@@ -1,3 +1,10 @@
+## code for the paper: https://doi.org/10.1093/hmg/ddaa162
+
+## code to be run in STATA
+
+
+
+
 set matsize 2000
 
 **split randomly into discovery & validation
