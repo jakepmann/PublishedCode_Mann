@@ -1,0 +1,3282 @@
+## code for the paper: https://doi.org/10.1016/j.jhep.2020.08.027
+
+## code to be run in R
+
+library(readxl)
+library(meta)
+library(metafor)
+library(dmetar)
+library(forestplot)
+
+***for histology
+
+setwd("~/Documents/MBOAT7_Jun20/Revision_Jun20/InputData")
+
+**NAFLD Diagnosis in adults
+
+NAFLD_Dx_adult <- read_excel("NAFLD_Dx_adult.xlsx")
+NAFLD_Dx_adult_add <- metagen(add_logOR, add_seOR, studlab = Author, method.tau = "DL", sm = "OR", data = NAFLD_Dx_adult)
+NAFLD_Dx_adult_add_ethnic <- update(NAFLD_Dx_adult_add, byvar = Ethnicity, bylab = "Ethnicity")
+NAFLD_Dx_adult_rec <- metagen(rec_logOR, rec_seOR, studlab = Author, method.tau = "DL", sm = "OR", data = NAFLD_Dx_adult)
+NAFLD_Dx_adult_rec_ethnic <- update(NAFLD_Dx_adult_rec, byvar = Ethnicity, bylab = "Ethnicity")
+NAFLD_Dx_adult_rec_mod <- update(NAFLD_Dx_adult_rec, byvar = Modality, bylab = "Modality")
+NAFLD_Dx_adult_dom <- metagen(dom_logOR, dom_seOR, studlab = Author, method.tau = "DL", sm = "OR", data = NAFLD_Dx_adult)
+NAFLD_Dx_adult_dom_ethnic <- update(NAFLD_Dx_adult_dom, byvar = Ethnicity, bylab = "Ethnicity")
+
+** recessive - overall
+NAFLD_Dx_adult_rec_tab <- data.frame(NAFLD_Dx_adult_rec_ethnic[["TE.random"]])
+row.names(NAFLD_Dx_adult_rec_tab) <- "Overall"
+NAFLD_Dx_adult_rec_tab$OR <- NAFLD_Dx_adult_rec_tab$NAFLD_Dx_adult_rec_ethnic...TE.random...
+NAFLD_Dx_adult_rec_tab$OR <- exp(NAFLD_Dx_adult_rec_tab$OR)
+NAFLD_Dx_adult_rec_tab <- NAFLD_Dx_adult_rec_tab[-c(1)]
+NAFLD_Dx_adult_rec_tab$lower <- NAFLD_Dx_adult_rec_ethnic[["lower.random"]]
+NAFLD_Dx_adult_rec_tab$lower <- exp(NAFLD_Dx_adult_rec_tab$lower)
+NAFLD_Dx_adult_rec_tab$upper <- NAFLD_Dx_adult_rec_ethnic[["upper.random"]]
+NAFLD_Dx_adult_rec_tab$upper <- exp(NAFLD_Dx_adult_rec_tab$upper)
+NAFLD_Dx_adult_rec_tab$k <- NAFLD_Dx_adult_rec_ethnic[["k"]]
+NAFLD_Dx_adult_rec_tab$p_z <- NAFLD_Dx_adult_rec_ethnic[["pval.random"]]
+NAFLD_Dx_adult_rec_tab$I2 <- NAFLD_Dx_adult_rec_ethnic[["I2"]]
+NAFLD_Dx_adult_rec_tab$p_q <- NAFLD_Dx_adult_rec_ethnic[["pval.Q"]]
+NAFLD_Dx_adult_rec_tab$group <- "Overall"
+NAFLD_Dx_adult_rec_tab$model <- "Recessive"
+NAFLD_Dx_adult_rec_tab$outcome <- "NAFLD_Dx"
+
+** recessive - subgroups
+NAFLD_Dx_adult_rec_tab2 <- data.frame(NAFLD_Dx_adult_rec_ethnic[["TE.random.w"]])
+row.names(NAFLD_Dx_adult_rec_tab2) <- NAFLD_Dx_adult_rec_ethnic[["bylevs"]]
+NAFLD_Dx_adult_rec_tab2$OR <- NAFLD_Dx_adult_rec_tab2$NAFLD_Dx_adult_rec_ethnic...TE.random.w...
+NAFLD_Dx_adult_rec_tab2$OR <- exp(NAFLD_Dx_adult_rec_tab2$OR)
+NAFLD_Dx_adult_rec_tab2 <- NAFLD_Dx_adult_rec_tab2[-c(1)]
+NAFLD_Dx_adult_rec_tab2$lower <- NAFLD_Dx_adult_rec_ethnic[["lower.random.w"]]
+NAFLD_Dx_adult_rec_tab2$lower <- exp(NAFLD_Dx_adult_rec_tab2$lower)
+NAFLD_Dx_adult_rec_tab2$upper <- NAFLD_Dx_adult_rec_ethnic[["upper.random.w"]]
+NAFLD_Dx_adult_rec_tab2$upper <- exp(NAFLD_Dx_adult_rec_tab2$upper)
+NAFLD_Dx_adult_rec_tab2$k <- NAFLD_Dx_adult_rec_ethnic[["k.w"]]
+NAFLD_Dx_adult_rec_tab2$p_z <- NAFLD_Dx_adult_rec_ethnic[["pval.random.w"]]
+NAFLD_Dx_adult_rec_tab2$I2 <- NAFLD_Dx_adult_rec_ethnic[["I2.w"]]
+NAFLD_Dx_adult_rec_tab2$p_q <- NAFLD_Dx_adult_rec_ethnic[["pval.Q.w"]]
+NAFLD_Dx_adult_rec_tab2$group <- row.names(NAFLD_Dx_adult_rec_tab2)
+NAFLD_Dx_adult_rec_tab2$model <- "Recessive"
+NAFLD_Dx_adult_rec_tab2$outcome <- "NAFLD_Dx"
+
+** additive - overall
+NAFLD_Dx_adult_add_tab <- data.frame(NAFLD_Dx_adult_add_ethnic[["TE.random"]])
+row.names(NAFLD_Dx_adult_add_tab) <- "Overall"
+NAFLD_Dx_adult_add_tab$OR <- NAFLD_Dx_adult_add_tab$NAFLD_Dx_adult_add_ethnic...TE.random...
+NAFLD_Dx_adult_add_tab$OR <- exp(NAFLD_Dx_adult_add_tab$OR)
+NAFLD_Dx_adult_add_tab <- NAFLD_Dx_adult_add_tab[-c(1)]
+NAFLD_Dx_adult_add_tab$lower <- NAFLD_Dx_adult_add_ethnic[["lower.random"]]
+NAFLD_Dx_adult_add_tab$lower <- exp(NAFLD_Dx_adult_add_tab$lower)
+NAFLD_Dx_adult_add_tab$upper <- NAFLD_Dx_adult_add_ethnic[["upper.random"]]
+NAFLD_Dx_adult_add_tab$upper <- exp(NAFLD_Dx_adult_add_tab$upper)
+NAFLD_Dx_adult_add_tab$k <- NAFLD_Dx_adult_add_ethnic[["k"]]
+NAFLD_Dx_adult_add_tab$p_z <- NAFLD_Dx_adult_add_ethnic[["pval.random"]]
+NAFLD_Dx_adult_add_tab$I2 <- NAFLD_Dx_adult_add_ethnic[["I2"]]
+NAFLD_Dx_adult_add_tab$p_q <- NAFLD_Dx_adult_add_ethnic[["pval.Q"]]
+NAFLD_Dx_adult_add_tab$group <- "Overall"
+NAFLD_Dx_adult_add_tab$model <- "Additive"
+NAFLD_Dx_adult_add_tab$outcome <- "NAFLD_Dx"
+
+** additive - subgroups
+NAFLD_Dx_adult_add_tab2 <- data.frame(NAFLD_Dx_adult_add_ethnic[["TE.random.w"]])
+row.names(NAFLD_Dx_adult_add_tab2) <- NAFLD_Dx_adult_add_ethnic[["bylevs"]]
+NAFLD_Dx_adult_add_tab2$OR <- NAFLD_Dx_adult_add_tab2$NAFLD_Dx_adult_add_ethnic...TE.random.w...
+NAFLD_Dx_adult_add_tab2$OR <- exp(NAFLD_Dx_adult_add_tab2$OR)
+NAFLD_Dx_adult_add_tab2 <- NAFLD_Dx_adult_add_tab2[-c(1)]
+NAFLD_Dx_adult_add_tab2$lower <- NAFLD_Dx_adult_add_ethnic[["lower.random.w"]]
+NAFLD_Dx_adult_add_tab2$lower <- exp(NAFLD_Dx_adult_add_tab2$lower)
+NAFLD_Dx_adult_add_tab2$upper <- NAFLD_Dx_adult_add_ethnic[["upper.random.w"]]
+NAFLD_Dx_adult_add_tab2$upper <- exp(NAFLD_Dx_adult_add_tab2$upper)
+NAFLD_Dx_adult_add_tab2$k <- NAFLD_Dx_adult_add_ethnic[["k.w"]]
+NAFLD_Dx_adult_add_tab2$p_z <- NAFLD_Dx_adult_add_ethnic[["pval.random.w"]]
+NAFLD_Dx_adult_add_tab2$I2 <- NAFLD_Dx_adult_add_ethnic[["I2.w"]]
+NAFLD_Dx_adult_add_tab2$p_q <- NAFLD_Dx_adult_add_ethnic[["pval.Q.w"]]
+NAFLD_Dx_adult_add_tab2$group <- row.names(NAFLD_Dx_adult_add_tab2)
+NAFLD_Dx_adult_add_tab2$model <- "Additive"
+NAFLD_Dx_adult_add_tab2$outcome <- "NAFLD_Dx"
+
+** dominant - overall
+NAFLD_Dx_adult_dom_tab <- data.frame(NAFLD_Dx_adult_dom_ethnic[["TE.random"]])
+row.names(NAFLD_Dx_adult_dom_tab) <- "Overall"
+NAFLD_Dx_adult_dom_tab$OR <- NAFLD_Dx_adult_dom_tab$NAFLD_Dx_adult_dom_ethnic...TE.random...
+NAFLD_Dx_adult_dom_tab$OR <- exp(NAFLD_Dx_adult_dom_tab$OR)
+NAFLD_Dx_adult_dom_tab <- NAFLD_Dx_adult_dom_tab[-c(1)]
+NAFLD_Dx_adult_dom_tab$lower <- NAFLD_Dx_adult_dom_ethnic[["lower.random"]]
+NAFLD_Dx_adult_dom_tab$lower <- exp(NAFLD_Dx_adult_dom_tab$lower)
+NAFLD_Dx_adult_dom_tab$upper <- NAFLD_Dx_adult_dom_ethnic[["upper.random"]]
+NAFLD_Dx_adult_dom_tab$upper <- exp(NAFLD_Dx_adult_dom_tab$upper)
+NAFLD_Dx_adult_dom_tab$k <- NAFLD_Dx_adult_dom_ethnic[["k"]]
+NAFLD_Dx_adult_dom_tab$p_z <- NAFLD_Dx_adult_dom_ethnic[["pval.random"]]
+NAFLD_Dx_adult_dom_tab$I2 <- NAFLD_Dx_adult_dom_ethnic[["I2"]]
+NAFLD_Dx_adult_dom_tab$p_q <- NAFLD_Dx_adult_dom_ethnic[["pval.Q"]]
+NAFLD_Dx_adult_dom_tab$group <- "Overall"
+NAFLD_Dx_adult_dom_tab$model <- "Dominant"
+NAFLD_Dx_adult_dom_tab$outcome <- "NAFLD_Dx"
+
+** dominant - subgroups
+NAFLD_Dx_adult_dom_tab2 <- data.frame(NAFLD_Dx_adult_dom_ethnic[["TE.random.w"]])
+row.names(NAFLD_Dx_adult_dom_tab2) <- NAFLD_Dx_adult_dom_ethnic[["bylevs"]]
+NAFLD_Dx_adult_dom_tab2$OR <- NAFLD_Dx_adult_dom_tab2$NAFLD_Dx_adult_dom_ethnic...TE.random.w...
+NAFLD_Dx_adult_dom_tab2$OR <- exp(NAFLD_Dx_adult_dom_tab2$OR)
+NAFLD_Dx_adult_dom_tab2 <- NAFLD_Dx_adult_dom_tab2[-c(1)]
+NAFLD_Dx_adult_dom_tab2$lower <- NAFLD_Dx_adult_dom_ethnic[["lower.random.w"]]
+NAFLD_Dx_adult_dom_tab2$lower <- exp(NAFLD_Dx_adult_dom_tab2$lower)
+NAFLD_Dx_adult_dom_tab2$upper <- NAFLD_Dx_adult_dom_ethnic[["upper.random.w"]]
+NAFLD_Dx_adult_dom_tab2$upper <- exp(NAFLD_Dx_adult_dom_tab2$upper)
+NAFLD_Dx_adult_dom_tab2$k <- NAFLD_Dx_adult_dom_ethnic[["k.w"]]
+NAFLD_Dx_adult_dom_tab2$p_z <- NAFLD_Dx_adult_dom_ethnic[["pval.random.w"]]
+NAFLD_Dx_adult_dom_tab2$I2 <- NAFLD_Dx_adult_dom_ethnic[["I2.w"]]
+NAFLD_Dx_adult_dom_tab2$p_q <- NAFLD_Dx_adult_dom_ethnic[["pval.Q.w"]]
+NAFLD_Dx_adult_dom_tab2$group <- row.names(NAFLD_Dx_adult_dom_tab2)
+NAFLD_Dx_adult_dom_tab2$model <- "Dominant"
+NAFLD_Dx_adult_dom_tab2$outcome <- "NAFLD_Dx"
+
+NAFLD_Dx_sumtab <- rbind(NAFLD_Dx_adult_rec_tab, NAFLD_Dx_adult_rec_tab2, NAFLD_Dx_adult_add_tab, NAFLD_Dx_adult_add_tab2, NAFLD_Dx_adult_dom_tab, NAFLD_Dx_adult_dom_tab2)
+
+pdf(file="NAFLD_Dx_adult_rec_ethnic.pdf",width=10,height=8)
+NAFLD_Dx_adult_rec_ethnic_forest <- forest(NAFLD_Dx_adult_rec_ethnic, comb.fixed=FALSE, col.random="red", col.diamond="red", xlab="Odds of NAFLD", digits.se=2, text.random = "Recessive model - overall effect", leftcols = c("studlab", "TT cases", "CT+CC cases", "TT controls", "CT+CC controls"), leftlabs = c("Study", "TT", "CT+CC", "TT", "CT+CC"), lab.e = "NAFLD", lab.c = "No NAFLD", digits.addcols.left=0, just.studlab="left", just.addcols.left="right", lab.e.attach.to.col="CT+CC cases", lab.c.attach.to.col="CT+CC controls", sortvar=rec_logOR, scientific.pval=TRUE, digits.pval=2, test.overall.random=TRUE, xlim=c(0.1,10), test.effect.subgroup.random=TRUE)
+dev.off()
+
+pdf(file="NAFLD_Dx_adult_rec_mod.pdf",width=10,height=12)
+NAFLD_Dx_adult_rec_mod_forest <- forest(NAFLD_Dx_adult_rec_mod, comb.fixed=FALSE, col.random="red", col.diamond="red", xlab="Odds of NAFLD", digits.se=2, text.random = "Recessive model - overall effect", leftcols = c("studlab", "TT cases", "CT+CC cases", "TT controls", "CT+CC controls"), leftlabs = c("Study", "TT", "CT+CC", "TT", "CT+CC"), lab.e = "NAFLD", lab.c = "No NAFLD", digits.addcols.left=0, just.studlab="left", just.addcols.left="right", lab.e.attach.to.col="CT+CC cases", lab.c.attach.to.col="CT+CC controls", sortvar=rec_logOR, scientific.pval=TRUE, digits.pval=2, test.overall.random=TRUE, xlim=c(0.1,10), test.effect.subgroup.random=TRUE)
+dev.off()
+
+**Re-run using recessive model after excluding 3 studies with potential differences between controls & cases
+
+NAFLD_Dx_adult_exclconf <- read_excel("NAFLD_Dx_adult_exclconf.xlsx")
+
+NAFLD_Dx_adult_rec_exclconf <- metagen(rec_logOR, rec_seOR, studlab = Author, method.tau = "DL", sm = "OR", data = NAFLD_Dx_adult_exclconf)
+NAFLD_Dx_adult_rec_ethnic_exclconf <- update(NAFLD_Dx_adult_rec_exclconf, byvar = Ethnicity, bylab = "Ethnicity")
+
+sink("NAFLD_Dx_adult_rec_ethnic_exclconf.txt")
+print(NAFLD_Dx_adult_rec_ethnic_exclconf)
+sink()
+
+pdf(file="NAFLD_Dx_adult_rec_ethnic_exclconf.pdf",width=10,height=8)
+NAFLD_Dx_adult_rec_ethnic_forest <- forest(NAFLD_Dx_adult_rec_ethnic_exclconf, comb.fixed=FALSE, col.random="red", col.diamond="red", xlab="Odds of NAFLD", digits.se=2, text.random = "Recessive model - overall effect", leftcols = c("studlab", "TT cases", "CT+CC cases", "TT controls", "CT+CC controls"), leftlabs = c("Study", "TT", "CT+CC", "TT", "CT+CC"), lab.e = "NAFLD", lab.c = "No NAFLD", digits.addcols.left=0, just.studlab="left", just.addcols.left="right", lab.e.attach.to.col="CT+CC cases", lab.c.attach.to.col="CT+CC controls", sortvar=rec_logOR, scientific.pval=TRUE, digits.pval=2, test.overall.random=TRUE, xlim=c(0.1,10), test.effect.subgroup.random=TRUE)
+dev.off()
+
+**NAFLD Diagnosis in children
+
+NAFLD_Dx_paed <- read_excel("NAFLD_Dx_paed.xlsx")
+NAFLD_Dx_paed_add <- metagen(add_logOR, add_seOR, studlab = Author, method.tau = "DL", sm = "OR", data = NAFLD_Dx_paed)
+NAFLD_Dx_paed_rec <- metagen(rec_logOR, rec_seOR, studlab = Author, method.tau = "DL", sm = "OR", data = NAFLD_Dx_paed)
+NAFLD_Dx_paed_dom <- metagen(dom_logOR, dom_seOR, studlab = Author, method.tau = "DL", sm = "OR", data = NAFLD_Dx_paed)
+
+
+** recessive - overall
+NAFLD_Dx_paed_rec_tab <- data.frame(NAFLD_Dx_paed_rec[["TE.random"]])
+row.names(NAFLD_Dx_paed_rec_tab) <- "Overall"
+NAFLD_Dx_paed_rec_tab$OR <- NAFLD_Dx_paed_rec_tab$NAFLD_Dx_paed_rec...TE.random...
+NAFLD_Dx_paed_rec_tab$OR <- exp(NAFLD_Dx_paed_rec_tab$OR)
+NAFLD_Dx_paed_rec_tab <- NAFLD_Dx_paed_rec_tab[-c(1)]
+NAFLD_Dx_paed_rec_tab$lower <- NAFLD_Dx_paed_rec[["lower.random"]]
+NAFLD_Dx_paed_rec_tab$lower <- exp(NAFLD_Dx_paed_rec_tab$lower)
+NAFLD_Dx_paed_rec_tab$upper <- NAFLD_Dx_paed_rec[["upper.random"]]
+NAFLD_Dx_paed_rec_tab$upper <- exp(NAFLD_Dx_paed_rec_tab$upper)
+NAFLD_Dx_paed_rec_tab$k <- NAFLD_Dx_paed_rec[["k"]]
+NAFLD_Dx_paed_rec_tab$p_z <- NAFLD_Dx_paed_rec[["pval.random"]]
+NAFLD_Dx_paed_rec_tab$I2 <- NAFLD_Dx_paed_rec[["I2"]]
+NAFLD_Dx_paed_rec_tab$p_q <- NAFLD_Dx_paed_rec[["pval.Q"]]
+NAFLD_Dx_paed_rec_tab$group <- "Overall"
+NAFLD_Dx_paed_rec_tab$model <- "Recessive"
+NAFLD_Dx_paed_rec_tab$outcome <- "NAFLD_Dx"
+
+** additive - overall
+NAFLD_Dx_paed_add_tab <- data.frame(NAFLD_Dx_paed_add[["TE.random"]])
+row.names(NAFLD_Dx_paed_add_tab) <- "Overall"
+NAFLD_Dx_paed_add_tab$OR <- NAFLD_Dx_paed_add_tab$NAFLD_Dx_paed_add...TE.random...
+NAFLD_Dx_paed_add_tab$OR <- exp(NAFLD_Dx_paed_add_tab$OR)
+NAFLD_Dx_paed_add_tab <- NAFLD_Dx_paed_add_tab[-c(1)]
+NAFLD_Dx_paed_add_tab$lower <- NAFLD_Dx_paed_add[["lower.random"]]
+NAFLD_Dx_paed_add_tab$lower <- exp(NAFLD_Dx_paed_add_tab$lower)
+NAFLD_Dx_paed_add_tab$upper <- NAFLD_Dx_paed_add[["upper.random"]]
+NAFLD_Dx_paed_add_tab$upper <- exp(NAFLD_Dx_paed_add_tab$upper)
+NAFLD_Dx_paed_add_tab$k <- NAFLD_Dx_paed_add[["k"]]
+NAFLD_Dx_paed_add_tab$p_z <- NAFLD_Dx_paed_add[["pval.random"]]
+NAFLD_Dx_paed_add_tab$I2 <- NAFLD_Dx_paed_add[["I2"]]
+NAFLD_Dx_paed_add_tab$p_q <- NAFLD_Dx_paed_add[["pval.Q"]]
+NAFLD_Dx_paed_add_tab$group <- "Overall"
+NAFLD_Dx_paed_add_tab$model <- "Additive"
+NAFLD_Dx_paed_add_tab$outcome <- "NAFLD_Dx"
+
+** dominant - overall
+NAFLD_Dx_paed_dom_tab <- data.frame(NAFLD_Dx_paed_dom[["TE.random"]])
+row.names(NAFLD_Dx_paed_dom_tab) <- "Overall"
+NAFLD_Dx_paed_dom_tab$OR <- NAFLD_Dx_paed_dom_tab$NAFLD_Dx_paed_dom...TE.random...
+NAFLD_Dx_paed_dom_tab$OR <- exp(NAFLD_Dx_paed_dom_tab$OR)
+NAFLD_Dx_paed_dom_tab <- NAFLD_Dx_paed_dom_tab[-c(1)]
+NAFLD_Dx_paed_dom_tab$lower <- NAFLD_Dx_paed_dom[["lower.random"]]
+NAFLD_Dx_paed_dom_tab$lower <- exp(NAFLD_Dx_paed_dom_tab$lower)
+NAFLD_Dx_paed_dom_tab$upper <- NAFLD_Dx_paed_dom[["upper.random"]]
+NAFLD_Dx_paed_dom_tab$upper <- exp(NAFLD_Dx_paed_dom_tab$upper)
+NAFLD_Dx_paed_dom_tab$k <- NAFLD_Dx_paed_dom[["k"]]
+NAFLD_Dx_paed_dom_tab$p_z <- NAFLD_Dx_paed_dom[["pval.random"]]
+NAFLD_Dx_paed_dom_tab$I2 <- NAFLD_Dx_paed_dom[["I2"]]
+NAFLD_Dx_paed_dom_tab$p_q <- NAFLD_Dx_paed_dom[["pval.Q"]]
+NAFLD_Dx_paed_dom_tab$group <- "Overall"
+NAFLD_Dx_paed_dom_tab$model <- "Dominant"
+NAFLD_Dx_paed_dom_tab$outcome <- "NAFLD_Dx"
+
+NAFLD_Dx_paed_sumtab <- rbind(NAFLD_Dx_paed_rec_tab, NAFLD_Dx_paed_add_tab, NAFLD_Dx_paed_dom_tab)
+
+
+**Presence of severe steatosis in adults
+
+Steat_adult <- read_excel("Steat_adult.xlsx")
+Steat_adult_add <- metagen(add_logOR, add_seOR, studlab = Author, method.tau = "DL", sm = "OR", data = Steat_adult)
+Steat_adult_add_ethnic <- update(Steat_adult_add, byvar = Ethnicity, bylab = "Ethnicity")
+Steat_adult_rec <- metagen(rec_logOR, rec_seOR, studlab = Author, method.tau = "DL", sm = "OR", data = Steat_adult)
+Steat_adult_rec_ethnic <- update(Steat_adult_rec, byvar = Ethnicity, bylab = "Ethnicity")
+Steat_adult_dom <- metagen(dom_logOR, dom_seOR, studlab = Author, method.tau = "DL", sm = "OR", data = Steat_adult)
+Steat_adult_dom_ethnic <- update(Steat_adult_dom, byvar = Ethnicity, bylab = "Ethnicity")
+
+** recessive - overall
+Steat_adult_rec_tab <- data.frame(Steat_adult_rec_ethnic[["TE.random"]])
+row.names(Steat_adult_rec_tab) <- "Overall"
+Steat_adult_rec_tab$OR <- Steat_adult_rec_tab$Steat_adult_rec_ethnic...TE.random...
+Steat_adult_rec_tab$OR <- exp(Steat_adult_rec_tab$OR)
+Steat_adult_rec_tab <- Steat_adult_rec_tab[-c(1)]
+Steat_adult_rec_tab$lower <- Steat_adult_rec_ethnic[["lower.random"]]
+Steat_adult_rec_tab$lower <- exp(Steat_adult_rec_tab$lower)
+Steat_adult_rec_tab$upper <- Steat_adult_rec_ethnic[["upper.random"]]
+Steat_adult_rec_tab$upper <- exp(Steat_adult_rec_tab$upper)
+Steat_adult_rec_tab$k <- Steat_adult_rec_ethnic[["k"]]
+Steat_adult_rec_tab$p_z <- Steat_adult_rec_ethnic[["pval.random"]]
+Steat_adult_rec_tab$I2 <- Steat_adult_rec_ethnic[["I2"]]
+Steat_adult_rec_tab$p_q <- Steat_adult_rec_ethnic[["pval.Q"]]
+Steat_adult_rec_tab$group <- "Overall"
+Steat_adult_rec_tab$model <- "Recessive"
+Steat_adult_rec_tab$outcome <- "Steat"
+
+** recessive - subgroups
+Steat_adult_rec_tab2 <- data.frame(Steat_adult_rec_ethnic[["TE.random.w"]])
+row.names(Steat_adult_rec_tab2) <- Steat_adult_rec_ethnic[["bylevs"]]
+Steat_adult_rec_tab2$OR <- Steat_adult_rec_tab2$Steat_adult_rec_ethnic...TE.random.w...
+Steat_adult_rec_tab2$OR <- exp(Steat_adult_rec_tab2$OR)
+Steat_adult_rec_tab2 <- Steat_adult_rec_tab2[-c(1)]
+Steat_adult_rec_tab2$lower <- Steat_adult_rec_ethnic[["lower.random.w"]]
+Steat_adult_rec_tab2$lower <- exp(Steat_adult_rec_tab2$lower)
+Steat_adult_rec_tab2$upper <- Steat_adult_rec_ethnic[["upper.random.w"]]
+Steat_adult_rec_tab2$upper <- exp(Steat_adult_rec_tab2$upper)
+Steat_adult_rec_tab2$k <- Steat_adult_rec_ethnic[["k.w"]]
+Steat_adult_rec_tab2$p_z <- Steat_adult_rec_ethnic[["pval.random.w"]]
+Steat_adult_rec_tab2$I2 <- Steat_adult_rec_ethnic[["I2.w"]]
+Steat_adult_rec_tab2$p_q <- Steat_adult_rec_ethnic[["pval.Q.w"]]
+Steat_adult_rec_tab2$group <- row.names(Steat_adult_rec_tab2)
+Steat_adult_rec_tab2$model <- "Recessive"
+Steat_adult_rec_tab2$outcome <- "Steat"
+
+** additive - overall
+Steat_adult_add_tab <- data.frame(Steat_adult_add_ethnic[["TE.random"]])
+row.names(Steat_adult_add_tab) <- "Overall"
+Steat_adult_add_tab$OR <- Steat_adult_add_tab$Steat_adult_add_ethnic...TE.random...
+Steat_adult_add_tab$OR <- exp(Steat_adult_add_tab$OR)
+Steat_adult_add_tab <- Steat_adult_add_tab[-c(1)]
+Steat_adult_add_tab$lower <- Steat_adult_add_ethnic[["lower.random"]]
+Steat_adult_add_tab$lower <- exp(Steat_adult_add_tab$lower)
+Steat_adult_add_tab$upper <- Steat_adult_add_ethnic[["upper.random"]]
+Steat_adult_add_tab$upper <- exp(Steat_adult_add_tab$upper)
+Steat_adult_add_tab$k <- Steat_adult_add_ethnic[["k"]]
+Steat_adult_add_tab$p_z <- Steat_adult_add_ethnic[["pval.random"]]
+Steat_adult_add_tab$I2 <- Steat_adult_add_ethnic[["I2"]]
+Steat_adult_add_tab$p_q <- Steat_adult_add_ethnic[["pval.Q"]]
+Steat_adult_add_tab$group <- "Overall"
+Steat_adult_add_tab$model <- "Additive"
+Steat_adult_add_tab$outcome <- "Steat"
+
+** additive - subgroups
+Steat_adult_add_tab2 <- data.frame(Steat_adult_add_ethnic[["TE.random.w"]])
+row.names(Steat_adult_add_tab2) <- Steat_adult_add_ethnic[["bylevs"]]
+Steat_adult_add_tab2$OR <- Steat_adult_add_tab2$Steat_adult_add_ethnic...TE.random.w...
+Steat_adult_add_tab2$OR <- exp(Steat_adult_add_tab2$OR)
+Steat_adult_add_tab2 <- Steat_adult_add_tab2[-c(1)]
+Steat_adult_add_tab2$lower <- Steat_adult_add_ethnic[["lower.random.w"]]
+Steat_adult_add_tab2$lower <- exp(Steat_adult_add_tab2$lower)
+Steat_adult_add_tab2$upper <- Steat_adult_add_ethnic[["upper.random.w"]]
+Steat_adult_add_tab2$upper <- exp(Steat_adult_add_tab2$upper)
+Steat_adult_add_tab2$k <- Steat_adult_add_ethnic[["k.w"]]
+Steat_adult_add_tab2$p_z <- Steat_adult_add_ethnic[["pval.random.w"]]
+Steat_adult_add_tab2$I2 <- Steat_adult_add_ethnic[["I2.w"]]
+Steat_adult_add_tab2$p_q <- Steat_adult_add_ethnic[["pval.Q.w"]]
+Steat_adult_add_tab2$group <- row.names(Steat_adult_add_tab2)
+Steat_adult_add_tab2$model <- "Additive"
+Steat_adult_add_tab2$outcome <- "Steat"
+
+** dominant - overall
+Steat_adult_dom_tab <- data.frame(Steat_adult_dom_ethnic[["TE.random"]])
+row.names(Steat_adult_dom_tab) <- "Overall"
+Steat_adult_dom_tab$OR <- Steat_adult_dom_tab$Steat_adult_dom_ethnic...TE.random...
+Steat_adult_dom_tab$OR <- exp(Steat_adult_dom_tab$OR)
+Steat_adult_dom_tab <- Steat_adult_dom_tab[-c(1)]
+Steat_adult_dom_tab$lower <- Steat_adult_dom_ethnic[["lower.random"]]
+Steat_adult_dom_tab$lower <- exp(Steat_adult_dom_tab$lower)
+Steat_adult_dom_tab$upper <- Steat_adult_dom_ethnic[["upper.random"]]
+Steat_adult_dom_tab$upper <- exp(Steat_adult_dom_tab$upper)
+Steat_adult_dom_tab$k <- Steat_adult_dom_ethnic[["k"]]
+Steat_adult_dom_tab$p_z <- Steat_adult_dom_ethnic[["pval.random"]]
+Steat_adult_dom_tab$I2 <- Steat_adult_dom_ethnic[["I2"]]
+Steat_adult_dom_tab$p_q <- Steat_adult_dom_ethnic[["pval.Q"]]
+Steat_adult_dom_tab$group <- "Overall"
+Steat_adult_dom_tab$model <- "Dominant"
+Steat_adult_dom_tab$outcome <- "Steat"
+
+** dominant - subgroups
+Steat_adult_dom_tab2 <- data.frame(Steat_adult_dom_ethnic[["TE.random.w"]])
+row.names(Steat_adult_dom_tab2) <- Steat_adult_dom_ethnic[["bylevs"]]
+Steat_adult_dom_tab2$OR <- Steat_adult_dom_tab2$Steat_adult_dom_ethnic...TE.random.w...
+Steat_adult_dom_tab2$OR <- exp(Steat_adult_dom_tab2$OR)
+Steat_adult_dom_tab2 <- Steat_adult_dom_tab2[-c(1)]
+Steat_adult_dom_tab2$lower <- Steat_adult_dom_ethnic[["lower.random.w"]]
+Steat_adult_dom_tab2$lower <- exp(Steat_adult_dom_tab2$lower)
+Steat_adult_dom_tab2$upper <- Steat_adult_dom_ethnic[["upper.random.w"]]
+Steat_adult_dom_tab2$upper <- exp(Steat_adult_dom_tab2$upper)
+Steat_adult_dom_tab2$k <- Steat_adult_dom_ethnic[["k.w"]]
+Steat_adult_dom_tab2$p_z <- Steat_adult_dom_ethnic[["pval.random.w"]]
+Steat_adult_dom_tab2$I2 <- Steat_adult_dom_ethnic[["I2.w"]]
+Steat_adult_dom_tab2$p_q <- Steat_adult_dom_ethnic[["pval.Q.w"]]
+Steat_adult_dom_tab2$group <- row.names(Steat_adult_dom_tab2)
+Steat_adult_dom_tab2$model <- "Dominant"
+Steat_adult_dom_tab2$outcome <- "Steat"
+
+Steat_sumtab <- rbind(Steat_adult_rec_tab, Steat_adult_rec_tab2, Steat_adult_add_tab, Steat_adult_add_tab2, Steat_adult_dom_tab, Steat_adult_dom_tab2)
+
+pdf(file="Steat_adult_rec_ethnic.pdf",width=10,height=8)
+Steat_adult_rec_ethnic_forest <- forest(Steat_adult_rec_ethnic, comb.fixed=FALSE, col.random="red", col.diamond="red", xlab="Odds of severe steatosis", digits.se=2, text.random = "Recessive model - overall effect", leftcols = c("studlab", "TT cases", "CT+CC cases", "TT controls", "CT+CC controls"), leftlabs = c("Study", "TT", "CT+CC", "TT", "CT+CC"), lab.e = "S3", lab.c = "S1-2", digits.addcols.left=0, just.studlab="left", just.addcols.left="right", lab.e.attach.to.col="CT+CC cases", lab.c.attach.to.col="CT+CC controls", sortvar=rec_logOR, digits.pval=3, test.overall.random=TRUE, test.effect.subgroup.random=TRUE)
+dev.off()
+
+
+**Presence of severe steatosis  in children
+
+Steat_paed <- read_excel("Steat_paed.xlsx")
+Steat_paed_add <- metagen(add_logOR, add_seOR, studlab = Author, method.tau = "DL", sm = "OR", data = Steat_paed)
+Steat_paed_rec <- metagen(rec_logOR, rec_seOR, studlab = Author, method.tau = "DL", sm = "OR", data = Steat_paed)
+Steat_paed_dom <- metagen(dom_logOR, dom_seOR, studlab = Author, method.tau = "DL", sm = "OR", data = Steat_paed)
+
+** recessive - overall
+Steat_paed_rec_tab <- data.frame(Steat_paed_rec[["TE.random"]])
+row.names(Steat_paed_rec_tab) <- "Overall"
+Steat_paed_rec_tab$OR <- Steat_paed_rec_tab$Steat_paed_rec...TE.random...
+Steat_paed_rec_tab$OR <- exp(Steat_paed_rec_tab$OR)
+Steat_paed_rec_tab <- Steat_paed_rec_tab[-c(1)]
+Steat_paed_rec_tab$lower <- Steat_paed_rec[["lower.random"]]
+Steat_paed_rec_tab$lower <- exp(Steat_paed_rec_tab$lower)
+Steat_paed_rec_tab$upper <- Steat_paed_rec[["upper.random"]]
+Steat_paed_rec_tab$upper <- exp(Steat_paed_rec_tab$upper)
+Steat_paed_rec_tab$k <- Steat_paed_rec[["k"]]
+Steat_paed_rec_tab$p_z <- Steat_paed_rec[["pval.random"]]
+Steat_paed_rec_tab$I2 <- Steat_paed_rec[["I2"]]
+Steat_paed_rec_tab$p_q <- Steat_paed_rec[["pval.Q"]]
+Steat_paed_rec_tab$group <- "Overall"
+Steat_paed_rec_tab$model <- "Recessive"
+Steat_paed_rec_tab$outcome <- "Steat"
+
+** additive - overall
+Steat_paed_add_tab <- data.frame(Steat_paed_add[["TE.random"]])
+row.names(Steat_paed_add_tab) <- "Overall"
+Steat_paed_add_tab$OR <- Steat_paed_add_tab$Steat_paed_add...TE.random...
+Steat_paed_add_tab$OR <- exp(Steat_paed_add_tab$OR)
+Steat_paed_add_tab <- Steat_paed_add_tab[-c(1)]
+Steat_paed_add_tab$lower <- Steat_paed_add[["lower.random"]]
+Steat_paed_add_tab$lower <- exp(Steat_paed_add_tab$lower)
+Steat_paed_add_tab$upper <- Steat_paed_add[["upper.random"]]
+Steat_paed_add_tab$upper <- exp(Steat_paed_add_tab$upper)
+Steat_paed_add_tab$k <- Steat_paed_add[["k"]]
+Steat_paed_add_tab$p_z <- Steat_paed_add[["pval.random"]]
+Steat_paed_add_tab$I2 <- Steat_paed_add[["I2"]]
+Steat_paed_add_tab$p_q <- Steat_paed_add[["pval.Q"]]
+Steat_paed_add_tab$group <- "Overall"
+Steat_paed_add_tab$model <- "Additive"
+Steat_paed_add_tab$outcome <- "Steat"
+
+** dominant - overall
+Steat_paed_dom_tab <- data.frame(Steat_paed_dom[["TE.random"]])
+row.names(Steat_paed_dom_tab) <- "Overall"
+Steat_paed_dom_tab$OR <- Steat_paed_dom_tab$Steat_paed_dom...TE.random...
+Steat_paed_dom_tab$OR <- exp(Steat_paed_dom_tab$OR)
+Steat_paed_dom_tab <- Steat_paed_dom_tab[-c(1)]
+Steat_paed_dom_tab$lower <- Steat_paed_dom[["lower.random"]]
+Steat_paed_dom_tab$lower <- exp(Steat_paed_dom_tab$lower)
+Steat_paed_dom_tab$upper <- Steat_paed_dom[["upper.random"]]
+Steat_paed_dom_tab$upper <- exp(Steat_paed_dom_tab$upper)
+Steat_paed_dom_tab$k <- Steat_paed_dom[["k"]]
+Steat_paed_dom_tab$p_z <- Steat_paed_dom[["pval.random"]]
+Steat_paed_dom_tab$I2 <- Steat_paed_dom[["I2"]]
+Steat_paed_dom_tab$p_q <- Steat_paed_dom[["pval.Q"]]
+Steat_paed_dom_tab$group <- "Overall"
+Steat_paed_dom_tab$model <- "Dominant"
+Steat_paed_dom_tab$outcome <- "Steat"
+
+Steat_paed_sumtab <- rbind(Steat_paed_rec_tab, Steat_paed_add_tab, Steat_paed_dom_tab)
+
+
+
+**Presence of NASH in adults
+
+NASH_adult <- read_excel("NASH_adult.xlsx")
+NASH_adult_add <- metagen(add_logOR, add_seOR, studlab = Author, method.tau = "DL", sm = "OR", data = NASH_adult)
+NASH_adult_add_ethnic <- update(NASH_adult_add, byvar = Ethnicity, bylab = "Ethnicity")
+NASH_adult_rec <- metagen(rec_logOR, rec_seOR, studlab = Author, method.tau = "DL", sm = "OR", data = NASH_adult)
+NASH_adult_rec_ethnic <- update(NASH_adult_rec, byvar = Ethnicity, bylab = "Ethnicity")
+NASH_adult_dom <- metagen(dom_logOR, dom_seOR, studlab = Author, method.tau = "DL", sm = "OR", data = NASH_adult)
+NASH_adult_dom_ethnic <- update(NASH_adult_dom, byvar = Ethnicity, bylab = "Ethnicity")
+
+** recessive - overall
+NASH_adult_rec_tab <- data.frame(NASH_adult_rec_ethnic[["TE.random"]])
+row.names(NASH_adult_rec_tab) <- "Overall"
+NASH_adult_rec_tab$OR <- NASH_adult_rec_tab$NASH_adult_rec_ethnic...TE.random...
+NASH_adult_rec_tab$OR <- exp(NASH_adult_rec_tab$OR)
+NASH_adult_rec_tab <- NASH_adult_rec_tab[-c(1)]
+NASH_adult_rec_tab$lower <- NASH_adult_rec_ethnic[["lower.random"]]
+NASH_adult_rec_tab$lower <- exp(NASH_adult_rec_tab$lower)
+NASH_adult_rec_tab$upper <- NASH_adult_rec_ethnic[["upper.random"]]
+NASH_adult_rec_tab$upper <- exp(NASH_adult_rec_tab$upper)
+NASH_adult_rec_tab$k <- NASH_adult_rec_ethnic[["k"]]
+NASH_adult_rec_tab$p_z <- NASH_adult_rec_ethnic[["pval.random"]]
+NASH_adult_rec_tab$I2 <- NASH_adult_rec_ethnic[["I2"]]
+NASH_adult_rec_tab$p_q <- NASH_adult_rec_ethnic[["pval.Q"]]
+NASH_adult_rec_tab$group <- "Overall"
+NASH_adult_rec_tab$model <- "Recessive"
+NASH_adult_rec_tab$outcome <- "NASH"
+
+** recessive - subgroups
+NASH_adult_rec_tab2 <- data.frame(NASH_adult_rec_ethnic[["TE.random.w"]])
+row.names(NASH_adult_rec_tab2) <- NASH_adult_rec_ethnic[["bylevs"]]
+NASH_adult_rec_tab2$OR <- NASH_adult_rec_tab2$NASH_adult_rec_ethnic...TE.random.w...
+NASH_adult_rec_tab2$OR <- exp(NASH_adult_rec_tab2$OR)
+NASH_adult_rec_tab2 <- NASH_adult_rec_tab2[-c(1)]
+NASH_adult_rec_tab2$lower <- NASH_adult_rec_ethnic[["lower.random.w"]]
+NASH_adult_rec_tab2$lower <- exp(NASH_adult_rec_tab2$lower)
+NASH_adult_rec_tab2$upper <- NASH_adult_rec_ethnic[["upper.random.w"]]
+NASH_adult_rec_tab2$upper <- exp(NASH_adult_rec_tab2$upper)
+NASH_adult_rec_tab2$k <- NASH_adult_rec_ethnic[["k.w"]]
+NASH_adult_rec_tab2$p_z <- NASH_adult_rec_ethnic[["pval.random.w"]]
+NASH_adult_rec_tab2$I2 <- NASH_adult_rec_ethnic[["I2.w"]]
+NASH_adult_rec_tab2$p_q <- NASH_adult_rec_ethnic[["pval.Q.w"]]
+NASH_adult_rec_tab2$group <- row.names(NASH_adult_rec_tab2)
+NASH_adult_rec_tab2$model <- "Recessive"
+NASH_adult_rec_tab2$outcome <- "NASH"
+
+** additive - overall
+NASH_adult_add_tab <- data.frame(NASH_adult_add_ethnic[["TE.random"]])
+row.names(NASH_adult_add_tab) <- "Overall"
+NASH_adult_add_tab$OR <- NASH_adult_add_tab$NASH_adult_add_ethnic...TE.random...
+NASH_adult_add_tab$OR <- exp(NASH_adult_add_tab$OR)
+NASH_adult_add_tab <- NASH_adult_add_tab[-c(1)]
+NASH_adult_add_tab$lower <- NASH_adult_add_ethnic[["lower.random"]]
+NASH_adult_add_tab$lower <- exp(NASH_adult_add_tab$lower)
+NASH_adult_add_tab$upper <- NASH_adult_add_ethnic[["upper.random"]]
+NASH_adult_add_tab$upper <- exp(NASH_adult_add_tab$upper)
+NASH_adult_add_tab$k <- NASH_adult_add_ethnic[["k"]]
+NASH_adult_add_tab$p_z <- NASH_adult_add_ethnic[["pval.random"]]
+NASH_adult_add_tab$I2 <- NASH_adult_add_ethnic[["I2"]]
+NASH_adult_add_tab$p_q <- NASH_adult_add_ethnic[["pval.Q"]]
+NASH_adult_add_tab$group <- "Overall"
+NASH_adult_add_tab$model <- "Additive"
+NASH_adult_add_tab$outcome <- "NASH"
+
+** additive - subgroups
+NASH_adult_add_tab2 <- data.frame(NASH_adult_add_ethnic[["TE.random.w"]])
+row.names(NASH_adult_add_tab2) <- NASH_adult_add_ethnic[["bylevs"]]
+NASH_adult_add_tab2$OR <- NASH_adult_add_tab2$NASH_adult_add_ethnic...TE.random.w...
+NASH_adult_add_tab2$OR <- exp(NASH_adult_add_tab2$OR)
+NASH_adult_add_tab2 <- NASH_adult_add_tab2[-c(1)]
+NASH_adult_add_tab2$lower <- NASH_adult_add_ethnic[["lower.random.w"]]
+NASH_adult_add_tab2$lower <- exp(NASH_adult_add_tab2$lower)
+NASH_adult_add_tab2$upper <- NASH_adult_add_ethnic[["upper.random.w"]]
+NASH_adult_add_tab2$upper <- exp(NASH_adult_add_tab2$upper)
+NASH_adult_add_tab2$k <- NASH_adult_add_ethnic[["k.w"]]
+NASH_adult_add_tab2$p_z <- NASH_adult_add_ethnic[["pval.random.w"]]
+NASH_adult_add_tab2$I2 <- NASH_adult_add_ethnic[["I2.w"]]
+NASH_adult_add_tab2$p_q <- NASH_adult_add_ethnic[["pval.Q.w"]]
+NASH_adult_add_tab2$group <- row.names(NASH_adult_add_tab2)
+NASH_adult_add_tab2$model <- "Additive"
+NASH_adult_add_tab2$outcome <- "NASH"
+
+
+** dominant - overall
+NASH_adult_dom_tab <- data.frame(NASH_adult_dom_ethnic[["TE.random"]])
+row.names(NASH_adult_dom_tab) <- "Overall"
+NASH_adult_dom_tab$OR <- NASH_adult_dom_tab$NASH_adult_dom_ethnic...TE.random...
+NASH_adult_dom_tab$OR <- exp(NASH_adult_dom_tab$OR)
+NASH_adult_dom_tab <- NASH_adult_dom_tab[-c(1)]
+NASH_adult_dom_tab$lower <- NASH_adult_dom_ethnic[["lower.random"]]
+NASH_adult_dom_tab$lower <- exp(NASH_adult_dom_tab$lower)
+NASH_adult_dom_tab$upper <- NASH_adult_dom_ethnic[["upper.random"]]
+NASH_adult_dom_tab$upper <- exp(NASH_adult_dom_tab$upper)
+NASH_adult_dom_tab$k <- NASH_adult_dom_ethnic[["k"]]
+NASH_adult_dom_tab$p_z <- NASH_adult_dom_ethnic[["pval.random"]]
+NASH_adult_dom_tab$I2 <- NASH_adult_dom_ethnic[["I2"]]
+NASH_adult_dom_tab$p_q <- NASH_adult_dom_ethnic[["pval.Q"]]
+NASH_adult_dom_tab$group <- "Overall"
+NASH_adult_dom_tab$model <- "Dominant"
+NASH_adult_dom_tab$outcome <- "NASH"
+
+** dominant - subgroups
+NASH_adult_dom_tab2 <- data.frame(NASH_adult_dom_ethnic[["TE.random.w"]])
+row.names(NASH_adult_dom_tab2) <- NASH_adult_dom_ethnic[["bylevs"]]
+NASH_adult_dom_tab2$OR <- NASH_adult_dom_tab2$NASH_adult_dom_ethnic...TE.random.w...
+NASH_adult_dom_tab2$OR <- exp(NASH_adult_dom_tab2$OR)
+NASH_adult_dom_tab2 <- NASH_adult_dom_tab2[-c(1)]
+NASH_adult_dom_tab2$lower <- NASH_adult_dom_ethnic[["lower.random.w"]]
+NASH_adult_dom_tab2$lower <- exp(NASH_adult_dom_tab2$lower)
+NASH_adult_dom_tab2$upper <- NASH_adult_dom_ethnic[["upper.random.w"]]
+NASH_adult_dom_tab2$upper <- exp(NASH_adult_dom_tab2$upper)
+NASH_adult_dom_tab2$k <- NASH_adult_dom_ethnic[["k.w"]]
+NASH_adult_dom_tab2$p_z <- NASH_adult_dom_ethnic[["pval.random.w"]]
+NASH_adult_dom_tab2$I2 <- NASH_adult_dom_ethnic[["I2.w"]]
+NASH_adult_dom_tab2$p_q <- NASH_adult_dom_ethnic[["pval.Q.w"]]
+NASH_adult_dom_tab2$group <- row.names(NASH_adult_dom_tab2)
+NASH_adult_dom_tab2$model <- "Dominant"
+NASH_adult_dom_tab2$outcome <- "NASH"
+
+NASH_sumtab <- rbind(NASH_adult_rec_tab, NASH_adult_rec_tab2, NASH_adult_add_tab, NASH_adult_add_tab2, NASH_adult_dom_tab, NASH_adult_dom_tab2)
+
+pdf(file="NASH_adult_rec_ethnic.pdf",width=10,height=8)
+NASH_adult_rec_ethnic_forest <- forest(NASH_adult_rec_ethnic, comb.fixed=FALSE, col.random="red", col.diamond="red", xlab="Odds of NASH", digits.se=2, text.random = "Recessive model - overall effect", leftcols = c("studlab", "TT cases", "CT+CC cases", "TT controls", "CT+CC controls"), leftlabs = c("Study", "TT", "CT+CC", "TT", "CT+CC"), lab.e = "NASH", lab.c = "NAFL", digits.addcols.left=0, just.studlab="left", just.addcols.left="right", lab.e.attach.to.col="CT+CC cases", lab.c.attach.to.col="CT+CC controls", sortvar=rec_logOR, digits.pval=3, test.overall.random=TRUE, test.effect.subgroup.random=TRUE)
+dev.off()
+
+
+**Presence of NASH in children
+
+NASH_paed <- read_excel("NASH_paed.xlsx")
+NASH_paed_add <- metagen(add_logOR, add_seOR, studlab = Author, method.tau = "DL", sm = "OR", data = NASH_paed)
+NASH_paed_rec <- metagen(rec_logOR, rec_seOR, studlab = Author, method.tau = "DL", sm = "OR", data = NASH_paed)
+NASH_paed_dom <- metagen(dom_logOR, dom_seOR, studlab = Author, method.tau = "DL", sm = "OR", data = NASH_paed)
+
+** recessive - overall
+NASH_paed_rec_tab <- data.frame(NASH_paed_rec[["TE.random"]])
+row.names(NASH_paed_rec_tab) <- "Overall"
+NASH_paed_rec_tab$OR <- NASH_paed_rec_tab$NASH_paed_rec...TE.random...
+NASH_paed_rec_tab$OR <- exp(NASH_paed_rec_tab$OR)
+NASH_paed_rec_tab <- NASH_paed_rec_tab[-c(1)]
+NASH_paed_rec_tab$lower <- NASH_paed_rec[["lower.random"]]
+NASH_paed_rec_tab$lower <- exp(NASH_paed_rec_tab$lower)
+NASH_paed_rec_tab$upper <- NASH_paed_rec[["upper.random"]]
+NASH_paed_rec_tab$upper <- exp(NASH_paed_rec_tab$upper)
+NASH_paed_rec_tab$k <- NASH_paed_rec[["k"]]
+NASH_paed_rec_tab$p_z <- NASH_paed_rec[["pval.random"]]
+NASH_paed_rec_tab$I2 <- NASH_paed_rec[["I2"]]
+NASH_paed_rec_tab$p_q <- NASH_paed_rec[["pval.Q"]]
+NASH_paed_rec_tab$group <- "Overall"
+NASH_paed_rec_tab$model <- "Recessive"
+NASH_paed_rec_tab$outcome <- "NASH"
+
+** additive - overall
+NASH_paed_add_tab <- data.frame(NASH_paed_add[["TE.random"]])
+row.names(NASH_paed_add_tab) <- "Overall"
+NASH_paed_add_tab$OR <- NASH_paed_add_tab$NASH_paed_add...TE.random...
+NASH_paed_add_tab$OR <- exp(NASH_paed_add_tab$OR)
+NASH_paed_add_tab <- NASH_paed_add_tab[-c(1)]
+NASH_paed_add_tab$lower <- NASH_paed_add[["lower.random"]]
+NASH_paed_add_tab$lower <- exp(NASH_paed_add_tab$lower)
+NASH_paed_add_tab$upper <- NASH_paed_add[["upper.random"]]
+NASH_paed_add_tab$upper <- exp(NASH_paed_add_tab$upper)
+NASH_paed_add_tab$k <- NASH_paed_add[["k"]]
+NASH_paed_add_tab$p_z <- NASH_paed_add[["pval.random"]]
+NASH_paed_add_tab$I2 <- NASH_paed_add[["I2"]]
+NASH_paed_add_tab$p_q <- NASH_paed_add[["pval.Q"]]
+NASH_paed_add_tab$group <- "Overall"
+NASH_paed_add_tab$model <- "Additive"
+NASH_paed_add_tab$outcome <- "NASH"
+
+** dominant - overall
+NASH_paed_dom_tab <- data.frame(NASH_paed_dom[["TE.random"]])
+row.names(NASH_paed_dom_tab) <- "Overall"
+NASH_paed_dom_tab$OR <- NASH_paed_dom_tab$NASH_paed_dom...TE.random...
+NASH_paed_dom_tab$OR <- exp(NASH_paed_dom_tab$OR)
+NASH_paed_dom_tab <- NASH_paed_dom_tab[-c(1)]
+NASH_paed_dom_tab$lower <- NASH_paed_dom[["lower.random"]]
+NASH_paed_dom_tab$lower <- exp(NASH_paed_dom_tab$lower)
+NASH_paed_dom_tab$upper <- NASH_paed_dom[["upper.random"]]
+NASH_paed_dom_tab$upper <- exp(NASH_paed_dom_tab$upper)
+NASH_paed_dom_tab$k <- NASH_paed_dom[["k"]]
+NASH_paed_dom_tab$p_z <- NASH_paed_dom[["pval.random"]]
+NASH_paed_dom_tab$I2 <- NASH_paed_dom[["I2"]]
+NASH_paed_dom_tab$p_q <- NASH_paed_dom[["pval.Q"]]
+NASH_paed_dom_tab$group <- "Overall"
+NASH_paed_dom_tab$model <- "Dominant"
+NASH_paed_dom_tab$outcome <- "NASH"
+
+NASH_paed_sumtab <- rbind(NASH_paed_rec_tab, NASH_paed_add_tab, NASH_paed_dom_tab)
+
+
+**Presence of any fibrosis in adults
+
+AnyFib_adult <- read_excel("AnyFib_adult.xlsx")
+AnyFib_adult_add <- metagen(add_logOR, add_seOR, studlab = Author, method.tau = "DL", sm = "OR", data = AnyFib_adult)
+AnyFib_adult_add_ethnic <- update(AnyFib_adult_add, byvar = Ethnicity, bylab = "Ethnicity")
+AnyFib_adult_rec <- metagen(rec_logOR, rec_seOR, studlab = Author, method.tau = "DL", sm = "OR", data = AnyFib_adult)
+AnyFib_adult_rec_ethnic <- update(AnyFib_adult_rec, byvar = Ethnicity, bylab = "Ethnicity")
+AnyFib_adult_dom <- metagen(dom_logOR, dom_seOR, studlab = Author, method.tau = "DL", sm = "OR", data = AnyFib_adult)
+AnyFib_adult_dom_ethnic <- update(AnyFib_adult_dom, byvar = Ethnicity, bylab = "Ethnicity")
+
+
+** recessive - overall
+AnyFib_adult_rec_tab <- data.frame(AnyFib_adult_rec_ethnic[["TE.random"]])
+row.names(AnyFib_adult_rec_tab) <- "Overall"
+AnyFib_adult_rec_tab$OR <- AnyFib_adult_rec_tab$AnyFib_adult_rec_ethnic...TE.random...
+AnyFib_adult_rec_tab$OR <- exp(AnyFib_adult_rec_tab$OR)
+AnyFib_adult_rec_tab <- AnyFib_adult_rec_tab[-c(1)]
+AnyFib_adult_rec_tab$lower <- AnyFib_adult_rec_ethnic[["lower.random"]]
+AnyFib_adult_rec_tab$lower <- exp(AnyFib_adult_rec_tab$lower)
+AnyFib_adult_rec_tab$upper <- AnyFib_adult_rec_ethnic[["upper.random"]]
+AnyFib_adult_rec_tab$upper <- exp(AnyFib_adult_rec_tab$upper)
+AnyFib_adult_rec_tab$k <- AnyFib_adult_rec_ethnic[["k"]]
+AnyFib_adult_rec_tab$p_z <- AnyFib_adult_rec_ethnic[["pval.random"]]
+AnyFib_adult_rec_tab$I2 <- AnyFib_adult_rec_ethnic[["I2"]]
+AnyFib_adult_rec_tab$p_q <- AnyFib_adult_rec_ethnic[["pval.Q"]]
+AnyFib_adult_rec_tab$group <- "Overall"
+AnyFib_adult_rec_tab$model <- "Recessive"
+AnyFib_adult_rec_tab$outcome <- "AnyFib"
+
+** recessive - subgroups
+AnyFib_adult_rec_tab2 <- data.frame(AnyFib_adult_rec_ethnic[["TE.random.w"]])
+row.names(AnyFib_adult_rec_tab2) <- AnyFib_adult_rec_ethnic[["bylevs"]]
+AnyFib_adult_rec_tab2$OR <- AnyFib_adult_rec_tab2$AnyFib_adult_rec_ethnic...TE.random.w...
+AnyFib_adult_rec_tab2$OR <- exp(AnyFib_adult_rec_tab2$OR)
+AnyFib_adult_rec_tab2 <- AnyFib_adult_rec_tab2[-c(1)]
+AnyFib_adult_rec_tab2$lower <- AnyFib_adult_rec_ethnic[["lower.random.w"]]
+AnyFib_adult_rec_tab2$lower <- exp(AnyFib_adult_rec_tab2$lower)
+AnyFib_adult_rec_tab2$upper <- AnyFib_adult_rec_ethnic[["upper.random.w"]]
+AnyFib_adult_rec_tab2$upper <- exp(AnyFib_adult_rec_tab2$upper)
+AnyFib_adult_rec_tab2$k <- AnyFib_adult_rec_ethnic[["k.w"]]
+AnyFib_adult_rec_tab2$p_z <- AnyFib_adult_rec_ethnic[["pval.random.w"]]
+AnyFib_adult_rec_tab2$I2 <- AnyFib_adult_rec_ethnic[["I2.w"]]
+AnyFib_adult_rec_tab2$p_q <- AnyFib_adult_rec_ethnic[["pval.Q.w"]]
+AnyFib_adult_rec_tab2$group <- row.names(AnyFib_adult_rec_tab2)
+AnyFib_adult_rec_tab2$model <- "Recessive"
+AnyFib_adult_rec_tab2$outcome <- "AnyFib"
+
+** additive - overall
+AnyFib_adult_add_tab <- data.frame(AnyFib_adult_add_ethnic[["TE.random"]])
+row.names(AnyFib_adult_add_tab) <- "Overall"
+AnyFib_adult_add_tab$OR <- AnyFib_adult_add_tab$AnyFib_adult_add_ethnic...TE.random...
+AnyFib_adult_add_tab$OR <- exp(AnyFib_adult_add_tab$OR)
+AnyFib_adult_add_tab <- AnyFib_adult_add_tab[-c(1)]
+AnyFib_adult_add_tab$lower <- AnyFib_adult_add_ethnic[["lower.random"]]
+AnyFib_adult_add_tab$lower <- exp(AnyFib_adult_add_tab$lower)
+AnyFib_adult_add_tab$upper <- AnyFib_adult_add_ethnic[["upper.random"]]
+AnyFib_adult_add_tab$upper <- exp(AnyFib_adult_add_tab$upper)
+AnyFib_adult_add_tab$k <- AnyFib_adult_add_ethnic[["k"]]
+AnyFib_adult_add_tab$p_z <- AnyFib_adult_add_ethnic[["pval.random"]]
+AnyFib_adult_add_tab$I2 <- AnyFib_adult_add_ethnic[["I2"]]
+AnyFib_adult_add_tab$p_q <- AnyFib_adult_add_ethnic[["pval.Q"]]
+AnyFib_adult_add_tab$group <- "Overall"
+AnyFib_adult_add_tab$model <- "Additive"
+AnyFib_adult_add_tab$outcome <- "AnyFib"
+
+** additive - subgroups
+AnyFib_adult_add_tab2 <- data.frame(AnyFib_adult_add_ethnic[["TE.random.w"]])
+row.names(AnyFib_adult_add_tab2) <- AnyFib_adult_add_ethnic[["bylevs"]]
+AnyFib_adult_add_tab2$OR <- AnyFib_adult_add_tab2$AnyFib_adult_add_ethnic...TE.random.w...
+AnyFib_adult_add_tab2$OR <- exp(AnyFib_adult_add_tab2$OR)
+AnyFib_adult_add_tab2 <- AnyFib_adult_add_tab2[-c(1)]
+AnyFib_adult_add_tab2$lower <- AnyFib_adult_add_ethnic[["lower.random.w"]]
+AnyFib_adult_add_tab2$lower <- exp(AnyFib_adult_add_tab2$lower)
+AnyFib_adult_add_tab2$upper <- AnyFib_adult_add_ethnic[["upper.random.w"]]
+AnyFib_adult_add_tab2$upper <- exp(AnyFib_adult_add_tab2$upper)
+AnyFib_adult_add_tab2$k <- AnyFib_adult_add_ethnic[["k.w"]]
+AnyFib_adult_add_tab2$p_z <- AnyFib_adult_add_ethnic[["pval.random.w"]]
+AnyFib_adult_add_tab2$I2 <- AnyFib_adult_add_ethnic[["I2.w"]]
+AnyFib_adult_add_tab2$p_q <- AnyFib_adult_add_ethnic[["pval.Q.w"]]
+AnyFib_adult_add_tab2$group <- row.names(AnyFib_adult_add_tab2)
+AnyFib_adult_add_tab2$model <- "Additive"
+AnyFib_adult_add_tab2$outcome <- "AnyFib"
+
+
+** dominant - overall
+AnyFib_adult_dom_tab <- data.frame(AnyFib_adult_dom_ethnic[["TE.random"]])
+row.names(AnyFib_adult_dom_tab) <- "Overall"
+AnyFib_adult_dom_tab$OR <- AnyFib_adult_dom_tab$AnyFib_adult_dom_ethnic...TE.random...
+AnyFib_adult_dom_tab$OR <- exp(AnyFib_adult_dom_tab$OR)
+AnyFib_adult_dom_tab <- AnyFib_adult_dom_tab[-c(1)]
+AnyFib_adult_dom_tab$lower <- AnyFib_adult_dom_ethnic[["lower.random"]]
+AnyFib_adult_dom_tab$lower <- exp(AnyFib_adult_dom_tab$lower)
+AnyFib_adult_dom_tab$upper <- AnyFib_adult_dom_ethnic[["upper.random"]]
+AnyFib_adult_dom_tab$upper <- exp(AnyFib_adult_dom_tab$upper)
+AnyFib_adult_dom_tab$k <- AnyFib_adult_dom_ethnic[["k"]]
+AnyFib_adult_dom_tab$p_z <- AnyFib_adult_dom_ethnic[["pval.random"]]
+AnyFib_adult_dom_tab$I2 <- AnyFib_adult_dom_ethnic[["I2"]]
+AnyFib_adult_dom_tab$p_q <- AnyFib_adult_dom_ethnic[["pval.Q"]]
+AnyFib_adult_dom_tab$group <- "Overall"
+AnyFib_adult_dom_tab$model <- "Dominant"
+AnyFib_adult_dom_tab$outcome <- "AnyFib"
+
+** dominant - subgroups
+AnyFib_adult_dom_tab2 <- data.frame(AnyFib_adult_dom_ethnic[["TE.random.w"]])
+row.names(AnyFib_adult_dom_tab2) <- AnyFib_adult_dom_ethnic[["bylevs"]]
+AnyFib_adult_dom_tab2$OR <- AnyFib_adult_dom_tab2$AnyFib_adult_dom_ethnic...TE.random.w...
+AnyFib_adult_dom_tab2$OR <- exp(AnyFib_adult_dom_tab2$OR)
+AnyFib_adult_dom_tab2 <- AnyFib_adult_dom_tab2[-c(1)]
+AnyFib_adult_dom_tab2$lower <- AnyFib_adult_dom_ethnic[["lower.random.w"]]
+AnyFib_adult_dom_tab2$lower <- exp(AnyFib_adult_dom_tab2$lower)
+AnyFib_adult_dom_tab2$upper <- AnyFib_adult_dom_ethnic[["upper.random.w"]]
+AnyFib_adult_dom_tab2$upper <- exp(AnyFib_adult_dom_tab2$upper)
+AnyFib_adult_dom_tab2$k <- AnyFib_adult_dom_ethnic[["k.w"]]
+AnyFib_adult_dom_tab2$p_z <- AnyFib_adult_dom_ethnic[["pval.random.w"]]
+AnyFib_adult_dom_tab2$I2 <- AnyFib_adult_dom_ethnic[["I2.w"]]
+AnyFib_adult_dom_tab2$p_q <- AnyFib_adult_dom_ethnic[["pval.Q.w"]]
+AnyFib_adult_dom_tab2$group <- row.names(AnyFib_adult_dom_tab2)
+AnyFib_adult_dom_tab2$model <- "Dominant"
+AnyFib_adult_dom_tab2$outcome <- "AnyFib"
+
+AnyFib_sumtab <- rbind(AnyFib_adult_rec_tab, AnyFib_adult_rec_tab2, AnyFib_adult_add_tab, AnyFib_adult_add_tab2, AnyFib_adult_dom_tab, AnyFib_adult_dom_tab2)
+
+pdf(file="AnyFib_adult_rec_ethnic.pdf",width=10,height=8)
+AnyFib_adult_rec_ethnic_forest <- forest(AnyFib_adult_rec_ethnic, comb.fixed=FALSE, col.random="red", col.diamond="red", xlab="Odds of fibrosis", digits.se=2, text.random = "Recessive model - overall effect", leftcols = c("studlab", "TT cases", "CT+CC cases", "TT controls", "CT+CC controls"), leftlabs = c("Study", "TT", "CT+CC", "TT", "CT+CC"), lab.e = "F1-4", lab.c = "F0", digits.addcols.left=0, just.studlab="left", just.addcols.left="right", lab.e.attach.to.col="CT+CC cases", lab.c.attach.to.col="CT+CC controls", sortvar=rec_logOR, digits.pval=3, test.overall.random=TRUE, test.effect.subgroup.random=TRUE)
+dev.off()
+
+
+
+**Presence of any fibrosis in children
+
+AnyFib_paed <- read_excel("AnyFib_paed.xlsx")
+AnyFib_paed_add <- metagen(add_logOR, add_seOR, studlab = Author, method.tau = "DL", sm = "OR", data = AnyFib_paed)
+AnyFib_paed_rec <- metagen(rec_logOR, rec_seOR, studlab = Author, method.tau = "DL", sm = "OR", data = AnyFib_paed)
+AnyFib_paed_dom <- metagen(dom_logOR, dom_seOR, studlab = Author, method.tau = "DL", sm = "OR", data = AnyFib_paed)
+
+** recessive - overall
+AnyFib_paed_rec_tab <- data.frame(AnyFib_paed_rec[["TE.random"]])
+row.names(AnyFib_paed_rec_tab) <- "Overall"
+AnyFib_paed_rec_tab$OR <- AnyFib_paed_rec_tab$AnyFib_paed_rec...TE.random...
+AnyFib_paed_rec_tab$OR <- exp(AnyFib_paed_rec_tab$OR)
+AnyFib_paed_rec_tab <- AnyFib_paed_rec_tab[-c(1)]
+AnyFib_paed_rec_tab$lower <- AnyFib_paed_rec[["lower.random"]]
+AnyFib_paed_rec_tab$lower <- exp(AnyFib_paed_rec_tab$lower)
+AnyFib_paed_rec_tab$upper <- AnyFib_paed_rec[["upper.random"]]
+AnyFib_paed_rec_tab$upper <- exp(AnyFib_paed_rec_tab$upper)
+AnyFib_paed_rec_tab$k <- AnyFib_paed_rec[["k"]]
+AnyFib_paed_rec_tab$p_z <- AnyFib_paed_rec[["pval.random"]]
+AnyFib_paed_rec_tab$I2 <- AnyFib_paed_rec[["I2"]]
+AnyFib_paed_rec_tab$p_q <- AnyFib_paed_rec[["pval.Q"]]
+AnyFib_paed_rec_tab$group <- "Overall"
+AnyFib_paed_rec_tab$model <- "Recessive"
+AnyFib_paed_rec_tab$outcome <- "AnyFib"
+
+** additive - overall
+AnyFib_paed_add_tab <- data.frame(AnyFib_paed_add[["TE.random"]])
+row.names(AnyFib_paed_add_tab) <- "Overall"
+AnyFib_paed_add_tab$OR <- AnyFib_paed_add_tab$AnyFib_paed_add...TE.random...
+AnyFib_paed_add_tab$OR <- exp(AnyFib_paed_add_tab$OR)
+AnyFib_paed_add_tab <- AnyFib_paed_add_tab[-c(1)]
+AnyFib_paed_add_tab$lower <- AnyFib_paed_add[["lower.random"]]
+AnyFib_paed_add_tab$lower <- exp(AnyFib_paed_add_tab$lower)
+AnyFib_paed_add_tab$upper <- AnyFib_paed_add[["upper.random"]]
+AnyFib_paed_add_tab$upper <- exp(AnyFib_paed_add_tab$upper)
+AnyFib_paed_add_tab$k <- AnyFib_paed_add[["k"]]
+AnyFib_paed_add_tab$p_z <- AnyFib_paed_add[["pval.random"]]
+AnyFib_paed_add_tab$I2 <- AnyFib_paed_add[["I2"]]
+AnyFib_paed_add_tab$p_q <- AnyFib_paed_add[["pval.Q"]]
+AnyFib_paed_add_tab$group <- "Overall"
+AnyFib_paed_add_tab$model <- "Additive"
+AnyFib_paed_add_tab$outcome <- "AnyFib"
+
+** dominant - overall
+AnyFib_paed_dom_tab <- data.frame(AnyFib_paed_dom[["TE.random"]])
+row.names(AnyFib_paed_dom_tab) <- "Overall"
+AnyFib_paed_dom_tab$OR <- AnyFib_paed_dom_tab$AnyFib_paed_dom...TE.random...
+AnyFib_paed_dom_tab$OR <- exp(AnyFib_paed_dom_tab$OR)
+AnyFib_paed_dom_tab <- AnyFib_paed_dom_tab[-c(1)]
+AnyFib_paed_dom_tab$lower <- AnyFib_paed_dom[["lower.random"]]
+AnyFib_paed_dom_tab$lower <- exp(AnyFib_paed_dom_tab$lower)
+AnyFib_paed_dom_tab$upper <- AnyFib_paed_dom[["upper.random"]]
+AnyFib_paed_dom_tab$upper <- exp(AnyFib_paed_dom_tab$upper)
+AnyFib_paed_dom_tab$k <- AnyFib_paed_dom[["k"]]
+AnyFib_paed_dom_tab$p_z <- AnyFib_paed_dom[["pval.random"]]
+AnyFib_paed_dom_tab$I2 <- AnyFib_paed_dom[["I2"]]
+AnyFib_paed_dom_tab$p_q <- AnyFib_paed_dom[["pval.Q"]]
+AnyFib_paed_dom_tab$group <- "Overall"
+AnyFib_paed_dom_tab$model <- "Dominant"
+AnyFib_paed_dom_tab$outcome <- "AnyFib"
+
+AnyFib_paed_sumtab <- rbind(AnyFib_paed_rec_tab, AnyFib_paed_add_tab, AnyFib_paed_dom_tab)
+
+
+**Presence of advanced fibrosis in adults
+
+FibAdv_adult <- read_excel("FibAdv_adult.xlsx")
+FibAdv_adult_add <- metagen(add_logOR, add_seOR, studlab = Author, method.tau = "DL", sm = "OR", data = FibAdv_adult)
+FibAdv_adult_add_ethnic <- update(FibAdv_adult_add, byvar = Ethnicity, bylab = "Ethnicity")
+FibAdv_adult_rec <- metagen(rec_logOR, rec_seOR, studlab = Author, method.tau = "DL", sm = "OR", data = FibAdv_adult)
+FibAdv_adult_rec_ethnic <- update(FibAdv_adult_rec, byvar = Ethnicity, bylab = "Ethnicity")
+FibAdv_adult_dom <- metagen(dom_logOR, dom_seOR, studlab = Author, method.tau = "DL", sm = "OR", data = FibAdv_adult)
+FibAdv_adult_dom_ethnic <- update(FibAdv_adult_dom, byvar = Ethnicity, bylab = "Ethnicity")
+
+** recessive - overall
+FibAdv_adult_rec_tab <- data.frame(FibAdv_adult_rec_ethnic[["TE.random"]])
+row.names(FibAdv_adult_rec_tab) <- "Overall"
+FibAdv_adult_rec_tab$OR <- FibAdv_adult_rec_tab$FibAdv_adult_rec_ethnic...TE.random...
+FibAdv_adult_rec_tab$OR <- exp(FibAdv_adult_rec_tab$OR)
+FibAdv_adult_rec_tab <- FibAdv_adult_rec_tab[-c(1)]
+FibAdv_adult_rec_tab$lower <- FibAdv_adult_rec_ethnic[["lower.random"]]
+FibAdv_adult_rec_tab$lower <- exp(FibAdv_adult_rec_tab$lower)
+FibAdv_adult_rec_tab$upper <- FibAdv_adult_rec_ethnic[["upper.random"]]
+FibAdv_adult_rec_tab$upper <- exp(FibAdv_adult_rec_tab$upper)
+FibAdv_adult_rec_tab$k <- FibAdv_adult_rec_ethnic[["k"]]
+FibAdv_adult_rec_tab$p_z <- FibAdv_adult_rec_ethnic[["pval.random"]]
+FibAdv_adult_rec_tab$I2 <- FibAdv_adult_rec_ethnic[["I2"]]
+FibAdv_adult_rec_tab$p_q <- FibAdv_adult_rec_ethnic[["pval.Q"]]
+FibAdv_adult_rec_tab$group <- "Overall"
+FibAdv_adult_rec_tab$model <- "Recessive"
+FibAdv_adult_rec_tab$outcome <- "FibAdv"
+
+** recessive - subgroups
+FibAdv_adult_rec_tab2 <- data.frame(FibAdv_adult_rec_ethnic[["TE.random.w"]])
+row.names(FibAdv_adult_rec_tab2) <- FibAdv_adult_rec_ethnic[["bylevs"]]
+FibAdv_adult_rec_tab2$OR <- FibAdv_adult_rec_tab2$FibAdv_adult_rec_ethnic...TE.random.w...
+FibAdv_adult_rec_tab2$OR <- exp(FibAdv_adult_rec_tab2$OR)
+FibAdv_adult_rec_tab2 <- FibAdv_adult_rec_tab2[-c(1)]
+FibAdv_adult_rec_tab2$lower <- FibAdv_adult_rec_ethnic[["lower.random.w"]]
+FibAdv_adult_rec_tab2$lower <- exp(FibAdv_adult_rec_tab2$lower)
+FibAdv_adult_rec_tab2$upper <- FibAdv_adult_rec_ethnic[["upper.random.w"]]
+FibAdv_adult_rec_tab2$upper <- exp(FibAdv_adult_rec_tab2$upper)
+FibAdv_adult_rec_tab2$k <- FibAdv_adult_rec_ethnic[["k.w"]]
+FibAdv_adult_rec_tab2$p_z <- FibAdv_adult_rec_ethnic[["pval.random.w"]]
+FibAdv_adult_rec_tab2$I2 <- FibAdv_adult_rec_ethnic[["I2.w"]]
+FibAdv_adult_rec_tab2$p_q <- FibAdv_adult_rec_ethnic[["pval.Q.w"]]
+FibAdv_adult_rec_tab2$group <- row.names(FibAdv_adult_rec_tab2)
+FibAdv_adult_rec_tab2$model <- "Recessive"
+FibAdv_adult_rec_tab2$outcome <- "FibAdv"
+
+** additive - overall
+FibAdv_adult_add_tab <- data.frame(FibAdv_adult_add_ethnic[["TE.random"]])
+row.names(FibAdv_adult_add_tab) <- "Overall"
+FibAdv_adult_add_tab$OR <- FibAdv_adult_add_tab$FibAdv_adult_add_ethnic...TE.random...
+FibAdv_adult_add_tab$OR <- exp(FibAdv_adult_add_tab$OR)
+FibAdv_adult_add_tab <- FibAdv_adult_add_tab[-c(1)]
+FibAdv_adult_add_tab$lower <- FibAdv_adult_add_ethnic[["lower.random"]]
+FibAdv_adult_add_tab$lower <- exp(FibAdv_adult_add_tab$lower)
+FibAdv_adult_add_tab$upper <- FibAdv_adult_add_ethnic[["upper.random"]]
+FibAdv_adult_add_tab$upper <- exp(FibAdv_adult_add_tab$upper)
+FibAdv_adult_add_tab$k <- FibAdv_adult_add_ethnic[["k"]]
+FibAdv_adult_add_tab$p_z <- FibAdv_adult_add_ethnic[["pval.random"]]
+FibAdv_adult_add_tab$I2 <- FibAdv_adult_add_ethnic[["I2"]]
+FibAdv_adult_add_tab$p_q <- FibAdv_adult_add_ethnic[["pval.Q"]]
+FibAdv_adult_add_tab$group <- "Overall"
+FibAdv_adult_add_tab$model <- "Additive"
+FibAdv_adult_add_tab$outcome <- "FibAdv"
+
+** additive - subgroups
+FibAdv_adult_add_tab2 <- data.frame(FibAdv_adult_add_ethnic[["TE.random.w"]])
+row.names(FibAdv_adult_add_tab2) <- FibAdv_adult_add_ethnic[["bylevs"]]
+FibAdv_adult_add_tab2$OR <- FibAdv_adult_add_tab2$FibAdv_adult_add_ethnic...TE.random.w...
+FibAdv_adult_add_tab2$OR <- exp(FibAdv_adult_add_tab2$OR)
+FibAdv_adult_add_tab2 <- FibAdv_adult_add_tab2[-c(1)]
+FibAdv_adult_add_tab2$lower <- FibAdv_adult_add_ethnic[["lower.random.w"]]
+FibAdv_adult_add_tab2$lower <- exp(FibAdv_adult_add_tab2$lower)
+FibAdv_adult_add_tab2$upper <- FibAdv_adult_add_ethnic[["upper.random.w"]]
+FibAdv_adult_add_tab2$upper <- exp(FibAdv_adult_add_tab2$upper)
+FibAdv_adult_add_tab2$k <- FibAdv_adult_add_ethnic[["k.w"]]
+FibAdv_adult_add_tab2$p_z <- FibAdv_adult_add_ethnic[["pval.random.w"]]
+FibAdv_adult_add_tab2$I2 <- FibAdv_adult_add_ethnic[["I2.w"]]
+FibAdv_adult_add_tab2$p_q <- FibAdv_adult_add_ethnic[["pval.Q.w"]]
+FibAdv_adult_add_tab2$group <- row.names(FibAdv_adult_add_tab2)
+FibAdv_adult_add_tab2$model <- "Additive"
+FibAdv_adult_add_tab2$outcome <- "FibAdv"
+
+
+** dominant - overall
+FibAdv_adult_dom_tab <- data.frame(FibAdv_adult_dom_ethnic[["TE.random"]])
+row.names(FibAdv_adult_dom_tab) <- "Overall"
+FibAdv_adult_dom_tab$OR <- FibAdv_adult_dom_tab$FibAdv_adult_dom_ethnic...TE.random...
+FibAdv_adult_dom_tab$OR <- exp(FibAdv_adult_dom_tab$OR)
+FibAdv_adult_dom_tab <- FibAdv_adult_dom_tab[-c(1)]
+FibAdv_adult_dom_tab$lower <- FibAdv_adult_dom_ethnic[["lower.random"]]
+FibAdv_adult_dom_tab$lower <- exp(FibAdv_adult_dom_tab$lower)
+FibAdv_adult_dom_tab$upper <- FibAdv_adult_dom_ethnic[["upper.random"]]
+FibAdv_adult_dom_tab$upper <- exp(FibAdv_adult_dom_tab$upper)
+FibAdv_adult_dom_tab$k <- FibAdv_adult_dom_ethnic[["k"]]
+FibAdv_adult_dom_tab$p_z <- FibAdv_adult_dom_ethnic[["pval.random"]]
+FibAdv_adult_dom_tab$I2 <- FibAdv_adult_dom_ethnic[["I2"]]
+FibAdv_adult_dom_tab$p_q <- FibAdv_adult_dom_ethnic[["pval.Q"]]
+FibAdv_adult_dom_tab$group <- "Overall"
+FibAdv_adult_dom_tab$model <- "Dominant"
+FibAdv_adult_dom_tab$outcome <- "FibAdv"
+
+** dominant - subgroups
+FibAdv_adult_dom_tab2 <- data.frame(FibAdv_adult_dom_ethnic[["TE.random.w"]])
+row.names(FibAdv_adult_dom_tab2) <- FibAdv_adult_dom_ethnic[["bylevs"]]
+FibAdv_adult_dom_tab2$OR <- FibAdv_adult_dom_tab2$FibAdv_adult_dom_ethnic...TE.random.w...
+FibAdv_adult_dom_tab2$OR <- exp(FibAdv_adult_dom_tab2$OR)
+FibAdv_adult_dom_tab2 <- FibAdv_adult_dom_tab2[-c(1)]
+FibAdv_adult_dom_tab2$lower <- FibAdv_adult_dom_ethnic[["lower.random.w"]]
+FibAdv_adult_dom_tab2$lower <- exp(FibAdv_adult_dom_tab2$lower)
+FibAdv_adult_dom_tab2$upper <- FibAdv_adult_dom_ethnic[["upper.random.w"]]
+FibAdv_adult_dom_tab2$upper <- exp(FibAdv_adult_dom_tab2$upper)
+FibAdv_adult_dom_tab2$k <- FibAdv_adult_dom_ethnic[["k.w"]]
+FibAdv_adult_dom_tab2$p_z <- FibAdv_adult_dom_ethnic[["pval.random.w"]]
+FibAdv_adult_dom_tab2$I2 <- FibAdv_adult_dom_ethnic[["I2.w"]]
+FibAdv_adult_dom_tab2$p_q <- FibAdv_adult_dom_ethnic[["pval.Q.w"]]
+FibAdv_adult_dom_tab2$group <- row.names(FibAdv_adult_dom_tab2)
+FibAdv_adult_dom_tab2$model <- "Dominant"
+FibAdv_adult_dom_tab2$outcome <- "FibAdv"
+
+FibAdv_sumtab <- rbind(FibAdv_adult_rec_tab, FibAdv_adult_rec_tab2, FibAdv_adult_add_tab, FibAdv_adult_add_tab2, FibAdv_adult_dom_tab, FibAdv_adult_dom_tab2)
+
+pdf(file="FibAdv_adult_rec_ethnic.pdf",width=10,height=8)
+FibAdv_adult_rec_ethnic_forest <- forest(FibAdv_adult_rec_ethnic, comb.fixed=FALSE, col.random="red", col.diamond="red", xlab="Odds of advanced fibrosis", digits.se=2, text.random = "Recessive model - overall effect", leftcols = c("studlab", "TT cases", "CT+CC cases", "TT controls", "CT+CC controls"), leftlabs = c("Study", "TT", "CT+CC", "TT", "CT+CC"), lab.e = "F3-4", lab.c = "F0-2", digits.addcols.left=0, just.studlab="left", just.addcols.left="right", lab.e.attach.to.col="CT+CC cases", lab.c.attach.to.col="CT+CC controls", sortvar=rec_logOR, digits.pval=3, test.overall.random=TRUE, test.effect.subgroup.random=TRUE)
+dev.off()
+
+
+
+**Presence of advanced fibrosis in children
+
+FibAdv_paed <- read_excel("FibAdv_paed.xlsx")
+FibAdv_paed_add <- metagen(add_logOR, add_seOR, studlab = Author, method.tau = "DL", sm = "OR", data = FibAdv_paed)
+FibAdv_paed_rec <- metagen(rec_logOR, rec_seOR, studlab = Author, method.tau = "DL", sm = "OR", data = FibAdv_paed)
+FibAdv_paed_dom <- metagen(dom_logOR, dom_seOR, studlab = Author, method.tau = "DL", sm = "OR", data = FibAdv_paed)
+
+** recessive - overall
+FibAdv_paed_rec_tab <- data.frame(FibAdv_paed_rec[["TE.random"]])
+row.names(FibAdv_paed_rec_tab) <- "Overall"
+FibAdv_paed_rec_tab$OR <- FibAdv_paed_rec_tab$FibAdv_paed_rec...TE.random...
+FibAdv_paed_rec_tab$OR <- exp(FibAdv_paed_rec_tab$OR)
+FibAdv_paed_rec_tab <- FibAdv_paed_rec_tab[-c(1)]
+FibAdv_paed_rec_tab$lower <- FibAdv_paed_rec[["lower.random"]]
+FibAdv_paed_rec_tab$lower <- exp(FibAdv_paed_rec_tab$lower)
+FibAdv_paed_rec_tab$upper <- FibAdv_paed_rec[["upper.random"]]
+FibAdv_paed_rec_tab$upper <- exp(FibAdv_paed_rec_tab$upper)
+FibAdv_paed_rec_tab$k <- FibAdv_paed_rec[["k"]]
+FibAdv_paed_rec_tab$p_z <- FibAdv_paed_rec[["pval.random"]]
+FibAdv_paed_rec_tab$I2 <- FibAdv_paed_rec[["I2"]]
+FibAdv_paed_rec_tab$p_q <- FibAdv_paed_rec[["pval.Q"]]
+FibAdv_paed_rec_tab$group <- "Overall"
+FibAdv_paed_rec_tab$model <- "Recessive"
+FibAdv_paed_rec_tab$outcome <- "FibAdv"
+
+** additive - overall
+FibAdv_paed_add_tab <- data.frame(FibAdv_paed_add[["TE.random"]])
+row.names(FibAdv_paed_add_tab) <- "Overall"
+FibAdv_paed_add_tab$OR <- FibAdv_paed_add_tab$FibAdv_paed_add...TE.random...
+FibAdv_paed_add_tab$OR <- exp(FibAdv_paed_add_tab$OR)
+FibAdv_paed_add_tab <- FibAdv_paed_add_tab[-c(1)]
+FibAdv_paed_add_tab$lower <- FibAdv_paed_add[["lower.random"]]
+FibAdv_paed_add_tab$lower <- exp(FibAdv_paed_add_tab$lower)
+FibAdv_paed_add_tab$upper <- FibAdv_paed_add[["upper.random"]]
+FibAdv_paed_add_tab$upper <- exp(FibAdv_paed_add_tab$upper)
+FibAdv_paed_add_tab$k <- FibAdv_paed_add[["k"]]
+FibAdv_paed_add_tab$p_z <- FibAdv_paed_add[["pval.random"]]
+FibAdv_paed_add_tab$I2 <- FibAdv_paed_add[["I2"]]
+FibAdv_paed_add_tab$p_q <- FibAdv_paed_add[["pval.Q"]]
+FibAdv_paed_add_tab$group <- "Overall"
+FibAdv_paed_add_tab$model <- "Additive"
+FibAdv_paed_add_tab$outcome <- "FibAdv"
+
+** dominant - overall
+FibAdv_paed_dom_tab <- data.frame(FibAdv_paed_dom[["TE.random"]])
+row.names(FibAdv_paed_dom_tab) <- "Overall"
+FibAdv_paed_dom_tab$OR <- FibAdv_paed_dom_tab$FibAdv_paed_dom...TE.random...
+FibAdv_paed_dom_tab$OR <- exp(FibAdv_paed_dom_tab$OR)
+FibAdv_paed_dom_tab <- FibAdv_paed_dom_tab[-c(1)]
+FibAdv_paed_dom_tab$lower <- FibAdv_paed_dom[["lower.random"]]
+FibAdv_paed_dom_tab$lower <- exp(FibAdv_paed_dom_tab$lower)
+FibAdv_paed_dom_tab$upper <- FibAdv_paed_dom[["upper.random"]]
+FibAdv_paed_dom_tab$upper <- exp(FibAdv_paed_dom_tab$upper)
+FibAdv_paed_dom_tab$k <- FibAdv_paed_dom[["k"]]
+FibAdv_paed_dom_tab$p_z <- FibAdv_paed_dom[["pval.random"]]
+FibAdv_paed_dom_tab$I2 <- FibAdv_paed_dom[["I2"]]
+FibAdv_paed_dom_tab$p_q <- FibAdv_paed_dom[["pval.Q"]]
+FibAdv_paed_dom_tab$group <- "Overall"
+FibAdv_paed_dom_tab$model <- "Dominant"
+FibAdv_paed_dom_tab$outcome <- "FibAdv"
+
+FibAdv_paed_sumtab <- rbind(FibAdv_paed_rec_tab, FibAdv_paed_add_tab, FibAdv_paed_dom_tab)
+
+
+**Presence of HCC in adults
+
+HCC_adult <- read_excel("HCC_adult.xlsx")
+HCC_adult_add <- metagen(add_logOR, add_seOR, studlab = Author, method.tau = "DL", sm = "OR", data = HCC_adult)
+HCC_adult_rec <- metagen(rec_logOR, rec_seOR, studlab = Author, method.tau = "DL", sm = "OR", data = HCC_adult)
+HCC_adult_dom <- metagen(dom_logOR, dom_seOR, studlab = Author, method.tau = "DL", sm = "OR", data = HCC_adult)
+
+
+** recessive - overall
+HCC_adult_rec_tab <- data.frame(HCC_adult_rec[["TE.random"]])
+row.names(HCC_adult_rec_tab) <- "Overall"
+HCC_adult_rec_tab$OR <- HCC_adult_rec_tab$HCC_adult_rec...TE.random...
+HCC_adult_rec_tab$OR <- exp(HCC_adult_rec_tab$OR)
+HCC_adult_rec_tab <- HCC_adult_rec_tab[-c(1)]
+HCC_adult_rec_tab$lower <- HCC_adult_rec[["lower.random"]]
+HCC_adult_rec_tab$lower <- exp(HCC_adult_rec_tab$lower)
+HCC_adult_rec_tab$upper <- HCC_adult_rec[["upper.random"]]
+HCC_adult_rec_tab$upper <- exp(HCC_adult_rec_tab$upper)
+HCC_adult_rec_tab$k <- HCC_adult_rec[["k"]]
+HCC_adult_rec_tab$p_z <- HCC_adult_rec[["pval.random"]]
+HCC_adult_rec_tab$I2 <- HCC_adult_rec[["I2"]]
+HCC_adult_rec_tab$p_q <- HCC_adult_rec[["pval.Q"]]
+HCC_adult_rec_tab$group <- "Overall"
+HCC_adult_rec_tab$model <- "Recessive"
+HCC_adult_rec_tab$outcome <- "HCC"
+
+** additive - overall
+HCC_adult_add_tab <- data.frame(HCC_adult_add[["TE.random"]])
+row.names(HCC_adult_add_tab) <- "Overall"
+HCC_adult_add_tab$OR <- HCC_adult_add_tab$HCC_adult_add...TE.random...
+HCC_adult_add_tab$OR <- exp(HCC_adult_add_tab$OR)
+HCC_adult_add_tab <- HCC_adult_add_tab[-c(1)]
+HCC_adult_add_tab$lower <- HCC_adult_add[["lower.random"]]
+HCC_adult_add_tab$lower <- exp(HCC_adult_add_tab$lower)
+HCC_adult_add_tab$upper <- HCC_adult_add[["upper.random"]]
+HCC_adult_add_tab$upper <- exp(HCC_adult_add_tab$upper)
+HCC_adult_add_tab$k <- HCC_adult_add[["k"]]
+HCC_adult_add_tab$p_z <- HCC_adult_add[["pval.random"]]
+HCC_adult_add_tab$I2 <- HCC_adult_add[["I2"]]
+HCC_adult_add_tab$p_q <- HCC_adult_add[["pval.Q"]]
+HCC_adult_add_tab$group <- "Overall"
+HCC_adult_add_tab$model <- "Additive"
+HCC_adult_add_tab$outcome <- "HCC"
+
+** dominant - overall
+HCC_adult_dom_tab <- data.frame(HCC_adult_dom[["TE.random"]])
+row.names(HCC_adult_dom_tab) <- "Overall"
+HCC_adult_dom_tab$OR <- HCC_adult_dom_tab$HCC_adult_dom...TE.random...
+HCC_adult_dom_tab$OR <- exp(HCC_adult_dom_tab$OR)
+HCC_adult_dom_tab <- HCC_adult_dom_tab[-c(1)]
+HCC_adult_dom_tab$lower <- HCC_adult_dom[["lower.random"]]
+HCC_adult_dom_tab$lower <- exp(HCC_adult_dom_tab$lower)
+HCC_adult_dom_tab$upper <- HCC_adult_dom[["upper.random"]]
+HCC_adult_dom_tab$upper <- exp(HCC_adult_dom_tab$upper)
+HCC_adult_dom_tab$k <- HCC_adult_dom[["k"]]
+HCC_adult_dom_tab$p_z <- HCC_adult_dom[["pval.random"]]
+HCC_adult_dom_tab$I2 <- HCC_adult_dom[["I2"]]
+HCC_adult_dom_tab$p_q <- HCC_adult_dom[["pval.Q"]]
+HCC_adult_dom_tab$group <- "Overall"
+HCC_adult_dom_tab$model <- "Dominant"
+HCC_adult_dom_tab$outcome <- "HCC"
+
+HCC_sumtab <- rbind(HCC_adult_rec_tab, HCC_adult_add_tab, HCC_adult_dom_tab)
+
+pdf(file="HCC_adult_rec.pdf",width=10,height=8)
+HCC_adult_rec_forest <- forest(HCC_adult_rec, comb.fixed=FALSE, col.random="red", col.diamond="red", xlab="Odds of NAFLD-HCC", digits.se=2, text.random = "Recessive model - overall effect", leftcols = c("studlab", "TT cases", "CT+CC cases", "TT controls", "CT+CC controls"), leftlabs = c("Study", "TT", "CT+CC", "TT", "CT+CC"), lab.e = "HCC", lab.c = "No HCC", digits.addcols.left=0, just.studlab="left", just.addcols.left="right", lab.e.attach.to.col="CT+CC cases", lab.c.attach.to.col="CT+CC controls", sortvar=rec_logOR, digits.pval=3, test.overall.random=TRUE, test.effect.subgroup.random=TRUE)
+dev.off()
+
+**overall summary table for adult & paed histology
+
+Histol_adult_sumtab <- rbind(NAFLD_Dx_sumtab, Steat_sumtab, NASH_sumtab, AnyFib_sumtab, FibAdv_sumtab, HCC_sumtab)
+write.table(Histol_adult_sumtab, file="Histol_adult_sumtab.csv",sep=",")
+
+Histol_paed_sumtab <- rbind(NAFLD_Dx_paed_sumtab, Steat_paed_sumtab, NASH_paed_sumtab, AnyFib_paed_sumtab, FibAdv_paed_sumtab)
+write.table(Histol_paed_sumtab, file="Histol_paed_sumtab.csv",sep=",")
+
+** liver fat analyses
+
+HFF_adult <- read_excel("HFF_adult.xlsx")
+
+HFF_adult$HFF_CCCT_num <- HFF_adult$HFF_CC_num+HFF_adult$HFF_CT_num
+HFF_adult$HFF_CCCT_mean <- ((HFF_adult$HFF_CC_mean*HFF_adult$HFF_CC_num)+(HFF_adult$HFF_CT_mean*HFF_adult$HFF_CT_num))/HFF_adult$HFF_CCCT_num
+HFF_adult$HFF_CCCT_SD <- ((HFF_adult$HFF_CC_SD*HFF_adult$HFF_CC_num)+(HFF_adult$HFF_CT_SD*HFF_adult$HFF_CT_num))/HFF_adult$HFF_CCCT_num
+HFF_adult$HFF_CTTT_num <- HFF_adult$HFF_TT_num+HFF_adult$HFF_CT_num
+HFF_adult$HFF_CTTT_mean <- ((HFF_adult$HFF_TT_mean*HFF_adult$HFF_TT_num)+(HFF_adult$HFF_CT_mean*HFF_adult$HFF_CT_num))/HFF_adult$HFF_CTTT_num
+HFF_adult$HFF_CTTT_SD <- ((HFF_adult$HFF_TT_SD*HFF_adult$HFF_TT_num)+(HFF_adult$HFF_CT_SD*HFF_adult$HFF_CT_num))/HFF_adult$HFF_CTTT_num
+
+HFF_adult_add <- read_excel("HFF_adult_add.xlsx")
+HFF_adult_add_reg <- metagen(Beta, SE, data = HFF_adult_add, studlab = HFF_adult_add$Author, sm = "ZCOR", method.tau = "DL")
+HFF_adult_add_reg_ethnic <- update(HFF_adult_add_reg, byvar = Ethnicity, bylab = "Ethnicity")
+pdf(file="HFF_adult_add_reg_ethnic.pdf",width=10,height=6)
+forest(HFF_adult_add_reg_ethnic, comb.fixed=FALSE, col.random="red", col.diamond="red", xlab="Beta (95% CI) per T-allele", digits.se=2, digits.pval=2, scientific.pval=TRUE, sortvar=TE, test.overall.random=TRUE, overall=TRUE, digits=2, print.zval=TRUE, colgap.studlab="2.5cm", print.tau2=FALSE, rightlabs = c("Beta", "95% CI", "Weight"), smlab="Hepatic fat on CT/MRI", leftcols = c("studlab", "num"), leftlabs = c("Study", "Total"), print.subgroup.labels = TRUE, xlim=c(-0.2,0.2), test.effect.subgroup.random=TRUE)
+dev.off()
+
+HFF_adult_add_reg_mod <- update(HFF_adult_add_reg, byvar = Method, bylab = "Modality")
+pdf(file="HFF_adult_add_reg_mod.pdf",width=10,height=8)
+forest(HFF_adult_add_reg_mod, comb.fixed=FALSE, col.random="red", col.diamond="red", xlab="Beta (95% CI) per T-allele", digits.se=2, digits.pval=2, scientific.pval= TRUE, sortvar=TE, test.overall.random=TRUE, overall=TRUE, digits=2, print.zval=TRUE, colgap.studlab="2.5cm", print.tau2=FALSE, rightlabs = c("Beta", "95% CI", "Weight"), smlab="Hepatic fat on CT/MRI", leftcols = c("studlab", "num"), leftlabs = c("Study", "Total"), print.subgroup.labels = TRUE, xlim=c(-0.2,0.2), test.effect.subgroup.random=TRUE)
+dev.off()
+
+HFF_adult_rec_reg <- metacont(HFF_TT_num, HFF_TT_mean, HFF_TT_SD, HFF_CCCT_num, HFF_CCCT_mean, HFF_CCCT_SD, data = HFF_adult, studlab = paste(Author), comb.fixed = FALSE, comb.random = TRUE, method.tau = "DL", hakn = TRUE, prediction = FALSE, sm = "MD")
+HFF_adult_rec_reg_ethnic <- update(HFF_adult_rec_reg, byvar = Ethnicity, bylab = "Ethnicity")
+
+HFF_adult_dom_reg <- metacont(HFF_CTTT_num, HFF_CTTT_mean, HFF_CTTT_SD, HFF_CC_num, HFF_CC_mean, HFF_CC_SD, data = HFF_adult, studlab = paste(Author), comb.fixed = FALSE, comb.random = TRUE, method.tau = "DL", hakn = TRUE, prediction = FALSE, sm = "MD")
+HFF_adult_dom_reg_ethnic <- update(HFF_adult_dom_reg, byvar = Ethnicity, bylab = "Ethnicity")
+
+HFF_adult_add_tab <- data.frame(HFF_adult_add_reg_ethnic[["TE.random"]])
+row.names(HFF_adult_add_tab) <- "Overall"
+HFF_adult_add_tab$MD <- HFF_adult_add_tab$HFF_adult_add_reg_ethnic...TE.random...
+HFF_adult_add_tab <- HFF_adult_add_tab[-c(1)]
+HFF_adult_add_tab$lower <- HFF_adult_add_reg_ethnic[["lower.random"]]
+HFF_adult_add_tab$upper <- HFF_adult_add_reg_ethnic[["upper.random"]]
+HFF_adult_add_tab$k <- HFF_adult_add_reg_ethnic[["k"]]
+HFF_adult_add_tab$p_z <- HFF_adult_add_reg_ethnic[["pval.random"]]
+HFF_adult_add_tab$I2 <- HFF_adult_add_reg_ethnic[["I2"]]
+HFF_adult_add_tab$p_q <- HFF_adult_add_reg_ethnic[["pval.Q"]]
+HFF_adult_add_tab$group <- "Overall"
+HFF_adult_add_tab$model <- "Additive"
+HFF_adult_add_tab$outcome <- "HFF"
+
+HFF_adult_add_tab2 <- data.frame(HFF_adult_add_reg_ethnic[["TE.random.w"]])
+row.names(HFF_adult_add_tab2) <- HFF_adult_add_reg_ethnic[["bylevs"]]
+HFF_adult_add_tab2$MD <- HFF_adult_add_tab2$HFF_adult_add_reg_ethnic...TE.random.w...
+HFF_adult_add_tab2 <- HFF_adult_add_tab2[-c(1)]
+HFF_adult_add_tab2$lower <- HFF_adult_add_reg_ethnic[["lower.random.w"]]
+HFF_adult_add_tab2$upper <- HFF_adult_add_reg_ethnic[["upper.random.w"]]
+HFF_adult_add_tab2$k <- HFF_adult_add_reg_ethnic[["k.w"]]
+HFF_adult_add_tab2$p_z <- HFF_adult_add_reg_ethnic[["pval.random.w"]]
+HFF_adult_add_tab2$I2 <- HFF_adult_add_reg_ethnic[["I2.w"]]
+HFF_adult_add_tab2$p_q <- HFF_adult_add_reg_ethnic[["pval.Q.w"]]
+HFF_adult_add_tab2$group <- row.names(HFF_adult_add_tab2)
+HFF_adult_add_tab2$model <- "Additive"
+HFF_adult_add_tab2$outcome <- "HFF"
+
+HFF_adult_dom_tab <- data.frame(HFF_adult_dom_reg_ethnic[["TE.random"]])
+row.names(HFF_adult_dom_tab) <- "Overall"
+HFF_adult_dom_tab$MD <- HFF_adult_dom_tab$HFF_adult_dom_reg_ethnic...TE.random...
+HFF_adult_dom_tab <- HFF_adult_dom_tab[-c(1)]
+HFF_adult_dom_tab$lower <- HFF_adult_dom_reg_ethnic[["lower.random"]]
+HFF_adult_dom_tab$upper <- HFF_adult_dom_reg_ethnic[["upper.random"]]
+HFF_adult_dom_tab$k <- HFF_adult_dom_reg_ethnic[["k"]]
+HFF_adult_dom_tab$p_z <- HFF_adult_dom_reg_ethnic[["pval.random"]]
+HFF_adult_dom_tab$I2 <- HFF_adult_dom_reg_ethnic[["I2"]]
+HFF_adult_dom_tab$p_q <- HFF_adult_dom_reg_ethnic[["pval.Q"]]
+HFF_adult_dom_tab$group <- "Overall"
+HFF_adult_dom_tab$model <- "Dominant"
+HFF_adult_dom_tab$outcome <- "HFF"
+
+HFF_adult_dom_tab2 <- data.frame(HFF_adult_dom_reg_ethnic[["TE.random.w"]])
+row.names(HFF_adult_dom_tab2) <- HFF_adult_dom_reg_ethnic[["bylevs"]]
+HFF_adult_dom_tab2$MD <- HFF_adult_dom_tab2$HFF_adult_dom_reg_ethnic...TE.random.w...
+HFF_adult_dom_tab2 <- HFF_adult_dom_tab2[-c(1)]
+HFF_adult_dom_tab2$lower <- HFF_adult_dom_reg_ethnic[["lower.random.w"]]
+HFF_adult_dom_tab2$upper <- HFF_adult_dom_reg_ethnic[["upper.random.w"]]
+HFF_adult_dom_tab2$k <- HFF_adult_dom_reg_ethnic[["k.w"]]
+HFF_adult_dom_tab2$p_z <- HFF_adult_dom_reg_ethnic[["pval.random.w"]]
+HFF_adult_dom_tab2$I2 <- HFF_adult_dom_reg_ethnic[["I2.w"]]
+HFF_adult_dom_tab2$p_q <- HFF_adult_dom_reg_ethnic[["pval.Q.w"]]
+HFF_adult_dom_tab2$group <- row.names(HFF_adult_dom_tab2)
+HFF_adult_dom_tab2$model <- "Dominant"
+HFF_adult_dom_tab2$outcome <- "HFF"
+
+HFF_adult_rec_tab <- data.frame(HFF_adult_rec_reg_ethnic[["TE.random"]])
+row.names(HFF_adult_rec_tab) <- "Overall"
+HFF_adult_rec_tab$MD <- HFF_adult_rec_tab$HFF_adult_rec_reg_ethnic...TE.random...
+HFF_adult_rec_tab <- HFF_adult_rec_tab[-c(1)]
+HFF_adult_rec_tab$lower <- HFF_adult_rec_reg_ethnic[["lower.random"]]
+HFF_adult_rec_tab$upper <- HFF_adult_rec_reg_ethnic[["upper.random"]]
+HFF_adult_rec_tab$k <- HFF_adult_rec_reg_ethnic[["k"]]
+HFF_adult_rec_tab$p_z <- HFF_adult_rec_reg_ethnic[["pval.random"]]
+HFF_adult_rec_tab$I2 <- HFF_adult_rec_reg_ethnic[["I2"]]
+HFF_adult_rec_tab$p_q <- HFF_adult_rec_reg_ethnic[["pval.Q"]]
+HFF_adult_rec_tab$group <- "Overall"
+HFF_adult_rec_tab$model <- "Recessive"
+HFF_adult_rec_tab$outcome <- "HFF"
+
+HFF_adult_rec_tab2 <- data.frame(HFF_adult_rec_reg_ethnic[["TE.random.w"]])
+row.names(HFF_adult_rec_tab2) <- HFF_adult_rec_reg_ethnic[["bylevs"]]
+HFF_adult_rec_tab2$MD <- HFF_adult_rec_tab2$HFF_adult_rec_reg_ethnic...TE.random.w...
+HFF_adult_rec_tab2 <- HFF_adult_rec_tab2[-c(1)]
+HFF_adult_rec_tab2$lower <- HFF_adult_rec_reg_ethnic[["lower.random.w"]]
+HFF_adult_rec_tab2$upper <- HFF_adult_rec_reg_ethnic[["upper.random.w"]]
+HFF_adult_rec_tab2$k <- HFF_adult_rec_reg_ethnic[["k.w"]]
+HFF_adult_rec_tab2$p_z <- HFF_adult_rec_reg_ethnic[["pval.random.w"]]
+HFF_adult_rec_tab2$I2 <- HFF_adult_rec_reg_ethnic[["I2.w"]]
+HFF_adult_rec_tab2$p_q <- HFF_adult_rec_reg_ethnic[["pval.Q.w"]]
+HFF_adult_rec_tab2$group <- row.names(HFF_adult_rec_tab2)
+HFF_adult_rec_tab2$model <- "Recessive"
+HFF_adult_rec_tab2$outcome <- "HFF"
+
+
+CAP_adult <- read_excel("CAP_adult.xlsx")
+
+CAP_adult$CAP_CCCT_num <- CAP_adult$CAP_CC_num+CAP_adult$CAP_CT_num
+CAP_adult$CAP_CCCT_mean <- ((CAP_adult$CAP_CC_mean*CAP_adult$CAP_CC_num)+(CAP_adult$CAP_CT_mean*CAP_adult$CAP_CT_num))/CAP_adult$CAP_CCCT_num
+CAP_adult$CAP_CCCT_SD <- ((CAP_adult$CAP_CC_SD*CAP_adult$CAP_CC_num)+(CAP_adult$CAP_CT_SD*CAP_adult$CAP_CT_num))/CAP_adult$CAP_CCCT_num
+CAP_adult$CAP_CTTT_num <- CAP_adult$CAP_TT_num+CAP_adult$CAP_CT_num
+CAP_adult$CAP_CTTT_mean <- ((CAP_adult$CAP_TT_mean*CAP_adult$CAP_TT_num)+(CAP_adult$CAP_CT_mean*CAP_adult$CAP_CT_num))/CAP_adult$CAP_CTTT_num
+CAP_adult$CAP_CTTT_SD <- ((CAP_adult$CAP_TT_SD*CAP_adult$CAP_TT_num)+(CAP_adult$CAP_CT_SD*CAP_adult$CAP_CT_num))/CAP_adult$CAP_CTTT_num
+
+CAP_adult_add <- read_excel("CAP_adult_add.xlsx")
+CAP_adult_add_reg <- metagen(Beta, SE, data = CAP_adult_add, studlab = CAP_adult_add$Author, sm = "ZCOR", method.tau = "DL")
+pdf(file="CAP_adult_add_reg.pdf",width=9,height=4)
+forest(CAP_adult_add_reg, comb.fixed=FALSE, col.random="red", col.diamond="red", xlab="Beta (95% CI) per T-allele", digits.se=2, digits.pval=3, scientific.pval=FALSE, sortvar=TE, test.overall.random=TRUE, overall=TRUE, digits=2, print.zval=TRUE, colgap.studlab="3cm", print.tau2=FALSE, rightlabs = c("Beta", "95% CI", "Weight"), smlab="Steatosis score \n from CAP/US", leftcols = c("studlab", "num"), leftlabs = c("Study", "Total"), print.subgroup.labels = TRUE, xlim=c(-0.1,0.1), test.effect.subgroup.random=TRUE)
+dev.off()
+
+CAP_adult_rec_reg <- metacont(CAP_TT_num, CAP_TT_mean, CAP_TT_SD, CAP_CCCT_num, CAP_CCCT_mean, CAP_CCCT_SD, data = CAP_adult, studlab = paste(Author), comb.fixed = FALSE, comb.random = TRUE, method.tau = "DL", hakn = TRUE, prediction = FALSE, sm = "MD")
+CAP_adult_rec_reg <- update(CAP_adult_rec_reg, byvar = Ethnicity, bylab = "Ethnicity")
+
+CAP_adult_dom_reg <- metacont(CAP_CTTT_num, CAP_CTTT_mean, CAP_CTTT_SD, CAP_CC_num, CAP_CC_mean, CAP_CC_SD, data = CAP_adult, studlab = paste(Author), comb.fixed = FALSE, comb.random = TRUE, method.tau = "DL", hakn = TRUE, prediction = FALSE, sm = "MD")
+CAP_adult_dom_reg <- update(CAP_adult_dom_reg, byvar = Ethnicity, bylab = "Ethnicity")
+
+CAP_adult_add_tab <- data.frame(CAP_adult_add_reg[["TE.random"]])
+row.names(CAP_adult_add_tab) <- "Overall"
+CAP_adult_add_tab$MD <- CAP_adult_add_tab$CAP_adult_add_reg...TE.random...
+CAP_adult_add_tab <- CAP_adult_add_tab[-c(1)]
+CAP_adult_add_tab$lower <- CAP_adult_add_reg[["lower.random"]]
+CAP_adult_add_tab$upper <- CAP_adult_add_reg[["upper.random"]]
+CAP_adult_add_tab$k <- CAP_adult_add_reg[["k"]]
+CAP_adult_add_tab$p_z <- CAP_adult_add_reg[["pval.random"]]
+CAP_adult_add_tab$I2 <- CAP_adult_add_reg[["I2"]]
+CAP_adult_add_tab$p_q <- CAP_adult_add_reg[["pval.Q"]]
+CAP_adult_add_tab$group <- "Overall"
+CAP_adult_add_tab$model <- "Additive"
+CAP_adult_add_tab$outcome <- "CAP"
+
+CAP_adult_dom_tab <- data.frame(CAP_adult_dom_reg[["TE.random"]])
+row.names(CAP_adult_dom_tab) <- "Overall"
+CAP_adult_dom_tab$MD <- CAP_adult_dom_tab$CAP_adult_dom_reg...TE.random...
+CAP_adult_dom_tab <- CAP_adult_dom_tab[-c(1)]
+CAP_adult_dom_tab$lower <- CAP_adult_dom_reg[["lower.random"]]
+CAP_adult_dom_tab$upper <- CAP_adult_dom_reg[["upper.random"]]
+CAP_adult_dom_tab$k <- CAP_adult_dom_reg[["k"]]
+CAP_adult_dom_tab$p_z <- CAP_adult_dom_reg[["pval.random"]]
+CAP_adult_dom_tab$I2 <- CAP_adult_dom_reg[["I2"]]
+CAP_adult_dom_tab$p_q <- CAP_adult_dom_reg[["pval.Q"]]
+CAP_adult_dom_tab$group <- "Overall"
+CAP_adult_dom_tab$model <- "Dominant"
+CAP_adult_dom_tab$outcome <- "CAP"
+
+CAP_adult_rec_tab <- data.frame(CAP_adult_rec_reg[["TE.random"]])
+row.names(CAP_adult_rec_tab) <- "Overall"
+CAP_adult_rec_tab$MD <- CAP_adult_rec_tab$CAP_adult_rec_reg...TE.random...
+CAP_adult_rec_tab <- CAP_adult_rec_tab[-c(1)]
+CAP_adult_rec_tab$lower <- CAP_adult_rec_reg[["lower.random"]]
+CAP_adult_rec_tab$upper <- CAP_adult_rec_reg[["upper.random"]]
+CAP_adult_rec_tab$k <- CAP_adult_rec_reg[["k"]]
+CAP_adult_rec_tab$p_z <- CAP_adult_rec_reg[["pval.random"]]
+CAP_adult_rec_tab$I2 <- CAP_adult_rec_reg[["I2"]]
+CAP_adult_rec_tab$p_q <- CAP_adult_rec_reg[["pval.Q"]]
+CAP_adult_rec_tab$group <- "Overall"
+CAP_adult_rec_tab$model <- "Recessive"
+CAP_adult_rec_tab$outcome <- "CAP"
+
+
+HFF_adult_sumtab <- rbind(HFF_adult_add_tab, HFF_adult_add_tab2, HFF_adult_dom_tab, HFF_adult_dom_tab2, HFF_adult_rec_tab, HFF_adult_rec_tab2, CAP_adult_add_tab, CAP_adult_dom_tab, CAP_adult_rec_tab)
+write.table(HFF_adult_sumtab, file="HFF_adult_sumtab.csv",sep=",")
+
+
+HFF_paed <- read_excel("HFF_paed.xlsx")
+
+HFF_paed$HFF_CCCT_num <- HFF_paed$HFF_CC_num+HFF_paed$HFF_CT_num
+HFF_paed$HFF_CCCT_mean <- ((HFF_paed$HFF_CC_mean*HFF_paed$HFF_CC_num)+(HFF_paed$HFF_CT_mean*HFF_paed$HFF_CT_num))/HFF_paed$HFF_CCCT_num
+HFF_paed$HFF_CCCT_SD <- ((HFF_paed$HFF_CC_SD*HFF_paed$HFF_CC_num)+(HFF_paed$HFF_CT_SD*HFF_paed$HFF_CT_num))/HFF_paed$HFF_CCCT_num
+HFF_paed$HFF_CTTT_num <- HFF_paed$HFF_TT_num+HFF_paed$HFF_CT_num
+HFF_paed$HFF_CTTT_mean <- ((HFF_paed$HFF_TT_mean*HFF_paed$HFF_TT_num)+(HFF_paed$HFF_CT_mean*HFF_paed$HFF_CT_num))/HFF_paed$HFF_CTTT_num
+HFF_paed$HFF_CTTT_SD <- ((HFF_paed$HFF_TT_SD*HFF_paed$HFF_TT_num)+(HFF_paed$HFF_CT_SD*HFF_paed$HFF_CT_num))/HFF_paed$HFF_CTTT_num
+
+HFF_paed_add <- read_excel("HFF_paed_add.xlsx")
+HFF_paed_add_reg <- metagen(Beta, SE, data = HFF_paed_add, studlab = HFF_paed_add$Author, sm = "ZCOR", method.tau = "DL")
+HFF_paed_add_reg_ethnic <- update(HFF_paed_add_reg, byvar = Ethnicity, bylab = "Ethnicity")
+pdf(file="HFF_paed_add_reg_ethnic.pdf",width=10,height=6)
+forest(HFF_paed_add_reg_ethnic, comb.fixed=FALSE, col.random="red", col.diamond="red", xlab="Beta (95% CI) per T-allele", digits.se=2, digits.pval=3, scientific.pval=FALSE, sortvar=TE, test.overall.random=TRUE, overall=TRUE, digits=2, print.zval=TRUE, colgap.studlab="2.5cm", print.tau2=FALSE, rightlabs = c("Beta", "95% CI", "Weight"), smlab="Hepatic fat on CT/MRI", leftcols = c("studlab", "num"), leftlabs = c("Study", "Total"), print.subgroup.labels = TRUE, xlim=c(-0.2,0.2), test.effect.subgroup.random=TRUE)
+dev.off()
+
+HFF_paed_add_reg_mod <- update(HFF_paed_add_reg, byvar = Method, bylab = "Modality")
+pdf(file="HFF_paed_add_reg_mod.pdf",width=10,height=6)
+forest(HFF_paed_add_reg_mod, comb.fixed=FALSE, col.random="red", col.diamond="red", xlab="Beta (95% CI) per T-allele", digits.se=2, digits.pval=3, scientific.pval=FALSE, sortvar=TE, test.overall.random=TRUE, overall=TRUE, digits=2, print.zval=TRUE, colgap.studlab="2.5cm", print.tau2=FALSE, rightlabs = c("Beta", "95% CI", "Weight"), smlab="Hepatic fat on CT/MRI", leftcols = c("studlab", "num"), leftlabs = c("Study", "Total"), print.subgroup.labels = TRUE, xlim=c(-0.2,0.2), test.effect.subgroup.random=TRUE)
+dev.off()
+
+HFF_paed_rec_reg <- metacont(HFF_TT_num, HFF_TT_mean, HFF_TT_SD, HFF_CCCT_num, HFF_CCCT_mean, HFF_CCCT_SD, data = HFF_paed, studlab = paste(Author), comb.fixed = FALSE, comb.random = TRUE, method.tau = "DL", hakn = TRUE, prediction = FALSE, sm = "MD")
+HFF_paed_rec_reg_ethnic <- update(HFF_paed_rec_reg, byvar = Ethnicity, bylab = "Ethnicity")
+
+HFF_paed_dom_reg <- metacont(HFF_CTTT_num, HFF_CTTT_mean, HFF_CTTT_SD, HFF_CC_num, HFF_CC_mean, HFF_CC_SD, data = HFF_paed, studlab = paste(Author), comb.fixed = FALSE, comb.random = TRUE, method.tau = "DL", hakn = TRUE, prediction = FALSE, sm = "MD")
+HFF_paed_dom_reg_ethnic <- update(HFF_paed_dom_reg, byvar = Ethnicity, bylab = "Ethnicity")
+
+HFF_paed_add_tab <- data.frame(HFF_paed_add_reg_ethnic[["TE.random"]])
+row.names(HFF_paed_add_tab) <- "Overall"
+HFF_paed_add_tab$MD <- HFF_paed_add_tab$HFF_paed_add_reg_ethnic...TE.random...
+HFF_paed_add_tab <- HFF_paed_add_tab[-c(1)]
+HFF_paed_add_tab$lower <- HFF_paed_add_reg_ethnic[["lower.random"]]
+HFF_paed_add_tab$upper <- HFF_paed_add_reg_ethnic[["upper.random"]]
+HFF_paed_add_tab$k <- HFF_paed_add_reg_ethnic[["k"]]
+HFF_paed_add_tab$p_z <- HFF_paed_add_reg_ethnic[["pval.random"]]
+HFF_paed_add_tab$I2 <- HFF_paed_add_reg_ethnic[["I2"]]
+HFF_paed_add_tab$p_q <- HFF_paed_add_reg_ethnic[["pval.Q"]]
+HFF_paed_add_tab$group <- "Overall"
+HFF_paed_add_tab$model <- "Additive"
+HFF_paed_add_tab$outcome <- "HFF"
+
+HFF_paed_add_tab2 <- data.frame(HFF_paed_add_reg_ethnic[["TE.random.w"]])
+row.names(HFF_paed_add_tab2) <- HFF_paed_add_reg_ethnic[["bylevs"]]
+HFF_paed_add_tab2$MD <- HFF_paed_add_tab2$HFF_paed_add_reg_ethnic...TE.random.w...
+HFF_paed_add_tab2 <- HFF_paed_add_tab2[-c(1)]
+HFF_paed_add_tab2$lower <- HFF_paed_add_reg_ethnic[["lower.random.w"]]
+HFF_paed_add_tab2$upper <- HFF_paed_add_reg_ethnic[["upper.random.w"]]
+HFF_paed_add_tab2$k <- HFF_paed_add_reg_ethnic[["k.w"]]
+HFF_paed_add_tab2$p_z <- HFF_paed_add_reg_ethnic[["pval.random.w"]]
+HFF_paed_add_tab2$I2 <- HFF_paed_add_reg_ethnic[["I2.w"]]
+HFF_paed_add_tab2$p_q <- HFF_paed_add_reg_ethnic[["pval.Q.w"]]
+HFF_paed_add_tab2$group <- row.names(HFF_paed_add_tab2)
+HFF_paed_add_tab2$model <- "Additive"
+HFF_paed_add_tab2$outcome <- "HFF"
+
+HFF_paed_dom_tab <- data.frame(HFF_paed_dom_reg_ethnic[["TE.random"]])
+row.names(HFF_paed_dom_tab) <- "Overall"
+HFF_paed_dom_tab$MD <- HFF_paed_dom_tab$HFF_paed_dom_reg_ethnic...TE.random...
+HFF_paed_dom_tab <- HFF_paed_dom_tab[-c(1)]
+HFF_paed_dom_tab$lower <- HFF_paed_dom_reg_ethnic[["lower.random"]]
+HFF_paed_dom_tab$upper <- HFF_paed_dom_reg_ethnic[["upper.random"]]
+HFF_paed_dom_tab$k <- HFF_paed_dom_reg_ethnic[["k"]]
+HFF_paed_dom_tab$p_z <- HFF_paed_dom_reg_ethnic[["pval.random"]]
+HFF_paed_dom_tab$I2 <- HFF_paed_dom_reg_ethnic[["I2"]]
+HFF_paed_dom_tab$p_q <- HFF_paed_dom_reg_ethnic[["pval.Q"]]
+HFF_paed_dom_tab$group <- "Overall"
+HFF_paed_dom_tab$model <- "Dominant"
+HFF_paed_dom_tab$outcome <- "HFF"
+
+HFF_paed_dom_tab2 <- data.frame(HFF_paed_dom_reg_ethnic[["TE.random.w"]])
+row.names(HFF_paed_dom_tab2) <- HFF_paed_dom_reg_ethnic[["bylevs"]]
+HFF_paed_dom_tab2$MD <- HFF_paed_dom_tab2$HFF_paed_dom_reg_ethnic...TE.random.w...
+HFF_paed_dom_tab2 <- HFF_paed_dom_tab2[-c(1)]
+HFF_paed_dom_tab2$lower <- HFF_paed_dom_reg_ethnic[["lower.random.w"]]
+HFF_paed_dom_tab2$upper <- HFF_paed_dom_reg_ethnic[["upper.random.w"]]
+HFF_paed_dom_tab2$k <- HFF_paed_dom_reg_ethnic[["k.w"]]
+HFF_paed_dom_tab2$p_z <- HFF_paed_dom_reg_ethnic[["pval.random.w"]]
+HFF_paed_dom_tab2$I2 <- HFF_paed_dom_reg_ethnic[["I2.w"]]
+HFF_paed_dom_tab2$p_q <- HFF_paed_dom_reg_ethnic[["pval.Q.w"]]
+HFF_paed_dom_tab2$group <- row.names(HFF_paed_dom_tab2)
+HFF_paed_dom_tab2$model <- "Dominant"
+HFF_paed_dom_tab2$outcome <- "HFF"
+
+HFF_paed_rec_tab <- data.frame(HFF_paed_rec_reg_ethnic[["TE.random"]])
+row.names(HFF_paed_rec_tab) <- "Overall"
+HFF_paed_rec_tab$MD <- HFF_paed_rec_tab$HFF_paed_rec_reg_ethnic...TE.random...
+HFF_paed_rec_tab <- HFF_paed_rec_tab[-c(1)]
+HFF_paed_rec_tab$lower <- HFF_paed_rec_reg_ethnic[["lower.random"]]
+HFF_paed_rec_tab$upper <- HFF_paed_rec_reg_ethnic[["upper.random"]]
+HFF_paed_rec_tab$k <- HFF_paed_rec_reg_ethnic[["k"]]
+HFF_paed_rec_tab$p_z <- HFF_paed_rec_reg_ethnic[["pval.random"]]
+HFF_paed_rec_tab$I2 <- HFF_paed_rec_reg_ethnic[["I2"]]
+HFF_paed_rec_tab$p_q <- HFF_paed_rec_reg_ethnic[["pval.Q"]]
+HFF_paed_rec_tab$group <- "Overall"
+HFF_paed_rec_tab$model <- "Recessive"
+HFF_paed_rec_tab$outcome <- "HFF"
+
+HFF_paed_rec_tab2 <- data.frame(HFF_paed_rec_reg_ethnic[["TE.random.w"]])
+row.names(HFF_paed_rec_tab2) <- HFF_paed_rec_reg_ethnic[["bylevs"]]
+HFF_paed_rec_tab2$MD <- HFF_paed_rec_tab2$HFF_paed_rec_reg_ethnic...TE.random.w...
+HFF_paed_rec_tab2 <- HFF_paed_rec_tab2[-c(1)]
+HFF_paed_rec_tab2$lower <- HFF_paed_rec_reg_ethnic[["lower.random.w"]]
+HFF_paed_rec_tab2$upper <- HFF_paed_rec_reg_ethnic[["upper.random.w"]]
+HFF_paed_rec_tab2$k <- HFF_paed_rec_reg_ethnic[["k.w"]]
+HFF_paed_rec_tab2$p_z <- HFF_paed_rec_reg_ethnic[["pval.random.w"]]
+HFF_paed_rec_tab2$I2 <- HFF_paed_rec_reg_ethnic[["I2.w"]]
+HFF_paed_rec_tab2$p_q <- HFF_paed_rec_reg_ethnic[["pval.Q.w"]]
+HFF_paed_rec_tab2$group <- row.names(HFF_paed_rec_tab2)
+HFF_paed_rec_tab2$model <- "Recessive"
+HFF_paed_rec_tab2$outcome <- "HFF"
+
+
+HFF_paed_sumtab <- rbind(HFF_paed_add_tab, HFF_paed_add_tab2, HFF_paed_dom_tab, HFF_paed_dom_tab2, HFF_paed_rec_tab, HFF_paed_rec_tab2)
+write.table(HFF_paed_sumtab, file="HFF_paed_sumtab.csv",sep=",")
+
+
+
+**bias analysis of NAFLD_Dx_adult
+
+NAFLD_Dx_adult_rec_eggers <- eggers.test(x = NAFLD_Dx_adult_rec)
+sink("NAFLD_Dx_adult_rec_eggers.txt")
+print(NAFLD_Dx_adult_rec_eggers)
+sink()
+
+NAFLD_Dx_adult_rec_trimfill <- trimfill(NAFLD_Dx_adult_rec)
+sink("NAFLD_Dx_adult_rec_trimfill.txt")
+print(NAFLD_Dx_adult_rec_trimfill)
+sink()
+
+pdf(file="NAFLD_Dx_adult_rec_trimfill.pdf")
+funnel(NAFLD_Dx_adult_rec_trimfill, xlab="Odds of NAFLD", contour = c(0.95,0.975,0.99), col.contour=c("darkblue","blue","lightblue")) + legend(0.01, 0.0, c("p < 0.05", "p < 0.025", "p < 0.01"), bty = "n", fill=c("darkblue","blue","lightblue"))
+dev.off()
+
+pdf(file="NAFLD_Dx_adult_rec_baujat.pdf")
+baujat(NAFLD_Dx_adult_rec)
+dev.off()
+
+
+**** perform meta-regressions
+
+NAFLD_Dx_female <- metareg(NAFLD_Dx_adult_rec, FemalePer)
+NAFLD_Dx_age <- metareg(NAFLD_Dx_adult_rec, Age)
+NAFLD_Dx_t2dm <- metareg(NAFLD_Dx_adult_rec, T2DMPer)
+NAFLD_Dx_bmi <- metareg(NAFLD_Dx_adult_rec, BMI)
+NAFLD_Dx_pnp <- metareg(NAFLD_Dx_adult_rec, PNPLA3)
+
+NAFLD_Dx_female_tab <- data.frame(NAFLD_Dx_female[["beta"]])
+NAFLD_Dx_female_tab$se <- NAFLD_Dx_female[["se"]]
+NAFLD_Dx_female_tab$pval <- NAFLD_Dx_female[["pval"]]
+NAFLD_Dx_female_tab$beta <- NAFLD_Dx_female[["beta"]]
+NAFLD_Dx_female_tab <- NAFLD_Dx_female_tab[-c(1),]
+NAFLD_Dx_female_tab <- NAFLD_Dx_female_tab[-c(1)]
+NAFLD_Dx_female_tab$k <- NAFLD_Dx_female[["k"]]
+NAFLD_Dx_female_tab$r2 <- NAFLD_Dx_female[["R2"]]
+NAFLD_Dx_female_tab$var <- "Female"
+
+NAFLD_Dx_age_tab <- data.frame(NAFLD_Dx_age[["beta"]])
+NAFLD_Dx_age_tab$se <- NAFLD_Dx_age[["se"]]
+NAFLD_Dx_age_tab$pval <- NAFLD_Dx_age[["pval"]]
+NAFLD_Dx_age_tab$beta <- NAFLD_Dx_age[["beta"]]
+NAFLD_Dx_age_tab <- NAFLD_Dx_age_tab[-c(1),]
+NAFLD_Dx_age_tab <- NAFLD_Dx_age_tab[-c(1)]
+NAFLD_Dx_age_tab$k <- NAFLD_Dx_age[["k"]]
+NAFLD_Dx_age_tab$r2 <- NAFLD_Dx_age[["R2"]]
+NAFLD_Dx_age_tab$var <- "Age"
+
+NAFLD_Dx_bmi_tab <- data.frame(NAFLD_Dx_bmi[["beta"]])
+NAFLD_Dx_bmi_tab$se <- NAFLD_Dx_bmi[["se"]]
+NAFLD_Dx_bmi_tab$pval <- NAFLD_Dx_bmi[["pval"]]
+NAFLD_Dx_bmi_tab$beta <- NAFLD_Dx_bmi[["beta"]]
+NAFLD_Dx_bmi_tab <- NAFLD_Dx_bmi_tab[-c(1),]
+NAFLD_Dx_bmi_tab <- NAFLD_Dx_bmi_tab[-c(1)]
+NAFLD_Dx_bmi_tab$k <- NAFLD_Dx_bmi[["k"]]
+NAFLD_Dx_bmi_tab$r2 <- NAFLD_Dx_bmi[["R2"]]
+NAFLD_Dx_bmi_tab$var <- "BMI"
+
+NAFLD_Dx_t2dm_tab <- data.frame(NAFLD_Dx_t2dm[["beta"]])
+NAFLD_Dx_t2dm_tab$se <- NAFLD_Dx_t2dm[["se"]]
+NAFLD_Dx_t2dm_tab$pval <- NAFLD_Dx_t2dm[["pval"]]
+NAFLD_Dx_t2dm_tab$beta <- NAFLD_Dx_t2dm[["beta"]]
+NAFLD_Dx_t2dm_tab <- NAFLD_Dx_t2dm_tab[-c(1),]
+NAFLD_Dx_t2dm_tab <- NAFLD_Dx_t2dm_tab[-c(1)]
+NAFLD_Dx_t2dm_tab$k <- NAFLD_Dx_t2dm[["k"]]
+NAFLD_Dx_t2dm_tab$r2 <- NAFLD_Dx_t2dm[["R2"]]
+NAFLD_Dx_t2dm_tab$var <- "T2DM"
+
+NAFLD_Dx_pnp_tab <- data.frame(NAFLD_Dx_pnp[["beta"]])
+NAFLD_Dx_pnp_tab$se <- NAFLD_Dx_pnp[["se"]]
+NAFLD_Dx_pnp_tab$pval <- NAFLD_Dx_pnp[["pval"]]
+NAFLD_Dx_pnp_tab$beta <- NAFLD_Dx_pnp[["beta"]]
+NAFLD_Dx_pnp_tab <- NAFLD_Dx_pnp_tab[-c(1),]
+NAFLD_Dx_pnp_tab <- NAFLD_Dx_pnp_tab[-c(1)]
+NAFLD_Dx_pnp_tab$k <- NAFLD_Dx_pnp[["k"]]
+NAFLD_Dx_pnp_tab$r2 <- NAFLD_Dx_pnp[["R2"]]
+NAFLD_Dx_pnp_tab$var <- "PNPLA3"
+
+NAFLD_Dx_metareg <- rbind(NAFLD_Dx_female_tab, NAFLD_Dx_age_tab, NAFLD_Dx_bmi_tab, NAFLD_Dx_t2dm_tab, NAFLD_Dx_pnp_tab)
+NAFLD_Dx_metareg$Outcome <- "NAFLD_Dx"
+
+Steat_female <- metareg(Steat_adult_rec, FemalePer)
+Steat_age <- metareg(Steat_adult_rec, Age)
+Steat_t2dm <- metareg(Steat_adult_rec, T2DMPer)
+Steat_bmi <- metareg(Steat_adult_rec, BMI)
+Steat_pnp <- metareg(Steat_adult_rec, PNPLA3)
+
+Steat_female_tab <- data.frame(Steat_female[["beta"]])
+Steat_female_tab$se <- Steat_female[["se"]]
+Steat_female_tab$pval <- Steat_female[["pval"]]
+Steat_female_tab$beta <- Steat_female[["beta"]]
+Steat_female_tab <- Steat_female_tab[-c(1),]
+Steat_female_tab <- Steat_female_tab[-c(1)]
+Steat_female_tab$k <- Steat_female[["k"]]
+Steat_female_tab$r2 <- Steat_female[["R2"]]
+Steat_female_tab$var <- "Female"
+
+Steat_age_tab <- data.frame(Steat_age[["beta"]])
+Steat_age_tab$se <- Steat_age[["se"]]
+Steat_age_tab$pval <- Steat_age[["pval"]]
+Steat_age_tab$beta <- Steat_age[["beta"]]
+Steat_age_tab <- Steat_age_tab[-c(1),]
+Steat_age_tab <- Steat_age_tab[-c(1)]
+Steat_age_tab$k <- Steat_age[["k"]]
+Steat_age_tab$r2 <- Steat_age[["R2"]]
+Steat_age_tab$var <- "Age"
+
+Steat_bmi_tab <- data.frame(Steat_bmi[["beta"]])
+Steat_bmi_tab$se <- Steat_bmi[["se"]]
+Steat_bmi_tab$pval <- Steat_bmi[["pval"]]
+Steat_bmi_tab$beta <- Steat_bmi[["beta"]]
+Steat_bmi_tab <- Steat_bmi_tab[-c(1),]
+Steat_bmi_tab <- Steat_bmi_tab[-c(1)]
+Steat_bmi_tab$k <- Steat_bmi[["k"]]
+Steat_bmi_tab$r2 <- Steat_bmi[["R2"]]
+Steat_bmi_tab$var <- "BMI"
+
+Steat_t2dm_tab <- data.frame(Steat_t2dm[["beta"]])
+Steat_t2dm_tab$se <- Steat_t2dm[["se"]]
+Steat_t2dm_tab$pval <- Steat_t2dm[["pval"]]
+Steat_t2dm_tab$beta <- Steat_t2dm[["beta"]]
+Steat_t2dm_tab <- Steat_t2dm_tab[-c(1),]
+Steat_t2dm_tab <- Steat_t2dm_tab[-c(1)]
+Steat_t2dm_tab$k <- Steat_t2dm[["k"]]
+Steat_t2dm_tab$r2 <- Steat_t2dm[["R2"]]
+Steat_t2dm_tab$var <- "T2DM"
+
+Steat_pnp_tab <- data.frame(Steat_pnp[["beta"]])
+Steat_pnp_tab$se <- Steat_pnp[["se"]]
+Steat_pnp_tab$pval <- Steat_pnp[["pval"]]
+Steat_pnp_tab$beta <- Steat_pnp[["beta"]]
+Steat_pnp_tab <- Steat_pnp_tab[-c(1),]
+Steat_pnp_tab <- Steat_pnp_tab[-c(1)]
+Steat_pnp_tab$k <- Steat_pnp[["k"]]
+Steat_pnp_tab$r2 <- Steat_pnp[["R2"]]
+Steat_pnp_tab$var <- "PNPLA3"
+
+Steat_metareg <- rbind(Steat_female_tab, Steat_age_tab, Steat_bmi_tab, Steat_t2dm_tab, Steat_pnp_tab)
+Steat_metareg$Outcome <- "Steat"
+
+NASH_female <- metareg(NASH_adult_rec, FemalePer)
+NASH_age <- metareg(NASH_adult_rec, Age)
+NASH_t2dm <- metareg(NASH_adult_rec, T2DMPer)
+NASH_bmi <- metareg(NASH_adult_rec, BMI)
+NASH_pnp <- metareg(NASH_adult_rec, PNPLA3)
+
+NASH_female_tab <- data.frame(NASH_female[["beta"]])
+NASH_female_tab$se <- NASH_female[["se"]]
+NASH_female_tab$pval <- NASH_female[["pval"]]
+NASH_female_tab$beta <- NASH_female[["beta"]]
+NASH_female_tab <- NASH_female_tab[-c(1),]
+NASH_female_tab <- NASH_female_tab[-c(1)]
+NASH_female_tab$k <- NASH_female[["k"]]
+NASH_female_tab$r2 <- NASH_female[["R2"]]
+NASH_female_tab$var <- "Female"
+
+NASH_age_tab <- data.frame(NASH_age[["beta"]])
+NASH_age_tab$se <- NASH_age[["se"]]
+NASH_age_tab$pval <- NASH_age[["pval"]]
+NASH_age_tab$beta <- NASH_age[["beta"]]
+NASH_age_tab <- NASH_age_tab[-c(1),]
+NASH_age_tab <- NASH_age_tab[-c(1)]
+NASH_age_tab$k <- NASH_age[["k"]]
+NASH_age_tab$r2 <- NASH_age[["R2"]]
+NASH_age_tab$var <- "Age"
+
+NASH_bmi_tab <- data.frame(NASH_bmi[["beta"]])
+NASH_bmi_tab$se <- NASH_bmi[["se"]]
+NASH_bmi_tab$pval <- NASH_bmi[["pval"]]
+NASH_bmi_tab$beta <- NASH_bmi[["beta"]]
+NASH_bmi_tab <- NASH_bmi_tab[-c(1),]
+NASH_bmi_tab <- NASH_bmi_tab[-c(1)]
+NASH_bmi_tab$k <- NASH_bmi[["k"]]
+NASH_bmi_tab$r2 <- NASH_bmi[["R2"]]
+NASH_bmi_tab$var <- "BMI"
+
+NASH_t2dm_tab <- data.frame(NASH_t2dm[["beta"]])
+NASH_t2dm_tab$se <- NASH_t2dm[["se"]]
+NASH_t2dm_tab$pval <- NASH_t2dm[["pval"]]
+NASH_t2dm_tab$beta <- NASH_t2dm[["beta"]]
+NASH_t2dm_tab <- NASH_t2dm_tab[-c(1),]
+NASH_t2dm_tab <- NASH_t2dm_tab[-c(1)]
+NASH_t2dm_tab$k <- NASH_t2dm[["k"]]
+NASH_t2dm_tab$r2 <- NASH_t2dm[["R2"]]
+NASH_t2dm_tab$var <- "T2DM"
+
+NASH_pnp_tab <- data.frame(NASH_pnp[["beta"]])
+NASH_pnp_tab$se <- NASH_pnp[["se"]]
+NASH_pnp_tab$pval <- NASH_pnp[["pval"]]
+NASH_pnp_tab$beta <- NASH_pnp[["beta"]]
+NASH_pnp_tab <- NASH_pnp_tab[-c(1),]
+NASH_pnp_tab <- NASH_pnp_tab[-c(1)]
+NASH_pnp_tab$k <- NASH_pnp[["k"]]
+NASH_pnp_tab$r2 <- NASH_pnp[["R2"]]
+NASH_pnp_tab$var <- "PNPLA3"
+
+NASH_metareg <- rbind(NASH_female_tab, NASH_age_tab, NASH_bmi_tab, NASH_t2dm_tab, NASH_pnp_tab)
+NASH_metareg$Outcome <- "NASH"
+
+AnyFib_female <- metareg(AnyFib_adult_rec, FemalePer)
+AnyFib_age <- metareg(AnyFib_adult_rec, Age)
+AnyFib_t2dm <- metareg(AnyFib_adult_rec, T2DMPer)
+AnyFib_bmi <- metareg(AnyFib_adult_rec, BMI)
+AnyFib_pnp <- metareg(AnyFib_adult_rec, PNPLA3)
+
+AnyFib_female_tab <- data.frame(AnyFib_female[["beta"]])
+AnyFib_female_tab$se <- AnyFib_female[["se"]]
+AnyFib_female_tab$pval <- AnyFib_female[["pval"]]
+AnyFib_female_tab$beta <- AnyFib_female[["beta"]]
+AnyFib_female_tab <- AnyFib_female_tab[-c(1),]
+AnyFib_female_tab <- AnyFib_female_tab[-c(1)]
+AnyFib_female_tab$k <- AnyFib_female[["k"]]
+AnyFib_female_tab$r2 <- AnyFib_female[["R2"]]
+AnyFib_female_tab$var <- "Female"
+
+AnyFib_age_tab <- data.frame(AnyFib_age[["beta"]])
+AnyFib_age_tab$se <- AnyFib_age[["se"]]
+AnyFib_age_tab$pval <- AnyFib_age[["pval"]]
+AnyFib_age_tab$beta <- AnyFib_age[["beta"]]
+AnyFib_age_tab <- AnyFib_age_tab[-c(1),]
+AnyFib_age_tab <- AnyFib_age_tab[-c(1)]
+AnyFib_age_tab$k <- AnyFib_age[["k"]]
+AnyFib_age_tab$r2 <- AnyFib_age[["R2"]]
+AnyFib_age_tab$var <- "Age"
+
+AnyFib_bmi_tab <- data.frame(AnyFib_bmi[["beta"]])
+AnyFib_bmi_tab$se <- AnyFib_bmi[["se"]]
+AnyFib_bmi_tab$pval <- AnyFib_bmi[["pval"]]
+AnyFib_bmi_tab$beta <- AnyFib_bmi[["beta"]]
+AnyFib_bmi_tab <- AnyFib_bmi_tab[-c(1),]
+AnyFib_bmi_tab <- AnyFib_bmi_tab[-c(1)]
+AnyFib_bmi_tab$k <- AnyFib_bmi[["k"]]
+AnyFib_bmi_tab$r2 <- AnyFib_bmi[["R2"]]
+AnyFib_bmi_tab$var <- "BMI"
+
+AnyFib_t2dm_tab <- data.frame(AnyFib_t2dm[["beta"]])
+AnyFib_t2dm_tab$se <- AnyFib_t2dm[["se"]]
+AnyFib_t2dm_tab$pval <- AnyFib_t2dm[["pval"]]
+AnyFib_t2dm_tab$beta <- AnyFib_t2dm[["beta"]]
+AnyFib_t2dm_tab <- AnyFib_t2dm_tab[-c(1),]
+AnyFib_t2dm_tab <- AnyFib_t2dm_tab[-c(1)]
+AnyFib_t2dm_tab$k <- AnyFib_t2dm[["k"]]
+AnyFib_t2dm_tab$r2 <- AnyFib_t2dm[["R2"]]
+AnyFib_t2dm_tab$var <- "T2DM"
+
+AnyFib_pnp_tab <- data.frame(AnyFib_pnp[["beta"]])
+AnyFib_pnp_tab$se <- AnyFib_pnp[["se"]]
+AnyFib_pnp_tab$pval <- AnyFib_pnp[["pval"]]
+AnyFib_pnp_tab$beta <- AnyFib_pnp[["beta"]]
+AnyFib_pnp_tab <- AnyFib_pnp_tab[-c(1),]
+AnyFib_pnp_tab <- AnyFib_pnp_tab[-c(1)]
+AnyFib_pnp_tab$k <- AnyFib_pnp[["k"]]
+AnyFib_pnp_tab$r2 <- AnyFib_pnp[["R2"]]
+AnyFib_pnp_tab$var <- "PNPLA3"
+
+AnyFib_metareg <- rbind(AnyFib_female_tab, AnyFib_age_tab, AnyFib_bmi_tab, AnyFib_t2dm_tab, AnyFib_pnp_tab)
+AnyFib_metareg$Outcome <- "AnyFib"
+
+FibAdv_female <- metareg(FibAdv_adult_rec, FemalePer)
+FibAdv_age <- metareg(FibAdv_adult_rec, Age)
+FibAdv_t2dm <- metareg(FibAdv_adult_rec, T2DMPer)
+FibAdv_bmi <- metareg(FibAdv_adult_rec, BMI)
+FibAdv_pnp <- metareg(FibAdv_adult_rec, PNPLA3)
+
+FibAdv_female_tab <- data.frame(FibAdv_female[["beta"]])
+FibAdv_female_tab$se <- FibAdv_female[["se"]]
+FibAdv_female_tab$pval <- FibAdv_female[["pval"]]
+FibAdv_female_tab$beta <- FibAdv_female[["beta"]]
+FibAdv_female_tab <- FibAdv_female_tab[-c(1),]
+FibAdv_female_tab <- FibAdv_female_tab[-c(1)]
+FibAdv_female_tab$k <- FibAdv_female[["k"]]
+FibAdv_female_tab$r2 <- FibAdv_female[["R2"]]
+FibAdv_female_tab$var <- "Female"
+
+FibAdv_age_tab <- data.frame(FibAdv_age[["beta"]])
+FibAdv_age_tab$se <- FibAdv_age[["se"]]
+FibAdv_age_tab$pval <- FibAdv_age[["pval"]]
+FibAdv_age_tab$beta <- FibAdv_age[["beta"]]
+FibAdv_age_tab <- FibAdv_age_tab[-c(1),]
+FibAdv_age_tab <- FibAdv_age_tab[-c(1)]
+FibAdv_age_tab$k <- FibAdv_age[["k"]]
+FibAdv_age_tab$r2 <- FibAdv_age[["R2"]]
+FibAdv_age_tab$var <- "Age"
+
+FibAdv_bmi_tab <- data.frame(FibAdv_bmi[["beta"]])
+FibAdv_bmi_tab$se <- FibAdv_bmi[["se"]]
+FibAdv_bmi_tab$pval <- FibAdv_bmi[["pval"]]
+FibAdv_bmi_tab$beta <- FibAdv_bmi[["beta"]]
+FibAdv_bmi_tab <- FibAdv_bmi_tab[-c(1),]
+FibAdv_bmi_tab <- FibAdv_bmi_tab[-c(1)]
+FibAdv_bmi_tab$k <- FibAdv_bmi[["k"]]
+FibAdv_bmi_tab$r2 <- FibAdv_bmi[["R2"]]
+FibAdv_bmi_tab$var <- "BMI"
+
+FibAdv_t2dm_tab <- data.frame(FibAdv_t2dm[["beta"]])
+FibAdv_t2dm_tab$se <- FibAdv_t2dm[["se"]]
+FibAdv_t2dm_tab$pval <- FibAdv_t2dm[["pval"]]
+FibAdv_t2dm_tab$beta <- FibAdv_t2dm[["beta"]]
+FibAdv_t2dm_tab <- FibAdv_t2dm_tab[-c(1),]
+FibAdv_t2dm_tab <- FibAdv_t2dm_tab[-c(1)]
+FibAdv_t2dm_tab$k <- FibAdv_t2dm[["k"]]
+FibAdv_t2dm_tab$r2 <- FibAdv_t2dm[["R2"]]
+FibAdv_t2dm_tab$var <- "T2DM"
+
+FibAdv_pnp_tab <- data.frame(FibAdv_pnp[["beta"]])
+FibAdv_pnp_tab$se <- FibAdv_pnp[["se"]]
+FibAdv_pnp_tab$pval <- FibAdv_pnp[["pval"]]
+FibAdv_pnp_tab$beta <- FibAdv_pnp[["beta"]]
+FibAdv_pnp_tab <- FibAdv_pnp_tab[-c(1),]
+FibAdv_pnp_tab <- FibAdv_pnp_tab[-c(1)]
+FibAdv_pnp_tab$k <- FibAdv_pnp[["k"]]
+FibAdv_pnp_tab$r2 <- FibAdv_pnp[["R2"]]
+FibAdv_pnp_tab$var <- "PNPLA3"
+
+FibAdv_metareg <- rbind(FibAdv_female_tab, FibAdv_age_tab, FibAdv_bmi_tab, FibAdv_t2dm_tab, FibAdv_pnp_tab)
+FibAdv_metareg$Outcome <- "FibAdv"
+
+
+HCC_female <- metareg(HCC_adult_rec, FemalePer)
+HCC_age <- metareg(HCC_adult_rec, Age)
+HCC_t2dm <- metareg(HCC_adult_rec, T2DMPer)
+HCC_cirrh <- metareg(HCC_adult_rec, Cirrhosis)
+
+HCC_female_tab <- data.frame(HCC_female[["beta"]])
+HCC_female_tab$se <- HCC_female[["se"]]
+HCC_female_tab$pval <- HCC_female[["pval"]]
+HCC_female_tab$beta <- HCC_female[["beta"]]
+HCC_female_tab <- HCC_female_tab[-c(1),]
+HCC_female_tab <- HCC_female_tab[-c(1)]
+HCC_female_tab$k <- HCC_female[["k"]]
+HCC_female_tab$r2 <- HCC_female[["R2"]]
+HCC_female_tab$var <- "Female"
+
+HCC_age_tab <- data.frame(HCC_age[["beta"]])
+HCC_age_tab$se <- HCC_age[["se"]]
+HCC_age_tab$pval <- HCC_age[["pval"]]
+HCC_age_tab$beta <- HCC_age[["beta"]]
+HCC_age_tab <- HCC_age_tab[-c(1),]
+HCC_age_tab <- HCC_age_tab[-c(1)]
+HCC_age_tab$k <- HCC_age[["k"]]
+HCC_age_tab$r2 <- HCC_age[["R2"]]
+HCC_age_tab$var <- "Age"
+
+HCC_t2dm_tab <- data.frame(HCC_t2dm[["beta"]])
+HCC_t2dm_tab$se <- HCC_t2dm[["se"]]
+HCC_t2dm_tab$pval <- HCC_t2dm[["pval"]]
+HCC_t2dm_tab$beta <- HCC_t2dm[["beta"]]
+HCC_t2dm_tab <- HCC_t2dm_tab[-c(1),]
+HCC_t2dm_tab <- HCC_t2dm_tab[-c(1)]
+HCC_t2dm_tab$k <- HCC_t2dm[["k"]]
+HCC_t2dm_tab$r2 <- HCC_t2dm[["R2"]]
+HCC_t2dm_tab$var <- "T2DM"
+
+HCC_cirrh_tab <- data.frame(HCC_cirrh[["beta"]])
+HCC_cirrh_tab$se <- HCC_cirrh[["se"]]
+HCC_cirrh_tab$pval <- HCC_cirrh[["pval"]]
+HCC_cirrh_tab$beta <- HCC_cirrh[["beta"]]
+HCC_cirrh_tab <- HCC_cirrh_tab[-c(1),]
+HCC_cirrh_tab <- HCC_cirrh_tab[-c(1)]
+HCC_cirrh_tab$k <- HCC_cirrh[["k"]]
+HCC_cirrh_tab$r2 <- HCC_cirrh[["R2"]]
+HCC_cirrh_tab$var <- "Cirrhosis"
+
+
+HCC_metareg <- rbind(HCC_female_tab, HCC_age_tab, HCC_t2dm_tab, HCC_cirrh_tab)
+HCC_metareg$Outcome <- "HCC"
+
+
+Metareg_summary <- rbind(NAFLD_Dx_metareg, Steat_metareg, NASH_metareg, AnyFib_metareg, FibAdv_metareg, HCC_metareg)
+write.table(Metareg_summary, file="Metareg_summary.csv",sep=",")
+
+pdf(file="NASH_T2DM_bubble.pdf")
+NASH_T2DM_bubble <- bubble(NASH_t2dm, xlab = "Proportion with diabetes", ylab = "LogOR NASH", col.line = "blue", lwd = 3, studlab = FALSE, box = FALSE, pos.studlab = 4, offset = 1.5, xlim = c(0, .6), ylim = c(-0.25,1))
+NASH_T2DM_bubble
+dev.off()
+
+pdf(file="AnyFib_age_bubble.pdf")
+AnyFib_age_bubble <- bubble(AnyFib_age, xlab = "Age (years)", ylab = "LogOR Any Fibrosis (F0 vs F1-4)", col.line = "blue", lwd = 3, studlab = FALSE, box = FALSE, pos.studlab = 4, offset = 1.5, xlim = c(35, 55), ylim = c(-0.25, 1))
+AnyFib_age_bubble
+dev.off()
+
+pdf(file="AnyFib_T2DM_bubble.pdf")
+AnyFib_T2DM_bubble  <- bubble(AnyFib_t2dm, xlab = "Proportion with diabetes", ylab = "LogOR Any Fibrosis (F0 vs F1-4)", col.line = "blue", lwd = 3, studlab = FALSE, box = FALSE, pos.studlab = 4, offset = 1.5, xlim = c(0, .5), ylim = c(-0.25, 1))
+AnyFib_T2DM_bubble
+dev.off()
+
+pdf(file="Steat_T2DM_bubble.pdf")
+Steat_T2DM_bubble  <- bubble(Steat_t2dm, xlab = "Proportion with diabetes", ylab = "LogOR Severe Steatosis (S1-2 vs S3)", col.line = "blue", lwd = 3, studlab = FALSE, box = FALSE, pos.studlab = 4, offset = 1.5, xlim = c(0, .5), ylim = c(-.75, 1))
+Steat_T2DM_bubble 
+dev.off()
+
+pdf(file="NAFLD_Dx_pnp_bubble.pdf")
+NAFLD_Dx_pnp_bubble  <- bubble(NAFLD_Dx_pnp, xlab = "Proportion with diabetes", ylab = "LogOR Severe Steatosis (S1-2 vs S3)", col.line = "blue", lwd = 3, studlab = FALSE, box = FALSE, pos.studlab = 4, offset = 1.5, xlim = c(0, .5), ylim = c(-.75, 1))
+NAFLD_Dx_pnp_bubble 
+dev.off()
+
+
+
+********************
+
+
+**gwas summary stats
+
+*ALT
+alt_GWAS_sum <- read_excel("alt_GWAS_sum.xlsx")
+alt_gwas <- metagen(Beta, SE, data = alt_GWAS_sum, studlab = alt_GWAS_sum$Study, sm = "ZCOR", method.tau = "DL")
+alt_gwas_ethnic <- update(alt_gwas, byvar = Ethnicity, bylab = "Ethnicity")
+pdf(file="alt_gwas_ethnic_v2.pdf",width=10,height=7)
+forest(alt_gwas_ethnic, comb.fixed=FALSE, col.random="red", col.diamond="red", xlab="Beta (95% CI) per T-allele", digits.se=2, digits.pval=3, scientific.pval=FALSE, sortvar=TE, test.overall.random=TRUE, test.overall.fixed=FALSE, overall=TRUE, digits=4, print.zval=TRUE, colgap.studlab="3cm", print.tau2=FALSE, rightlabs = c("Beta", "95% CI", "Weight"), smlab="Alanine \n aminotransferase", leftcols = c("studlab", "num"), leftlabs = c("Study", "Total"), print.subgroup.labels = TRUE, xlim=c(-0.05,0.05), test.effect.subgroup.random=TRUE)
+dev.off()
+
+** ALT - overall
+alt_gwas_tab <- data.frame(alt_gwas_ethnic[["TE.random"]])
+row.names(alt_gwas_tab) <- "Overall"
+alt_gwas_tab$OR <- alt_gwas_tab$alt_gwas_ethnic...TE.random...
+alt_gwas_tab <- alt_gwas_tab[-c(1)]
+alt_gwas_tab$lower <- alt_gwas_ethnic[["lower.random"]]
+alt_gwas_tab$upper <- alt_gwas_ethnic[["upper.random"]]
+alt_gwas_tab$k <- alt_gwas_ethnic[["k"]]
+alt_gwas_tab$p_z <- alt_gwas_ethnic[["pval.random"]]
+alt_gwas_tab$I2 <- alt_gwas_ethnic[["I2"]]
+alt_gwas_tab$p_q <- alt_gwas_ethnic[["pval.Q"]]
+alt_gwas_tab$group <- "Overall"
+alt_gwas_tab$model <- "Linear"
+alt_gwas_tab$outcome <- "ALT"
+
+** ALT - subgroups
+alt_gwas_tab2 <- data.frame(alt_gwas_ethnic[["TE.random.w"]])
+row.names(alt_gwas_tab2) <- alt_gwas_ethnic[["bylevs"]]
+alt_gwas_tab2$OR <- alt_gwas_tab2$alt_gwas_ethnic...TE.random.w...
+alt_gwas_tab2 <- alt_gwas_tab2[-c(1)]
+alt_gwas_tab2$lower <- alt_gwas_ethnic[["lower.random.w"]]
+alt_gwas_tab2$upper <- alt_gwas_ethnic[["upper.random.w"]]
+alt_gwas_tab2$k <- alt_gwas_ethnic[["k.w"]]
+alt_gwas_tab2$p_z <- alt_gwas_ethnic[["pval.random.w"]]
+alt_gwas_tab2$I2 <- alt_gwas_ethnic[["I2.w"]]
+alt_gwas_tab2$p_q <- alt_gwas_ethnic[["pval.Q.w"]]
+alt_gwas_tab2$group <- row.names(alt_gwas_tab2)
+alt_gwas_tab2$model <- "Linear"
+alt_gwas_tab2$outcome <- "ALT"
+
+*Total cholesterol
+tchol_GWAS_sum <- read_excel("tchol_GWAS_sum.xlsx")
+tchol_gwas <- metagen(Beta, SE, data = tchol_GWAS_sum, studlab = tchol_GWAS_sum$Study, sm = "ZCOR", method.tau = "DL")
+tchol_gwas_ethnic <- update(tchol_gwas, byvar = Ethnicity, bylab = "Ethnicity")
+pdf(file="tchol_gwas_ethnic_v2.pdf",width=10,height=6)
+forest(tchol_gwas_ethnic, comb.fixed=FALSE, col.random="red", col.diamond="red", xlab="Beta (95% CI) per T-allele", digits.se=2, digits.pval=2, scientific.pval=TRUE, sortvar=TE, test.overall.random=TRUE, test.overall.fixed=FALSE, overall=TRUE, digits=4, print.zval=TRUE, colgap.studlab="3cm", print.tau2=FALSE, rightlabs = c("Beta", "95% CI", "Weight"), smlab="Total \n cholesterol", leftcols = c("studlab", "num"), leftlabs = c("Study", "Total"), print.subgroup.labels = TRUE, xlim=c(-0.05,0.05), test.effect.subgroup.random=TRUE)
+dev.off()
+
+** Total cholesterol - overall
+tchol_gwas_tab <- data.frame(tchol_gwas_ethnic[["TE.random"]])
+row.names(tchol_gwas_tab) <- "Overall"
+tchol_gwas_tab$OR <- tchol_gwas_tab$tchol_gwas_ethnic...TE.random...
+tchol_gwas_tab <- tchol_gwas_tab[-c(1)]
+tchol_gwas_tab$lower <- tchol_gwas_ethnic[["lower.random"]]
+tchol_gwas_tab$upper <- tchol_gwas_ethnic[["upper.random"]]
+tchol_gwas_tab$k <- tchol_gwas_ethnic[["k"]]
+tchol_gwas_tab$p_z <- tchol_gwas_ethnic[["pval.random"]]
+tchol_gwas_tab$I2 <- tchol_gwas_ethnic[["I2"]]
+tchol_gwas_tab$p_q <- tchol_gwas_ethnic[["pval.Q"]]
+tchol_gwas_tab$group <- "Overall"
+tchol_gwas_tab$model <- "Linear"
+tchol_gwas_tab$outcome <- "Total cholesterol"
+
+** Total cholesterol - subgroups
+tchol_gwas_tab2 <- data.frame(tchol_gwas_ethnic[["TE.random.w"]])
+row.names(tchol_gwas_tab2) <- tchol_gwas_ethnic[["bylevs"]]
+tchol_gwas_tab2$OR <- tchol_gwas_tab2$tchol_gwas_ethnic...TE.random.w...
+tchol_gwas_tab2 <- tchol_gwas_tab2[-c(1)]
+tchol_gwas_tab2$lower <- tchol_gwas_ethnic[["lower.random.w"]]
+tchol_gwas_tab2$upper <- tchol_gwas_ethnic[["upper.random.w"]]
+tchol_gwas_tab2$k <- tchol_gwas_ethnic[["k.w"]]
+tchol_gwas_tab2$p_z <- tchol_gwas_ethnic[["pval.random.w"]]
+tchol_gwas_tab2$I2 <- tchol_gwas_ethnic[["I2.w"]]
+tchol_gwas_tab2$p_q <- tchol_gwas_ethnic[["pval.Q.w"]]
+tchol_gwas_tab2$group <- row.names(tchol_gwas_tab2)
+tchol_gwas_tab2$model <- "Linear"
+tchol_gwas_tab2$outcome <- "Total cholesterol"
+
+*HDL
+hdl_GWAS_sum <- read_excel("hdl_GWAS_sum.xlsx")
+hdl_gwas <- metagen(Beta, SE, data = hdl_GWAS_sum, studlab = hdl_GWAS_sum$Study, sm = "ZCOR", method.tau = "DL")
+hdl_gwas_ethnic <- update(hdl_gwas, byvar = Ethnicity, bylab = "Ethnicity")
+
+** HDL cholesterol - overall
+hdl_gwas_tab <- data.frame(hdl_gwas_ethnic[["TE.random"]])
+row.names(hdl_gwas_tab) <- "Overall"
+hdl_gwas_tab$OR <- hdl_gwas_tab$hdl_gwas_ethnic...TE.random...
+hdl_gwas_tab <- hdl_gwas_tab[-c(1)]
+hdl_gwas_tab$lower <- hdl_gwas_ethnic[["lower.random"]]
+hdl_gwas_tab$upper <- hdl_gwas_ethnic[["upper.random"]]
+hdl_gwas_tab$k <- hdl_gwas_ethnic[["k"]]
+hdl_gwas_tab$p_z <- hdl_gwas_ethnic[["pval.random"]]
+hdl_gwas_tab$I2 <- hdl_gwas_ethnic[["I2"]]
+hdl_gwas_tab$p_q <- hdl_gwas_ethnic[["pval.Q"]]
+hdl_gwas_tab$group <- "Overall"
+hdl_gwas_tab$model <- "Linear"
+hdl_gwas_tab$outcome <- "HDL cholesterol"
+
+** HDL cholesterol - subgroups
+hdl_gwas_tab2 <- data.frame(hdl_gwas_ethnic[["TE.random.w"]])
+row.names(hdl_gwas_tab2) <- hdl_gwas_ethnic[["bylevs"]]
+hdl_gwas_tab2$OR <- hdl_gwas_tab2$hdl_gwas_ethnic...TE.random.w...
+hdl_gwas_tab2 <- hdl_gwas_tab2[-c(1)]
+hdl_gwas_tab2$lower <- hdl_gwas_ethnic[["lower.random.w"]]
+hdl_gwas_tab2$upper <- hdl_gwas_ethnic[["upper.random.w"]]
+hdl_gwas_tab2$k <- hdl_gwas_ethnic[["k.w"]]
+hdl_gwas_tab2$p_z <- hdl_gwas_ethnic[["pval.random.w"]]
+hdl_gwas_tab2$I2 <- hdl_gwas_ethnic[["I2.w"]]
+hdl_gwas_tab2$p_q <- hdl_gwas_ethnic[["pval.Q.w"]]
+hdl_gwas_tab2$group <- row.names(hdl_gwas_tab2)
+hdl_gwas_tab2$model <- "Linear"
+hdl_gwas_tab2$outcome <- "HDL cholesterol"
+
+
+*LDL
+ldl_GWAS_sum <- read_excel("ldl_GWAS_sum.xlsx")
+ldl_gwas <- metagen(Beta, SE, data = ldl_GWAS_sum, studlab = ldl_GWAS_sum$Study, sm = "ZCOR", method.tau = "DL")
+ldl_gwas_ethnic <- update(ldl_gwas, byvar = Ethnicity, bylab = "Ethnicity")
+
+** LDL cholesterol - overall
+ldl_gwas_tab <- data.frame(ldl_gwas_ethnic[["TE.random"]])
+row.names(ldl_gwas_tab) <- "Overall"
+ldl_gwas_tab$OR <- ldl_gwas_tab$ldl_gwas_ethnic...TE.random...
+ldl_gwas_tab <- ldl_gwas_tab[-c(1)]
+ldl_gwas_tab$lower <- ldl_gwas_ethnic[["lower.random"]]
+ldl_gwas_tab$upper <- ldl_gwas_ethnic[["upper.random"]]
+ldl_gwas_tab$k <- ldl_gwas_ethnic[["k"]]
+ldl_gwas_tab$p_z <- ldl_gwas_ethnic[["pval.random"]]
+ldl_gwas_tab$I2 <- ldl_gwas_ethnic[["I2"]]
+ldl_gwas_tab$p_q <- ldl_gwas_ethnic[["pval.Q"]]
+ldl_gwas_tab$group <- "Overall"
+ldl_gwas_tab$model <- "Linear"
+ldl_gwas_tab$outcome <- "LDL cholesterol"
+
+** LDL cholesterol - subgroups
+ldl_gwas_tab2 <- data.frame(ldl_gwas_ethnic[["TE.random.w"]])
+row.names(ldl_gwas_tab2) <- ldl_gwas_ethnic[["bylevs"]]
+ldl_gwas_tab2$OR <- ldl_gwas_tab2$ldl_gwas_ethnic...TE.random.w...
+ldl_gwas_tab2 <- ldl_gwas_tab2[-c(1)]
+ldl_gwas_tab2$lower <- ldl_gwas_ethnic[["lower.random.w"]]
+ldl_gwas_tab2$upper <- ldl_gwas_ethnic[["upper.random.w"]]
+ldl_gwas_tab2$k <- ldl_gwas_ethnic[["k.w"]]
+ldl_gwas_tab2$p_z <- ldl_gwas_ethnic[["pval.random.w"]]
+ldl_gwas_tab2$I2 <- ldl_gwas_ethnic[["I2.w"]]
+ldl_gwas_tab2$p_q <- ldl_gwas_ethnic[["pval.Q.w"]]
+ldl_gwas_tab2$group <- row.names(ldl_gwas_tab2)
+ldl_gwas_tab2$model <- "Linear"
+ldl_gwas_tab2$outcome <- "LDL cholesterol"
+
+*Triglycerides
+trig_GWAS_sum <- read_excel("trig_GWAS_sum.xlsx")
+trig_gwas <- metagen(Beta, SE, data = trig_GWAS_sum, studlab = trig_GWAS_sum$Study, sm = "ZCOR", method.tau = "DL")
+trig_gwas_ethnic <- update(trig_gwas, byvar = Ethnicity, bylab = "Ethnicity")
+pdf(file="trig_gwas_ethnic_v2.pdf",width=10,height=6)
+forest(trig_gwas_ethnic, comb.fixed=FALSE, col.random="red", col.diamond="red", xlab="Beta (95% CI) per T-allele", digits.se=2, digits.pval=2, scientific.pval=TRUE, sortvar=TE, test.overall.random=TRUE, test.overall.fixed=FALSE, overall=TRUE, digits=4, print.zval=TRUE, colgap.studlab="2cm", print.tau2=FALSE, rightlabs = c("Beta", "95% CI", "Weight"), smlab="Triglycerides", leftcols = c("studlab", "num"), leftlabs = c("Study", "Total"), print.subgroup.labels = TRUE, xlim=c(-0.05,0.05), test.effect.subgroup.random=TRUE)
+dev.off()
+
+** Trigylcerides - overall
+trig_gwas_tab <- data.frame(trig_gwas_ethnic[["TE.random"]])
+row.names(trig_gwas_tab) <- "Overall"
+trig_gwas_tab$OR <- trig_gwas_tab$trig_gwas_ethnic...TE.random...
+trig_gwas_tab <- trig_gwas_tab[-c(1)]
+trig_gwas_tab$lower <- trig_gwas_ethnic[["lower.random"]]
+trig_gwas_tab$upper <- trig_gwas_ethnic[["upper.random"]]
+trig_gwas_tab$k <- trig_gwas_ethnic[["k"]]
+trig_gwas_tab$p_z <- trig_gwas_ethnic[["pval.random"]]
+trig_gwas_tab$I2 <- trig_gwas_ethnic[["I2"]]
+trig_gwas_tab$p_q <- trig_gwas_ethnic[["pval.Q"]]
+trig_gwas_tab$group <- "Overall"
+trig_gwas_tab$model <- "Linear"
+trig_gwas_tab$outcome <- "Trigylcerides"
+
+** Trigylcerides - subgroups
+trig_gwas_tab2 <- data.frame(trig_gwas_ethnic[["TE.random.w"]])
+row.names(trig_gwas_tab2) <- trig_gwas_ethnic[["bylevs"]]
+trig_gwas_tab2$OR <- trig_gwas_tab2$trig_gwas_ethnic...TE.random.w...
+trig_gwas_tab2 <- trig_gwas_tab2[-c(1)]
+trig_gwas_tab2$lower <- trig_gwas_ethnic[["lower.random.w"]]
+trig_gwas_tab2$upper <- trig_gwas_ethnic[["upper.random.w"]]
+trig_gwas_tab2$k <- trig_gwas_ethnic[["k.w"]]
+trig_gwas_tab2$p_z <- trig_gwas_ethnic[["pval.random.w"]]
+trig_gwas_tab2$I2 <- trig_gwas_ethnic[["I2.w"]]
+trig_gwas_tab2$p_q <- trig_gwas_ethnic[["pval.Q.w"]]
+trig_gwas_tab2$group <- row.names(trig_gwas_tab2)
+trig_gwas_tab2$model <- "Linear"
+trig_gwas_tab2$outcome <- "Trigylcerides"
+
+*Insulin
+insul_GWAS_sum <- read_excel("insul_GWAS_sum.xlsx")
+insul_gwas <- metagen(Beta, SE, data = insul_GWAS_sum, studlab = insul_GWAS_sum$Study, sm = "ZCOR", method.tau = "DL")
+
+** Insulin - overall
+insul_gwas_tab <- data.frame(insul_gwas[["TE.random"]])
+row.names(insul_gwas_tab) <- "Overall"
+insul_gwas_tab$OR <- insul_gwas_tab$insul_gwas...TE.random...
+insul_gwas_tab <- insul_gwas_tab[-c(1)]
+insul_gwas_tab$lower <- insul_gwas[["lower.random"]]
+insul_gwas_tab$upper <- insul_gwas[["upper.random"]]
+insul_gwas_tab$k <- insul_gwas[["k"]]
+insul_gwas_tab$p_z <- insul_gwas[["pval.random"]]
+insul_gwas_tab$I2 <- insul_gwas[["I2"]]
+insul_gwas_tab$p_q <- insul_gwas[["pval.Q"]]
+insul_gwas_tab$group <- "Overall"
+insul_gwas_tab$model <- "Linear"
+insul_gwas_tab$outcome <- "Insulin"
+
+** make summary table for GWAS meta-analyses
+
+
+GWAS_sumtab <- rbind(alt_gwas_tab, alt_gwas_tab2, tchol_gwas_tab, tchol_gwas_tab2, hdl_gwas_tab, hdl_gwas_tab2, ldl_gwas_tab, ldl_gwas_tab2, trig_gwas_tab, trig_gwas_tab2, insul_gwas_tab)
+write.table(GWAS_sumtab, file="GWAS_sumtab.csv",sep=",")
+
+
+*** Biochemistry meta-analysis from candidate gene (i.e. non-GWAS)
+
+
+
+ALT_adult <- read_excel("ALT_adult.xlsx")
+
+ALT_adult$ALT_CCCT_num <- ALT_adult$ALT_CC_num+ALT_adult$ALT_CT_num
+ALT_adult$ALT_CCCT_mean <- ((ALT_adult$ALT_CC_mean*ALT_adult$ALT_CC_num)+(ALT_adult$ALT_CT_mean*ALT_adult$ALT_CT_num))/ALT_adult$ALT_CCCT_num
+ALT_adult$ALT_CCCT_SD <- ((ALT_adult$ALT_CC_SD*ALT_adult$ALT_CC_num)+(ALT_adult$ALT_CT_SD*ALT_adult$ALT_CT_num))/ALT_adult$ALT_CCCT_num
+ALT_adult$ALT_CTTT_num <- ALT_adult$ALT_TT_num+ALT_adult$ALT_CT_num
+ALT_adult$ALT_CTTT_mean <- ((ALT_adult$ALT_TT_mean*ALT_adult$ALT_TT_num)+(ALT_adult$ALT_CT_mean*ALT_adult$ALT_CT_num))/ALT_adult$ALT_CTTT_num
+ALT_adult$ALT_CTTT_SD <- ((ALT_adult$ALT_TT_SD*ALT_adult$ALT_TT_num)+(ALT_adult$ALT_CT_SD*ALT_adult$ALT_CT_num))/ALT_adult$ALT_CTTT_num
+
+ALT_adult_add <- read_excel("ALT_adult_add.xlsx")
+ALT_adult_add_reg <- metagen(Beta, SE, data = ALT_adult_add, studlab = ALT_adult_add$Paper, sm = "ZCOR", method.tau = "DL")
+ALT_adult_add_reg_ethnic <- update(ALT_adult_add_reg, byvar = Ethnicity, bylab = "Ethnicity")
+
+ALT_adult_rec_reg <- metacont(ALT_TT_num, ALT_TT_mean, ALT_TT_SD, ALT_CCCT_num, ALT_CCCT_mean, ALT_CCCT_SD, data = ALT_adult, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "DL", hakn = TRUE, prediction = FALSE, sm = "MD")
+ALT_adult_rec_reg_ethnic <- update(ALT_adult_rec_reg, byvar = Ethnicity, bylab = "Ethnicity")
+
+ALT_adult_dom_reg <- metacont(ALT_CTTT_num, ALT_CTTT_mean, ALT_CTTT_SD, ALT_CC_num, ALT_CC_mean, ALT_CC_SD, data = ALT_adult, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "DL", hakn = TRUE, prediction = FALSE, sm = "MD")
+ALT_adult_dom_reg_ethnic <- update(ALT_adult_dom_reg, byvar = Ethnicity, bylab = "Ethnicity")
+
+ALT_adult_add_tab <- data.frame(ALT_adult_add_reg_ethnic[["TE.random"]])
+row.names(ALT_adult_add_tab) <- "Overall"
+ALT_adult_add_tab$MD <- ALT_adult_add_tab$ALT_adult_add_reg_ethnic...TE.random...
+ALT_adult_add_tab <- ALT_adult_add_tab[-c(1)]
+ALT_adult_add_tab$lower <- ALT_adult_add_reg_ethnic[["lower.random"]]
+ALT_adult_add_tab$upper <- ALT_adult_add_reg_ethnic[["upper.random"]]
+ALT_adult_add_tab$k <- ALT_adult_add_reg_ethnic[["k"]]
+ALT_adult_add_tab$p_z <- ALT_adult_add_reg_ethnic[["pval.random"]]
+ALT_adult_add_tab$I2 <- ALT_adult_add_reg_ethnic[["I2"]]
+ALT_adult_add_tab$p_q <- ALT_adult_add_reg_ethnic[["pval.Q"]]
+ALT_adult_add_tab$group <- "Overall"
+ALT_adult_add_tab$model <- "Additive"
+ALT_adult_add_tab$outcome <- "ALT"
+
+ALT_adult_add_tab2 <- data.frame(ALT_adult_add_reg_ethnic[["TE.random.w"]])
+row.names(ALT_adult_add_tab2) <- ALT_adult_add_reg_ethnic[["bylevs"]]
+ALT_adult_add_tab2$MD <- ALT_adult_add_tab2$ALT_adult_add_reg_ethnic...TE.random.w...
+ALT_adult_add_tab2 <- ALT_adult_add_tab2[-c(1)]
+ALT_adult_add_tab2$lower <- ALT_adult_add_reg_ethnic[["lower.random.w"]]
+ALT_adult_add_tab2$upper <- ALT_adult_add_reg_ethnic[["upper.random.w"]]
+ALT_adult_add_tab2$k <- ALT_adult_add_reg_ethnic[["k.w"]]
+ALT_adult_add_tab2$p_z <- ALT_adult_add_reg_ethnic[["pval.random.w"]]
+ALT_adult_add_tab2$I2 <- ALT_adult_add_reg_ethnic[["I2.w"]]
+ALT_adult_add_tab2$p_q <- ALT_adult_add_reg_ethnic[["pval.Q.w"]]
+ALT_adult_add_tab2$group <- row.names(ALT_adult_add_tab2)
+ALT_adult_add_tab2$model <- "Additive"
+ALT_adult_add_tab2$outcome <- "ALT"
+
+ALT_adult_dom_tab <- data.frame(ALT_adult_dom_reg_ethnic[["TE.random"]])
+row.names(ALT_adult_dom_tab) <- "Overall"
+ALT_adult_dom_tab$MD <- ALT_adult_dom_tab$ALT_adult_dom_reg_ethnic...TE.random...
+ALT_adult_dom_tab <- ALT_adult_dom_tab[-c(1)]
+ALT_adult_dom_tab$lower <- ALT_adult_dom_reg_ethnic[["lower.random"]]
+ALT_adult_dom_tab$upper <- ALT_adult_dom_reg_ethnic[["upper.random"]]
+ALT_adult_dom_tab$k <- ALT_adult_dom_reg_ethnic[["k"]]
+ALT_adult_dom_tab$p_z <- ALT_adult_dom_reg_ethnic[["pval.random"]]
+ALT_adult_dom_tab$I2 <- ALT_adult_dom_reg_ethnic[["I2"]]
+ALT_adult_dom_tab$p_q <- ALT_adult_dom_reg_ethnic[["pval.Q"]]
+ALT_adult_dom_tab$group <- "Overall"
+ALT_adult_dom_tab$model <- "Dominant"
+ALT_adult_dom_tab$outcome <- "ALT"
+
+ALT_adult_dom_tab2 <- data.frame(ALT_adult_dom_reg_ethnic[["TE.random.w"]])
+row.names(ALT_adult_dom_tab2) <- ALT_adult_dom_reg_ethnic[["bylevs"]]
+ALT_adult_dom_tab2$MD <- ALT_adult_dom_tab2$ALT_adult_dom_reg_ethnic...TE.random.w...
+ALT_adult_dom_tab2 <- ALT_adult_dom_tab2[-c(1)]
+ALT_adult_dom_tab2$lower <- ALT_adult_dom_reg_ethnic[["lower.random.w"]]
+ALT_adult_dom_tab2$upper <- ALT_adult_dom_reg_ethnic[["upper.random.w"]]
+ALT_adult_dom_tab2$k <- ALT_adult_dom_reg_ethnic[["k.w"]]
+ALT_adult_dom_tab2$p_z <- ALT_adult_dom_reg_ethnic[["pval.random.w"]]
+ALT_adult_dom_tab2$I2 <- ALT_adult_dom_reg_ethnic[["I2.w"]]
+ALT_adult_dom_tab2$p_q <- ALT_adult_dom_reg_ethnic[["pval.Q.w"]]
+ALT_adult_dom_tab2$group <- row.names(ALT_adult_dom_tab2)
+ALT_adult_dom_tab2$model <- "Dominant"
+ALT_adult_dom_tab2$outcome <- "ALT"
+
+ALT_adult_rec_tab <- data.frame(ALT_adult_rec_reg_ethnic[["TE.random"]])
+row.names(ALT_adult_rec_tab) <- "Overall"
+ALT_adult_rec_tab$MD <- ALT_adult_rec_tab$ALT_adult_rec_reg_ethnic...TE.random...
+ALT_adult_rec_tab <- ALT_adult_rec_tab[-c(1)]
+ALT_adult_rec_tab$lower <- ALT_adult_rec_reg_ethnic[["lower.random"]]
+ALT_adult_rec_tab$upper <- ALT_adult_rec_reg_ethnic[["upper.random"]]
+ALT_adult_rec_tab$k <- ALT_adult_rec_reg_ethnic[["k"]]
+ALT_adult_rec_tab$p_z <- ALT_adult_rec_reg_ethnic[["pval.random"]]
+ALT_adult_rec_tab$I2 <- ALT_adult_rec_reg_ethnic[["I2"]]
+ALT_adult_rec_tab$p_q <- ALT_adult_rec_reg_ethnic[["pval.Q"]]
+ALT_adult_rec_tab$group <- "Overall"
+ALT_adult_rec_tab$model <- "Recessive"
+ALT_adult_rec_tab$outcome <- "ALT"
+
+ALT_adult_rec_tab2 <- data.frame(ALT_adult_rec_reg_ethnic[["TE.random.w"]])
+row.names(ALT_adult_rec_tab2) <- ALT_adult_rec_reg_ethnic[["bylevs"]]
+ALT_adult_rec_tab2$MD <- ALT_adult_rec_tab2$ALT_adult_rec_reg_ethnic...TE.random.w...
+ALT_adult_rec_tab2 <- ALT_adult_rec_tab2[-c(1)]
+ALT_adult_rec_tab2$lower <- ALT_adult_rec_reg_ethnic[["lower.random.w"]]
+ALT_adult_rec_tab2$upper <- ALT_adult_rec_reg_ethnic[["upper.random.w"]]
+ALT_adult_rec_tab2$k <- ALT_adult_rec_reg_ethnic[["k.w"]]
+ALT_adult_rec_tab2$p_z <- ALT_adult_rec_reg_ethnic[["pval.random.w"]]
+ALT_adult_rec_tab2$I2 <- ALT_adult_rec_reg_ethnic[["I2.w"]]
+ALT_adult_rec_tab2$p_q <- ALT_adult_rec_reg_ethnic[["pval.Q.w"]]
+ALT_adult_rec_tab2$group <- row.names(ALT_adult_rec_tab2)
+ALT_adult_rec_tab2$model <- "Recessive"
+ALT_adult_rec_tab2$outcome <- "ALT"
+
+ALT_adult_sumtab <- rbind(ALT_adult_add_tab, ALT_adult_add_tab2, ALT_adult_dom_tab, ALT_adult_dom_tab2, ALT_adult_rec_tab, ALT_adult_rec_tab2)
+
+
+ALT_paed <- read_excel("ALT_paed.xlsx")
+
+ALT_paed$ALT_CCCT_num <- ALT_paed$ALT_CC_num+ALT_paed$ALT_CT_num
+ALT_paed$ALT_CCCT_mean <- ((ALT_paed$ALT_CC_mean*ALT_paed$ALT_CC_num)+(ALT_paed$ALT_CT_mean*ALT_paed$ALT_CT_num))/ALT_paed$ALT_CCCT_num
+ALT_paed$ALT_CCCT_SD <- ((ALT_paed$ALT_CC_SD*ALT_paed$ALT_CC_num)+(ALT_paed$ALT_CT_SD*ALT_paed$ALT_CT_num))/ALT_paed$ALT_CCCT_num
+ALT_paed$ALT_CTTT_num <- ALT_paed$ALT_TT_num+ALT_paed$ALT_CT_num
+ALT_paed$ALT_CTTT_mean <- ((ALT_paed$ALT_TT_mean*ALT_paed$ALT_TT_num)+(ALT_paed$ALT_CT_mean*ALT_paed$ALT_CT_num))/ALT_paed$ALT_CTTT_num
+ALT_paed$ALT_CTTT_SD <- ((ALT_paed$ALT_TT_SD*ALT_paed$ALT_TT_num)+(ALT_paed$ALT_CT_SD*ALT_paed$ALT_CT_num))/ALT_paed$ALT_CTTT_num
+
+ALT_paed_add <- read_excel("ALT_paed_add.xlsx")
+ALT_paed_add_reg <- metagen(Beta, SE, data = ALT_paed_add, studlab = ALT_paed_add$Paper, sm = "ZCOR", method.tau = "DL")
+ALT_paed_add_reg_ethnic <- update(ALT_paed_add_reg, byvar = Ethnicity, bylab = "Ethnicity")
+
+ALT_paed_rec_reg <- metacont(ALT_TT_num, ALT_TT_mean, ALT_TT_SD, ALT_CCCT_num, ALT_CCCT_mean, ALT_CCCT_SD, data = ALT_paed, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "DL", hakn = TRUE, prediction = FALSE, sm = "MD")
+ALT_paed_rec_reg_ethnic <- update(ALT_paed_rec_reg, byvar = Ethnicity, bylab = "Ethnicity")
+
+ALT_paed_dom_reg <- metacont(ALT_CTTT_num, ALT_CTTT_mean, ALT_CTTT_SD, ALT_CC_num, ALT_CC_mean, ALT_CC_SD, data = ALT_paed, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "DL", hakn = TRUE, prediction = FALSE, sm = "MD")
+ALT_paed_dom_reg_ethnic <- update(ALT_paed_dom_reg, byvar = Ethnicity, bylab = "Ethnicity")
+
+ALT_paed_add_tab <- data.frame(ALT_paed_add_reg_ethnic[["TE.random"]])
+row.names(ALT_paed_add_tab) <- "Overall"
+ALT_paed_add_tab$MD <- ALT_paed_add_tab$ALT_paed_add_reg_ethnic...TE.random...
+ALT_paed_add_tab <- ALT_paed_add_tab[-c(1)]
+ALT_paed_add_tab$lower <- ALT_paed_add_reg_ethnic[["lower.random"]]
+ALT_paed_add_tab$upper <- ALT_paed_add_reg_ethnic[["upper.random"]]
+ALT_paed_add_tab$k <- ALT_paed_add_reg_ethnic[["k"]]
+ALT_paed_add_tab$p_z <- ALT_paed_add_reg_ethnic[["pval.random"]]
+ALT_paed_add_tab$I2 <- ALT_paed_add_reg_ethnic[["I2"]]
+ALT_paed_add_tab$p_q <- ALT_paed_add_reg_ethnic[["pval.Q"]]
+ALT_paed_add_tab$group <- "Overall"
+ALT_paed_add_tab$model <- "Additive"
+ALT_paed_add_tab$outcome <- "ALT"
+
+ALT_paed_add_tab2 <- data.frame(ALT_paed_add_reg_ethnic[["TE.random.w"]])
+row.names(ALT_paed_add_tab2) <- ALT_paed_add_reg_ethnic[["bylevs"]]
+ALT_paed_add_tab2$MD <- ALT_paed_add_tab2$ALT_paed_add_reg_ethnic...TE.random.w...
+ALT_paed_add_tab2 <- ALT_paed_add_tab2[-c(1)]
+ALT_paed_add_tab2$lower <- ALT_paed_add_reg_ethnic[["lower.random.w"]]
+ALT_paed_add_tab2$upper <- ALT_paed_add_reg_ethnic[["upper.random.w"]]
+ALT_paed_add_tab2$k <- ALT_paed_add_reg_ethnic[["k.w"]]
+ALT_paed_add_tab2$p_z <- ALT_paed_add_reg_ethnic[["pval.random.w"]]
+ALT_paed_add_tab2$I2 <- ALT_paed_add_reg_ethnic[["I2.w"]]
+ALT_paed_add_tab2$p_q <- ALT_paed_add_reg_ethnic[["pval.Q.w"]]
+ALT_paed_add_tab2$group <- row.names(ALT_paed_add_tab2)
+ALT_paed_add_tab2$model <- "Additive"
+ALT_paed_add_tab2$outcome <- "ALT"
+
+ALT_paed_dom_tab <- data.frame(ALT_paed_dom_reg_ethnic[["TE.random"]])
+row.names(ALT_paed_dom_tab) <- "Overall"
+ALT_paed_dom_tab$MD <- ALT_paed_dom_tab$ALT_paed_dom_reg_ethnic...TE.random...
+ALT_paed_dom_tab <- ALT_paed_dom_tab[-c(1)]
+ALT_paed_dom_tab$lower <- ALT_paed_dom_reg_ethnic[["lower.random"]]
+ALT_paed_dom_tab$upper <- ALT_paed_dom_reg_ethnic[["upper.random"]]
+ALT_paed_dom_tab$k <- ALT_paed_dom_reg_ethnic[["k"]]
+ALT_paed_dom_tab$p_z <- ALT_paed_dom_reg_ethnic[["pval.random"]]
+ALT_paed_dom_tab$I2 <- ALT_paed_dom_reg_ethnic[["I2"]]
+ALT_paed_dom_tab$p_q <- ALT_paed_dom_reg_ethnic[["pval.Q"]]
+ALT_paed_dom_tab$group <- "Overall"
+ALT_paed_dom_tab$model <- "Dominant"
+ALT_paed_dom_tab$outcome <- "ALT"
+
+ALT_paed_dom_tab2 <- data.frame(ALT_paed_dom_reg_ethnic[["TE.random.w"]])
+row.names(ALT_paed_dom_tab2) <- ALT_paed_dom_reg_ethnic[["bylevs"]]
+ALT_paed_dom_tab2$MD <- ALT_paed_dom_tab2$ALT_paed_dom_reg_ethnic...TE.random.w...
+ALT_paed_dom_tab2 <- ALT_paed_dom_tab2[-c(1)]
+ALT_paed_dom_tab2$lower <- ALT_paed_dom_reg_ethnic[["lower.random.w"]]
+ALT_paed_dom_tab2$upper <- ALT_paed_dom_reg_ethnic[["upper.random.w"]]
+ALT_paed_dom_tab2$k <- ALT_paed_dom_reg_ethnic[["k.w"]]
+ALT_paed_dom_tab2$p_z <- ALT_paed_dom_reg_ethnic[["pval.random.w"]]
+ALT_paed_dom_tab2$I2 <- ALT_paed_dom_reg_ethnic[["I2.w"]]
+ALT_paed_dom_tab2$p_q <- ALT_paed_dom_reg_ethnic[["pval.Q.w"]]
+ALT_paed_dom_tab2$group <- row.names(ALT_paed_dom_tab2)
+ALT_paed_dom_tab2$model <- "Dominant"
+ALT_paed_dom_tab2$outcome <- "ALT"
+
+ALT_paed_rec_tab <- data.frame(ALT_paed_rec_reg_ethnic[["TE.random"]])
+row.names(ALT_paed_rec_tab) <- "Overall"
+ALT_paed_rec_tab$MD <- ALT_paed_rec_tab$ALT_paed_rec_reg_ethnic...TE.random...
+ALT_paed_rec_tab <- ALT_paed_rec_tab[-c(1)]
+ALT_paed_rec_tab$lower <- ALT_paed_rec_reg_ethnic[["lower.random"]]
+ALT_paed_rec_tab$upper <- ALT_paed_rec_reg_ethnic[["upper.random"]]
+ALT_paed_rec_tab$k <- ALT_paed_rec_reg_ethnic[["k"]]
+ALT_paed_rec_tab$p_z <- ALT_paed_rec_reg_ethnic[["pval.random"]]
+ALT_paed_rec_tab$I2 <- ALT_paed_rec_reg_ethnic[["I2"]]
+ALT_paed_rec_tab$p_q <- ALT_paed_rec_reg_ethnic[["pval.Q"]]
+ALT_paed_rec_tab$group <- "Overall"
+ALT_paed_rec_tab$model <- "Recessive"
+ALT_paed_rec_tab$outcome <- "ALT"
+
+ALT_paed_rec_tab2 <- data.frame(ALT_paed_rec_reg_ethnic[["TE.random.w"]])
+row.names(ALT_paed_rec_tab2) <- ALT_paed_rec_reg_ethnic[["bylevs"]]
+ALT_paed_rec_tab2$MD <- ALT_paed_rec_tab2$ALT_paed_rec_reg_ethnic...TE.random.w...
+ALT_paed_rec_tab2 <- ALT_paed_rec_tab2[-c(1)]
+ALT_paed_rec_tab2$lower <- ALT_paed_rec_reg_ethnic[["lower.random.w"]]
+ALT_paed_rec_tab2$upper <- ALT_paed_rec_reg_ethnic[["upper.random.w"]]
+ALT_paed_rec_tab2$k <- ALT_paed_rec_reg_ethnic[["k.w"]]
+ALT_paed_rec_tab2$p_z <- ALT_paed_rec_reg_ethnic[["pval.random.w"]]
+ALT_paed_rec_tab2$I2 <- ALT_paed_rec_reg_ethnic[["I2.w"]]
+ALT_paed_rec_tab2$p_q <- ALT_paed_rec_reg_ethnic[["pval.Q.w"]]
+ALT_paed_rec_tab2$group <- row.names(ALT_paed_rec_tab2)
+ALT_paed_rec_tab2$model <- "Recessive"
+ALT_paed_rec_tab2$outcome <- "ALT"
+
+ALT_paed_sumtab <- rbind(ALT_paed_add_tab, ALT_paed_add_tab2, ALT_paed_dom_tab, ALT_paed_dom_tab2, ALT_paed_rec_tab, ALT_paed_rec_tab2)
+
+
+
+
+
+Chol_adult <- read_excel("Chol_adult.xlsx")
+
+Chol_adult$Chol_CCCT_num <- Chol_adult$Chol_CC_num+Chol_adult$Chol_CT_num
+Chol_adult$Chol_CCCT_mean <- ((Chol_adult$Chol_CC_mean*Chol_adult$Chol_CC_num)+(Chol_adult$Chol_CT_mean*Chol_adult$Chol_CT_num))/Chol_adult$Chol_CCCT_num
+Chol_adult$Chol_CCCT_SD <- ((Chol_adult$Chol_CC_SD*Chol_adult$Chol_CC_num)+(Chol_adult$Chol_CT_SD*Chol_adult$Chol_CT_num))/Chol_adult$Chol_CCCT_num
+Chol_adult$Chol_CTTT_num <- Chol_adult$Chol_TT_num+Chol_adult$Chol_CT_num
+Chol_adult$Chol_CTTT_mean <- ((Chol_adult$Chol_TT_mean*Chol_adult$Chol_TT_num)+(Chol_adult$Chol_CT_mean*Chol_adult$Chol_CT_num))/Chol_adult$Chol_CTTT_num
+Chol_adult$Chol_CTTT_SD <- ((Chol_adult$Chol_TT_SD*Chol_adult$Chol_TT_num)+(Chol_adult$Chol_CT_SD*Chol_adult$Chol_CT_num))/Chol_adult$Chol_CTTT_num
+
+Chol_adult_add <- read_excel("Chol_adult_add.xlsx")
+Chol_adult_add_reg <- metagen(Beta, SE, data = Chol_adult_add, studlab = Chol_adult_add$Paper, sm = "ZCOR", method.tau = "DL")
+Chol_adult_add_reg_ethnic <- update(Chol_adult_add_reg, byvar = Ethnicity, bylab = "Ethnicity")
+
+Chol_adult_rec_reg <- metacont(Chol_TT_num, Chol_TT_mean, Chol_TT_SD, Chol_CCCT_num, Chol_CCCT_mean, Chol_CCCT_SD, data = Chol_adult, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "DL", hakn = TRUE, prediction = FALSE, sm = "MD")
+Chol_adult_rec_reg_ethnic <- update(Chol_adult_rec_reg, byvar = Ethnicity, bylab = "Ethnicity")
+
+Chol_adult_dom_reg <- metacont(Chol_CTTT_num, Chol_CTTT_mean, Chol_CTTT_SD, Chol_CC_num, Chol_CC_mean, Chol_CC_SD, data = Chol_adult, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "DL", hakn = TRUE, prediction = FALSE, sm = "MD")
+Chol_adult_dom_reg_ethnic <- update(Chol_adult_dom_reg, byvar = Ethnicity, bylab = "Ethnicity")
+
+Chol_adult_add_tab <- data.frame(Chol_adult_add_reg_ethnic[["TE.random"]])
+row.names(Chol_adult_add_tab) <- "Overall"
+Chol_adult_add_tab$MD <- Chol_adult_add_tab$Chol_adult_add_reg_ethnic...TE.random...
+Chol_adult_add_tab <- Chol_adult_add_tab[-c(1)]
+Chol_adult_add_tab$lower <- Chol_adult_add_reg_ethnic[["lower.random"]]
+Chol_adult_add_tab$upper <- Chol_adult_add_reg_ethnic[["upper.random"]]
+Chol_adult_add_tab$k <- Chol_adult_add_reg_ethnic[["k"]]
+Chol_adult_add_tab$p_z <- Chol_adult_add_reg_ethnic[["pval.random"]]
+Chol_adult_add_tab$I2 <- Chol_adult_add_reg_ethnic[["I2"]]
+Chol_adult_add_tab$p_q <- Chol_adult_add_reg_ethnic[["pval.Q"]]
+Chol_adult_add_tab$group <- "Overall"
+Chol_adult_add_tab$model <- "Additive"
+Chol_adult_add_tab$outcome <- "Chol"
+
+Chol_adult_add_tab2 <- data.frame(Chol_adult_add_reg_ethnic[["TE.random.w"]])
+row.names(Chol_adult_add_tab2) <- Chol_adult_add_reg_ethnic[["bylevs"]]
+Chol_adult_add_tab2$MD <- Chol_adult_add_tab2$Chol_adult_add_reg_ethnic...TE.random.w...
+Chol_adult_add_tab2 <- Chol_adult_add_tab2[-c(1)]
+Chol_adult_add_tab2$lower <- Chol_adult_add_reg_ethnic[["lower.random.w"]]
+Chol_adult_add_tab2$upper <- Chol_adult_add_reg_ethnic[["upper.random.w"]]
+Chol_adult_add_tab2$k <- Chol_adult_add_reg_ethnic[["k.w"]]
+Chol_adult_add_tab2$p_z <- Chol_adult_add_reg_ethnic[["pval.random.w"]]
+Chol_adult_add_tab2$I2 <- Chol_adult_add_reg_ethnic[["I2.w"]]
+Chol_adult_add_tab2$p_q <- Chol_adult_add_reg_ethnic[["pval.Q.w"]]
+Chol_adult_add_tab2$group <- row.names(Chol_adult_add_tab2)
+Chol_adult_add_tab2$model <- "Additive"
+Chol_adult_add_tab2$outcome <- "Chol"
+
+Chol_adult_dom_tab <- data.frame(Chol_adult_dom_reg_ethnic[["TE.random"]])
+row.names(Chol_adult_dom_tab) <- "Overall"
+Chol_adult_dom_tab$MD <- Chol_adult_dom_tab$Chol_adult_dom_reg_ethnic...TE.random...
+Chol_adult_dom_tab <- Chol_adult_dom_tab[-c(1)]
+Chol_adult_dom_tab$lower <- Chol_adult_dom_reg_ethnic[["lower.random"]]
+Chol_adult_dom_tab$upper <- Chol_adult_dom_reg_ethnic[["upper.random"]]
+Chol_adult_dom_tab$k <- Chol_adult_dom_reg_ethnic[["k"]]
+Chol_adult_dom_tab$p_z <- Chol_adult_dom_reg_ethnic[["pval.random"]]
+Chol_adult_dom_tab$I2 <- Chol_adult_dom_reg_ethnic[["I2"]]
+Chol_adult_dom_tab$p_q <- Chol_adult_dom_reg_ethnic[["pval.Q"]]
+Chol_adult_dom_tab$group <- "Overall"
+Chol_adult_dom_tab$model <- "Dominant"
+Chol_adult_dom_tab$outcome <- "Chol"
+
+Chol_adult_dom_tab2 <- data.frame(Chol_adult_dom_reg_ethnic[["TE.random.w"]])
+row.names(Chol_adult_dom_tab2) <- Chol_adult_dom_reg_ethnic[["bylevs"]]
+Chol_adult_dom_tab2$MD <- Chol_adult_dom_tab2$Chol_adult_dom_reg_ethnic...TE.random.w...
+Chol_adult_dom_tab2 <- Chol_adult_dom_tab2[-c(1)]
+Chol_adult_dom_tab2$lower <- Chol_adult_dom_reg_ethnic[["lower.random.w"]]
+Chol_adult_dom_tab2$upper <- Chol_adult_dom_reg_ethnic[["upper.random.w"]]
+Chol_adult_dom_tab2$k <- Chol_adult_dom_reg_ethnic[["k.w"]]
+Chol_adult_dom_tab2$p_z <- Chol_adult_dom_reg_ethnic[["pval.random.w"]]
+Chol_adult_dom_tab2$I2 <- Chol_adult_dom_reg_ethnic[["I2.w"]]
+Chol_adult_dom_tab2$p_q <- Chol_adult_dom_reg_ethnic[["pval.Q.w"]]
+Chol_adult_dom_tab2$group <- row.names(Chol_adult_dom_tab2)
+Chol_adult_dom_tab2$model <- "Dominant"
+Chol_adult_dom_tab2$outcome <- "Chol"
+
+Chol_adult_rec_tab <- data.frame(Chol_adult_rec_reg_ethnic[["TE.random"]])
+row.names(Chol_adult_rec_tab) <- "Overall"
+Chol_adult_rec_tab$MD <- Chol_adult_rec_tab$Chol_adult_rec_reg_ethnic...TE.random...
+Chol_adult_rec_tab <- Chol_adult_rec_tab[-c(1)]
+Chol_adult_rec_tab$lower <- Chol_adult_rec_reg_ethnic[["lower.random"]]
+Chol_adult_rec_tab$upper <- Chol_adult_rec_reg_ethnic[["upper.random"]]
+Chol_adult_rec_tab$k <- Chol_adult_rec_reg_ethnic[["k"]]
+Chol_adult_rec_tab$p_z <- Chol_adult_rec_reg_ethnic[["pval.random"]]
+Chol_adult_rec_tab$I2 <- Chol_adult_rec_reg_ethnic[["I2"]]
+Chol_adult_rec_tab$p_q <- Chol_adult_rec_reg_ethnic[["pval.Q"]]
+Chol_adult_rec_tab$group <- "Overall"
+Chol_adult_rec_tab$model <- "Recessive"
+Chol_adult_rec_tab$outcome <- "Chol"
+
+Chol_adult_rec_tab2 <- data.frame(Chol_adult_rec_reg_ethnic[["TE.random.w"]])
+row.names(Chol_adult_rec_tab2) <- Chol_adult_rec_reg_ethnic[["bylevs"]]
+Chol_adult_rec_tab2$MD <- Chol_adult_rec_tab2$Chol_adult_rec_reg_ethnic...TE.random.w...
+Chol_adult_rec_tab2 <- Chol_adult_rec_tab2[-c(1)]
+Chol_adult_rec_tab2$lower <- Chol_adult_rec_reg_ethnic[["lower.random.w"]]
+Chol_adult_rec_tab2$upper <- Chol_adult_rec_reg_ethnic[["upper.random.w"]]
+Chol_adult_rec_tab2$k <- Chol_adult_rec_reg_ethnic[["k.w"]]
+Chol_adult_rec_tab2$p_z <- Chol_adult_rec_reg_ethnic[["pval.random.w"]]
+Chol_adult_rec_tab2$I2 <- Chol_adult_rec_reg_ethnic[["I2.w"]]
+Chol_adult_rec_tab2$p_q <- Chol_adult_rec_reg_ethnic[["pval.Q.w"]]
+Chol_adult_rec_tab2$group <- row.names(Chol_adult_rec_tab2)
+Chol_adult_rec_tab2$model <- "Recessive"
+Chol_adult_rec_tab2$outcome <- "Chol"
+
+Chol_adult_sumtab <- rbind(Chol_adult_add_tab, Chol_adult_add_tab2, Chol_adult_dom_tab, Chol_adult_dom_tab2, Chol_adult_rec_tab, Chol_adult_rec_tab2)
+
+
+
+
+Chol_paed <- read_excel("Chol_paed.xlsx")
+
+Chol_paed$Chol_CCCT_num <- Chol_paed$Chol_CC_num+Chol_paed$Chol_CT_num
+Chol_paed$Chol_CCCT_mean <- ((Chol_paed$Chol_CC_mean*Chol_paed$Chol_CC_num)+(Chol_paed$Chol_CT_mean*Chol_paed$Chol_CT_num))/Chol_paed$Chol_CCCT_num
+Chol_paed$Chol_CCCT_SD <- ((Chol_paed$Chol_CC_SD*Chol_paed$Chol_CC_num)+(Chol_paed$Chol_CT_SD*Chol_paed$Chol_CT_num))/Chol_paed$Chol_CCCT_num
+Chol_paed$Chol_CTTT_num <- Chol_paed$Chol_TT_num+Chol_paed$Chol_CT_num
+Chol_paed$Chol_CTTT_mean <- ((Chol_paed$Chol_TT_mean*Chol_paed$Chol_TT_num)+(Chol_paed$Chol_CT_mean*Chol_paed$Chol_CT_num))/Chol_paed$Chol_CTTT_num
+Chol_paed$Chol_CTTT_SD <- ((Chol_paed$Chol_TT_SD*Chol_paed$Chol_TT_num)+(Chol_paed$Chol_CT_SD*Chol_paed$Chol_CT_num))/Chol_paed$Chol_CTTT_num
+
+Chol_paed_add <- read_excel("Chol_paed_add.xlsx")
+Chol_paed_add_reg <- metagen(Beta, SE, data = Chol_paed_add, studlab = Chol_paed_add$Paper, sm = "ZCOR", method.tau = "DL")
+Chol_paed_add_reg_ethnic <- update(Chol_paed_add_reg, byvar = Ethnicity, bylab = "Ethnicity")
+
+Chol_paed_rec_reg <- metacont(Chol_TT_num, Chol_TT_mean, Chol_TT_SD, Chol_CCCT_num, Chol_CCCT_mean, Chol_CCCT_SD, data = Chol_paed, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "DL", hakn = TRUE, prediction = FALSE, sm = "MD")
+Chol_paed_rec_reg_ethnic <- update(Chol_paed_rec_reg, byvar = Ethnicity, bylab = "Ethnicity")
+
+Chol_paed_dom_reg <- metacont(Chol_CTTT_num, Chol_CTTT_mean, Chol_CTTT_SD, Chol_CC_num, Chol_CC_mean, Chol_CC_SD, data = Chol_paed, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "DL", hakn = TRUE, prediction = FALSE, sm = "MD")
+Chol_paed_dom_reg_ethnic <- update(Chol_paed_dom_reg, byvar = Ethnicity, bylab = "Ethnicity")
+
+Chol_paed_add_tab <- data.frame(Chol_paed_add_reg_ethnic[["TE.random"]])
+row.names(Chol_paed_add_tab) <- "Overall"
+Chol_paed_add_tab$MD <- Chol_paed_add_tab$Chol_paed_add_reg_ethnic...TE.random...
+Chol_paed_add_tab <- Chol_paed_add_tab[-c(1)]
+Chol_paed_add_tab$lower <- Chol_paed_add_reg_ethnic[["lower.random"]]
+Chol_paed_add_tab$upper <- Chol_paed_add_reg_ethnic[["upper.random"]]
+Chol_paed_add_tab$k <- Chol_paed_add_reg_ethnic[["k"]]
+Chol_paed_add_tab$p_z <- Chol_paed_add_reg_ethnic[["pval.random"]]
+Chol_paed_add_tab$I2 <- Chol_paed_add_reg_ethnic[["I2"]]
+Chol_paed_add_tab$p_q <- Chol_paed_add_reg_ethnic[["pval.Q"]]
+Chol_paed_add_tab$group <- "Overall"
+Chol_paed_add_tab$model <- "Additive"
+Chol_paed_add_tab$outcome <- "Chol"
+
+Chol_paed_add_tab2 <- data.frame(Chol_paed_add_reg_ethnic[["TE.random.w"]])
+row.names(Chol_paed_add_tab2) <- Chol_paed_add_reg_ethnic[["bylevs"]]
+Chol_paed_add_tab2$MD <- Chol_paed_add_tab2$Chol_paed_add_reg_ethnic...TE.random.w...
+Chol_paed_add_tab2 <- Chol_paed_add_tab2[-c(1)]
+Chol_paed_add_tab2$lower <- Chol_paed_add_reg_ethnic[["lower.random.w"]]
+Chol_paed_add_tab2$upper <- Chol_paed_add_reg_ethnic[["upper.random.w"]]
+Chol_paed_add_tab2$k <- Chol_paed_add_reg_ethnic[["k.w"]]
+Chol_paed_add_tab2$p_z <- Chol_paed_add_reg_ethnic[["pval.random.w"]]
+Chol_paed_add_tab2$I2 <- Chol_paed_add_reg_ethnic[["I2.w"]]
+Chol_paed_add_tab2$p_q <- Chol_paed_add_reg_ethnic[["pval.Q.w"]]
+Chol_paed_add_tab2$group <- row.names(Chol_paed_add_tab2)
+Chol_paed_add_tab2$model <- "Additive"
+Chol_paed_add_tab2$outcome <- "Chol"
+
+Chol_paed_dom_tab <- data.frame(Chol_paed_dom_reg_ethnic[["TE.random"]])
+row.names(Chol_paed_dom_tab) <- "Overall"
+Chol_paed_dom_tab$MD <- Chol_paed_dom_tab$Chol_paed_dom_reg_ethnic...TE.random...
+Chol_paed_dom_tab <- Chol_paed_dom_tab[-c(1)]
+Chol_paed_dom_tab$lower <- Chol_paed_dom_reg_ethnic[["lower.random"]]
+Chol_paed_dom_tab$upper <- Chol_paed_dom_reg_ethnic[["upper.random"]]
+Chol_paed_dom_tab$k <- Chol_paed_dom_reg_ethnic[["k"]]
+Chol_paed_dom_tab$p_z <- Chol_paed_dom_reg_ethnic[["pval.random"]]
+Chol_paed_dom_tab$I2 <- Chol_paed_dom_reg_ethnic[["I2"]]
+Chol_paed_dom_tab$p_q <- Chol_paed_dom_reg_ethnic[["pval.Q"]]
+Chol_paed_dom_tab$group <- "Overall"
+Chol_paed_dom_tab$model <- "Dominant"
+Chol_paed_dom_tab$outcome <- "Chol"
+
+Chol_paed_dom_tab2 <- data.frame(Chol_paed_dom_reg_ethnic[["TE.random.w"]])
+row.names(Chol_paed_dom_tab2) <- Chol_paed_dom_reg_ethnic[["bylevs"]]
+Chol_paed_dom_tab2$MD <- Chol_paed_dom_tab2$Chol_paed_dom_reg_ethnic...TE.random.w...
+Chol_paed_dom_tab2 <- Chol_paed_dom_tab2[-c(1)]
+Chol_paed_dom_tab2$lower <- Chol_paed_dom_reg_ethnic[["lower.random.w"]]
+Chol_paed_dom_tab2$upper <- Chol_paed_dom_reg_ethnic[["upper.random.w"]]
+Chol_paed_dom_tab2$k <- Chol_paed_dom_reg_ethnic[["k.w"]]
+Chol_paed_dom_tab2$p_z <- Chol_paed_dom_reg_ethnic[["pval.random.w"]]
+Chol_paed_dom_tab2$I2 <- Chol_paed_dom_reg_ethnic[["I2.w"]]
+Chol_paed_dom_tab2$p_q <- Chol_paed_dom_reg_ethnic[["pval.Q.w"]]
+Chol_paed_dom_tab2$group <- row.names(Chol_paed_dom_tab2)
+Chol_paed_dom_tab2$model <- "Dominant"
+Chol_paed_dom_tab2$outcome <- "Chol"
+
+Chol_paed_rec_tab <- data.frame(Chol_paed_rec_reg_ethnic[["TE.random"]])
+row.names(Chol_paed_rec_tab) <- "Overall"
+Chol_paed_rec_tab$MD <- Chol_paed_rec_tab$Chol_paed_rec_reg_ethnic...TE.random...
+Chol_paed_rec_tab <- Chol_paed_rec_tab[-c(1)]
+Chol_paed_rec_tab$lower <- Chol_paed_rec_reg_ethnic[["lower.random"]]
+Chol_paed_rec_tab$upper <- Chol_paed_rec_reg_ethnic[["upper.random"]]
+Chol_paed_rec_tab$k <- Chol_paed_rec_reg_ethnic[["k"]]
+Chol_paed_rec_tab$p_z <- Chol_paed_rec_reg_ethnic[["pval.random"]]
+Chol_paed_rec_tab$I2 <- Chol_paed_rec_reg_ethnic[["I2"]]
+Chol_paed_rec_tab$p_q <- Chol_paed_rec_reg_ethnic[["pval.Q"]]
+Chol_paed_rec_tab$group <- "Overall"
+Chol_paed_rec_tab$model <- "Recessive"
+Chol_paed_rec_tab$outcome <- "Chol"
+
+Chol_paed_rec_tab2 <- data.frame(Chol_paed_rec_reg_ethnic[["TE.random.w"]])
+row.names(Chol_paed_rec_tab2) <- Chol_paed_rec_reg_ethnic[["bylevs"]]
+Chol_paed_rec_tab2$MD <- Chol_paed_rec_tab2$Chol_paed_rec_reg_ethnic...TE.random.w...
+Chol_paed_rec_tab2 <- Chol_paed_rec_tab2[-c(1)]
+Chol_paed_rec_tab2$lower <- Chol_paed_rec_reg_ethnic[["lower.random.w"]]
+Chol_paed_rec_tab2$upper <- Chol_paed_rec_reg_ethnic[["upper.random.w"]]
+Chol_paed_rec_tab2$k <- Chol_paed_rec_reg_ethnic[["k.w"]]
+Chol_paed_rec_tab2$p_z <- Chol_paed_rec_reg_ethnic[["pval.random.w"]]
+Chol_paed_rec_tab2$I2 <- Chol_paed_rec_reg_ethnic[["I2.w"]]
+Chol_paed_rec_tab2$p_q <- Chol_paed_rec_reg_ethnic[["pval.Q.w"]]
+Chol_paed_rec_tab2$group <- row.names(Chol_paed_rec_tab2)
+Chol_paed_rec_tab2$model <- "Recessive"
+Chol_paed_rec_tab2$outcome <- "Chol"
+
+Chol_paed_sumtab <- rbind(Chol_paed_add_tab, Chol_paed_add_tab2, Chol_paed_dom_tab, Chol_paed_dom_tab2, Chol_paed_rec_tab, Chol_paed_rec_tab2)
+
+
+
+
+
+HDL_adult <- read_excel("HDL_adult.xlsx")
+
+HDL_adult$HDL_CCCT_num <- HDL_adult$HDL_CC_num+HDL_adult$HDL_CT_num
+HDL_adult$HDL_CCCT_mean <- ((HDL_adult$HDL_CC_mean*HDL_adult$HDL_CC_num)+(HDL_adult$HDL_CT_mean*HDL_adult$HDL_CT_num))/HDL_adult$HDL_CCCT_num
+HDL_adult$HDL_CCCT_SD <- ((HDL_adult$HDL_CC_SD*HDL_adult$HDL_CC_num)+(HDL_adult$HDL_CT_SD*HDL_adult$HDL_CT_num))/HDL_adult$HDL_CCCT_num
+HDL_adult$HDL_CTTT_num <- HDL_adult$HDL_TT_num+HDL_adult$HDL_CT_num
+HDL_adult$HDL_CTTT_mean <- ((HDL_adult$HDL_TT_mean*HDL_adult$HDL_TT_num)+(HDL_adult$HDL_CT_mean*HDL_adult$HDL_CT_num))/HDL_adult$HDL_CTTT_num
+HDL_adult$HDL_CTTT_SD <- ((HDL_adult$HDL_TT_SD*HDL_adult$HDL_TT_num)+(HDL_adult$HDL_CT_SD*HDL_adult$HDL_CT_num))/HDL_adult$HDL_CTTT_num
+
+HDL_adult_add <- read_excel("HDL_adult_add.xlsx")
+HDL_adult_add_reg <- metagen(Beta, SE, data = HDL_adult_add, studlab = HDL_adult_add$Paper, sm = "ZCOR", method.tau = "DL")
+HDL_adult_add_reg_ethnic <- update(HDL_adult_add_reg, byvar = Ethnicity, bylab = "Ethnicity")
+
+HDL_adult_rec_reg <- metacont(HDL_TT_num, HDL_TT_mean, HDL_TT_SD, HDL_CCCT_num, HDL_CCCT_mean, HDL_CCCT_SD, data = HDL_adult, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "DL", hakn = TRUE, prediction = FALSE, sm = "MD")
+HDL_adult_rec_reg_ethnic <- update(HDL_adult_rec_reg, byvar = Ethnicity, bylab = "Ethnicity")
+
+HDL_adult_dom_reg <- metacont(HDL_CTTT_num, HDL_CTTT_mean, HDL_CTTT_SD, HDL_CC_num, HDL_CC_mean, HDL_CC_SD, data = HDL_adult, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "DL", hakn = TRUE, prediction = FALSE, sm = "MD")
+HDL_adult_dom_reg_ethnic <- update(HDL_adult_dom_reg, byvar = Ethnicity, bylab = "Ethnicity")
+
+HDL_adult_add_tab <- data.frame(HDL_adult_add_reg_ethnic[["TE.random"]])
+row.names(HDL_adult_add_tab) <- "Overall"
+HDL_adult_add_tab$MD <- HDL_adult_add_tab$HDL_adult_add_reg_ethnic...TE.random...
+HDL_adult_add_tab <- HDL_adult_add_tab[-c(1)]
+HDL_adult_add_tab$lower <- HDL_adult_add_reg_ethnic[["lower.random"]]
+HDL_adult_add_tab$upper <- HDL_adult_add_reg_ethnic[["upper.random"]]
+HDL_adult_add_tab$k <- HDL_adult_add_reg_ethnic[["k"]]
+HDL_adult_add_tab$p_z <- HDL_adult_add_reg_ethnic[["pval.random"]]
+HDL_adult_add_tab$I2 <- HDL_adult_add_reg_ethnic[["I2"]]
+HDL_adult_add_tab$p_q <- HDL_adult_add_reg_ethnic[["pval.Q"]]
+HDL_adult_add_tab$group <- "Overall"
+HDL_adult_add_tab$model <- "Additive"
+HDL_adult_add_tab$outcome <- "HDL"
+
+HDL_adult_add_tab2 <- data.frame(HDL_adult_add_reg_ethnic[["TE.random.w"]])
+row.names(HDL_adult_add_tab2) <- HDL_adult_add_reg_ethnic[["bylevs"]]
+HDL_adult_add_tab2$MD <- HDL_adult_add_tab2$HDL_adult_add_reg_ethnic...TE.random.w...
+HDL_adult_add_tab2 <- HDL_adult_add_tab2[-c(1)]
+HDL_adult_add_tab2$lower <- HDL_adult_add_reg_ethnic[["lower.random.w"]]
+HDL_adult_add_tab2$upper <- HDL_adult_add_reg_ethnic[["upper.random.w"]]
+HDL_adult_add_tab2$k <- HDL_adult_add_reg_ethnic[["k.w"]]
+HDL_adult_add_tab2$p_z <- HDL_adult_add_reg_ethnic[["pval.random.w"]]
+HDL_adult_add_tab2$I2 <- HDL_adult_add_reg_ethnic[["I2.w"]]
+HDL_adult_add_tab2$p_q <- HDL_adult_add_reg_ethnic[["pval.Q.w"]]
+HDL_adult_add_tab2$group <- row.names(HDL_adult_add_tab2)
+HDL_adult_add_tab2$model <- "Additive"
+HDL_adult_add_tab2$outcome <- "HDL"
+
+HDL_adult_dom_tab <- data.frame(HDL_adult_dom_reg_ethnic[["TE.random"]])
+row.names(HDL_adult_dom_tab) <- "Overall"
+HDL_adult_dom_tab$MD <- HDL_adult_dom_tab$HDL_adult_dom_reg_ethnic...TE.random...
+HDL_adult_dom_tab <- HDL_adult_dom_tab[-c(1)]
+HDL_adult_dom_tab$lower <- HDL_adult_dom_reg_ethnic[["lower.random"]]
+HDL_adult_dom_tab$upper <- HDL_adult_dom_reg_ethnic[["upper.random"]]
+HDL_adult_dom_tab$k <- HDL_adult_dom_reg_ethnic[["k"]]
+HDL_adult_dom_tab$p_z <- HDL_adult_dom_reg_ethnic[["pval.random"]]
+HDL_adult_dom_tab$I2 <- HDL_adult_dom_reg_ethnic[["I2"]]
+HDL_adult_dom_tab$p_q <- HDL_adult_dom_reg_ethnic[["pval.Q"]]
+HDL_adult_dom_tab$group <- "Overall"
+HDL_adult_dom_tab$model <- "Dominant"
+HDL_adult_dom_tab$outcome <- "HDL"
+
+HDL_adult_dom_tab2 <- data.frame(HDL_adult_dom_reg_ethnic[["TE.random.w"]])
+row.names(HDL_adult_dom_tab2) <- HDL_adult_dom_reg_ethnic[["bylevs"]]
+HDL_adult_dom_tab2$MD <- HDL_adult_dom_tab2$HDL_adult_dom_reg_ethnic...TE.random.w...
+HDL_adult_dom_tab2 <- HDL_adult_dom_tab2[-c(1)]
+HDL_adult_dom_tab2$lower <- HDL_adult_dom_reg_ethnic[["lower.random.w"]]
+HDL_adult_dom_tab2$upper <- HDL_adult_dom_reg_ethnic[["upper.random.w"]]
+HDL_adult_dom_tab2$k <- HDL_adult_dom_reg_ethnic[["k.w"]]
+HDL_adult_dom_tab2$p_z <- HDL_adult_dom_reg_ethnic[["pval.random.w"]]
+HDL_adult_dom_tab2$I2 <- HDL_adult_dom_reg_ethnic[["I2.w"]]
+HDL_adult_dom_tab2$p_q <- HDL_adult_dom_reg_ethnic[["pval.Q.w"]]
+HDL_adult_dom_tab2$group <- row.names(HDL_adult_dom_tab2)
+HDL_adult_dom_tab2$model <- "Dominant"
+HDL_adult_dom_tab2$outcome <- "HDL"
+
+HDL_adult_rec_tab <- data.frame(HDL_adult_rec_reg_ethnic[["TE.random"]])
+row.names(HDL_adult_rec_tab) <- "Overall"
+HDL_adult_rec_tab$MD <- HDL_adult_rec_tab$HDL_adult_rec_reg_ethnic...TE.random...
+HDL_adult_rec_tab <- HDL_adult_rec_tab[-c(1)]
+HDL_adult_rec_tab$lower <- HDL_adult_rec_reg_ethnic[["lower.random"]]
+HDL_adult_rec_tab$upper <- HDL_adult_rec_reg_ethnic[["upper.random"]]
+HDL_adult_rec_tab$k <- HDL_adult_rec_reg_ethnic[["k"]]
+HDL_adult_rec_tab$p_z <- HDL_adult_rec_reg_ethnic[["pval.random"]]
+HDL_adult_rec_tab$I2 <- HDL_adult_rec_reg_ethnic[["I2"]]
+HDL_adult_rec_tab$p_q <- HDL_adult_rec_reg_ethnic[["pval.Q"]]
+HDL_adult_rec_tab$group <- "Overall"
+HDL_adult_rec_tab$model <- "Recessive"
+HDL_adult_rec_tab$outcome <- "HDL"
+
+HDL_adult_rec_tab2 <- data.frame(HDL_adult_rec_reg_ethnic[["TE.random.w"]])
+row.names(HDL_adult_rec_tab2) <- HDL_adult_rec_reg_ethnic[["bylevs"]]
+HDL_adult_rec_tab2$MD <- HDL_adult_rec_tab2$HDL_adult_rec_reg_ethnic...TE.random.w...
+HDL_adult_rec_tab2 <- HDL_adult_rec_tab2[-c(1)]
+HDL_adult_rec_tab2$lower <- HDL_adult_rec_reg_ethnic[["lower.random.w"]]
+HDL_adult_rec_tab2$upper <- HDL_adult_rec_reg_ethnic[["upper.random.w"]]
+HDL_adult_rec_tab2$k <- HDL_adult_rec_reg_ethnic[["k.w"]]
+HDL_adult_rec_tab2$p_z <- HDL_adult_rec_reg_ethnic[["pval.random.w"]]
+HDL_adult_rec_tab2$I2 <- HDL_adult_rec_reg_ethnic[["I2.w"]]
+HDL_adult_rec_tab2$p_q <- HDL_adult_rec_reg_ethnic[["pval.Q.w"]]
+HDL_adult_rec_tab2$group <- row.names(HDL_adult_rec_tab2)
+HDL_adult_rec_tab2$model <- "Recessive"
+HDL_adult_rec_tab2$outcome <- "HDL"
+
+HDL_adult_sumtab <- rbind(HDL_adult_add_tab, HDL_adult_add_tab2, HDL_adult_dom_tab, HDL_adult_dom_tab2, HDL_adult_rec_tab, HDL_adult_rec_tab2)
+
+
+
+
+HDL_paed <- read_excel("HDL_paed.xlsx")
+
+HDL_paed$HDL_CCCT_num <- HDL_paed$HDL_CC_num+HDL_paed$HDL_CT_num
+HDL_paed$HDL_CCCT_mean <- ((HDL_paed$HDL_CC_mean*HDL_paed$HDL_CC_num)+(HDL_paed$HDL_CT_mean*HDL_paed$HDL_CT_num))/HDL_paed$HDL_CCCT_num
+HDL_paed$HDL_CCCT_SD <- ((HDL_paed$HDL_CC_SD*HDL_paed$HDL_CC_num)+(HDL_paed$HDL_CT_SD*HDL_paed$HDL_CT_num))/HDL_paed$HDL_CCCT_num
+HDL_paed$HDL_CTTT_num <- HDL_paed$HDL_TT_num+HDL_paed$HDL_CT_num
+HDL_paed$HDL_CTTT_mean <- ((HDL_paed$HDL_TT_mean*HDL_paed$HDL_TT_num)+(HDL_paed$HDL_CT_mean*HDL_paed$HDL_CT_num))/HDL_paed$HDL_CTTT_num
+HDL_paed$HDL_CTTT_SD <- ((HDL_paed$HDL_TT_SD*HDL_paed$HDL_TT_num)+(HDL_paed$HDL_CT_SD*HDL_paed$HDL_CT_num))/HDL_paed$HDL_CTTT_num
+
+HDL_paed_add <- read_excel("HDL_paed_add.xlsx")
+HDL_paed_add_reg <- metagen(Beta, SE, data = HDL_paed_add, studlab = HDL_paed_add$Paper, sm = "ZCOR", method.tau = "DL")
+HDL_paed_add_reg_ethnic <- update(HDL_paed_add_reg, byvar = Ethnicity, bylab = "Ethnicity")
+
+HDL_paed_rec_reg <- metacont(HDL_TT_num, HDL_TT_mean, HDL_TT_SD, HDL_CCCT_num, HDL_CCCT_mean, HDL_CCCT_SD, data = HDL_paed, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "DL", hakn = TRUE, prediction = FALSE, sm = "MD")
+HDL_paed_rec_reg_ethnic <- update(HDL_paed_rec_reg, byvar = Ethnicity, bylab = "Ethnicity")
+
+HDL_paed_dom_reg <- metacont(HDL_CTTT_num, HDL_CTTT_mean, HDL_CTTT_SD, HDL_CC_num, HDL_CC_mean, HDL_CC_SD, data = HDL_paed, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "DL", hakn = TRUE, prediction = FALSE, sm = "MD")
+HDL_paed_dom_reg_ethnic <- update(HDL_paed_dom_reg, byvar = Ethnicity, bylab = "Ethnicity")
+
+HDL_paed_add_tab <- data.frame(HDL_paed_add_reg_ethnic[["TE.random"]])
+row.names(HDL_paed_add_tab) <- "Overall"
+HDL_paed_add_tab$MD <- HDL_paed_add_tab$HDL_paed_add_reg_ethnic...TE.random...
+HDL_paed_add_tab <- HDL_paed_add_tab[-c(1)]
+HDL_paed_add_tab$lower <- HDL_paed_add_reg_ethnic[["lower.random"]]
+HDL_paed_add_tab$upper <- HDL_paed_add_reg_ethnic[["upper.random"]]
+HDL_paed_add_tab$k <- HDL_paed_add_reg_ethnic[["k"]]
+HDL_paed_add_tab$p_z <- HDL_paed_add_reg_ethnic[["pval.random"]]
+HDL_paed_add_tab$I2 <- HDL_paed_add_reg_ethnic[["I2"]]
+HDL_paed_add_tab$p_q <- HDL_paed_add_reg_ethnic[["pval.Q"]]
+HDL_paed_add_tab$group <- "Overall"
+HDL_paed_add_tab$model <- "Additive"
+HDL_paed_add_tab$outcome <- "HDL"
+
+HDL_paed_add_tab2 <- data.frame(HDL_paed_add_reg_ethnic[["TE.random.w"]])
+row.names(HDL_paed_add_tab2) <- HDL_paed_add_reg_ethnic[["bylevs"]]
+HDL_paed_add_tab2$MD <- HDL_paed_add_tab2$HDL_paed_add_reg_ethnic...TE.random.w...
+HDL_paed_add_tab2 <- HDL_paed_add_tab2[-c(1)]
+HDL_paed_add_tab2$lower <- HDL_paed_add_reg_ethnic[["lower.random.w"]]
+HDL_paed_add_tab2$upper <- HDL_paed_add_reg_ethnic[["upper.random.w"]]
+HDL_paed_add_tab2$k <- HDL_paed_add_reg_ethnic[["k.w"]]
+HDL_paed_add_tab2$p_z <- HDL_paed_add_reg_ethnic[["pval.random.w"]]
+HDL_paed_add_tab2$I2 <- HDL_paed_add_reg_ethnic[["I2.w"]]
+HDL_paed_add_tab2$p_q <- HDL_paed_add_reg_ethnic[["pval.Q.w"]]
+HDL_paed_add_tab2$group <- row.names(HDL_paed_add_tab2)
+HDL_paed_add_tab2$model <- "Additive"
+HDL_paed_add_tab2$outcome <- "HDL"
+
+HDL_paed_dom_tab <- data.frame(HDL_paed_dom_reg_ethnic[["TE.random"]])
+row.names(HDL_paed_dom_tab) <- "Overall"
+HDL_paed_dom_tab$MD <- HDL_paed_dom_tab$HDL_paed_dom_reg_ethnic...TE.random...
+HDL_paed_dom_tab <- HDL_paed_dom_tab[-c(1)]
+HDL_paed_dom_tab$lower <- HDL_paed_dom_reg_ethnic[["lower.random"]]
+HDL_paed_dom_tab$upper <- HDL_paed_dom_reg_ethnic[["upper.random"]]
+HDL_paed_dom_tab$k <- HDL_paed_dom_reg_ethnic[["k"]]
+HDL_paed_dom_tab$p_z <- HDL_paed_dom_reg_ethnic[["pval.random"]]
+HDL_paed_dom_tab$I2 <- HDL_paed_dom_reg_ethnic[["I2"]]
+HDL_paed_dom_tab$p_q <- HDL_paed_dom_reg_ethnic[["pval.Q"]]
+HDL_paed_dom_tab$group <- "Overall"
+HDL_paed_dom_tab$model <- "Dominant"
+HDL_paed_dom_tab$outcome <- "HDL"
+
+HDL_paed_dom_tab2 <- data.frame(HDL_paed_dom_reg_ethnic[["TE.random.w"]])
+row.names(HDL_paed_dom_tab2) <- HDL_paed_dom_reg_ethnic[["bylevs"]]
+HDL_paed_dom_tab2$MD <- HDL_paed_dom_tab2$HDL_paed_dom_reg_ethnic...TE.random.w...
+HDL_paed_dom_tab2 <- HDL_paed_dom_tab2[-c(1)]
+HDL_paed_dom_tab2$lower <- HDL_paed_dom_reg_ethnic[["lower.random.w"]]
+HDL_paed_dom_tab2$upper <- HDL_paed_dom_reg_ethnic[["upper.random.w"]]
+HDL_paed_dom_tab2$k <- HDL_paed_dom_reg_ethnic[["k.w"]]
+HDL_paed_dom_tab2$p_z <- HDL_paed_dom_reg_ethnic[["pval.random.w"]]
+HDL_paed_dom_tab2$I2 <- HDL_paed_dom_reg_ethnic[["I2.w"]]
+HDL_paed_dom_tab2$p_q <- HDL_paed_dom_reg_ethnic[["pval.Q.w"]]
+HDL_paed_dom_tab2$group <- row.names(HDL_paed_dom_tab2)
+HDL_paed_dom_tab2$model <- "Dominant"
+HDL_paed_dom_tab2$outcome <- "HDL"
+
+HDL_paed_rec_tab <- data.frame(HDL_paed_rec_reg_ethnic[["TE.random"]])
+row.names(HDL_paed_rec_tab) <- "Overall"
+HDL_paed_rec_tab$MD <- HDL_paed_rec_tab$HDL_paed_rec_reg_ethnic...TE.random...
+HDL_paed_rec_tab <- HDL_paed_rec_tab[-c(1)]
+HDL_paed_rec_tab$lower <- HDL_paed_rec_reg_ethnic[["lower.random"]]
+HDL_paed_rec_tab$upper <- HDL_paed_rec_reg_ethnic[["upper.random"]]
+HDL_paed_rec_tab$k <- HDL_paed_rec_reg_ethnic[["k"]]
+HDL_paed_rec_tab$p_z <- HDL_paed_rec_reg_ethnic[["pval.random"]]
+HDL_paed_rec_tab$I2 <- HDL_paed_rec_reg_ethnic[["I2"]]
+HDL_paed_rec_tab$p_q <- HDL_paed_rec_reg_ethnic[["pval.Q"]]
+HDL_paed_rec_tab$group <- "Overall"
+HDL_paed_rec_tab$model <- "Recessive"
+HDL_paed_rec_tab$outcome <- "HDL"
+
+HDL_paed_rec_tab2 <- data.frame(HDL_paed_rec_reg_ethnic[["TE.random.w"]])
+row.names(HDL_paed_rec_tab2) <- HDL_paed_rec_reg_ethnic[["bylevs"]]
+HDL_paed_rec_tab2$MD <- HDL_paed_rec_tab2$HDL_paed_rec_reg_ethnic...TE.random.w...
+HDL_paed_rec_tab2 <- HDL_paed_rec_tab2[-c(1)]
+HDL_paed_rec_tab2$lower <- HDL_paed_rec_reg_ethnic[["lower.random.w"]]
+HDL_paed_rec_tab2$upper <- HDL_paed_rec_reg_ethnic[["upper.random.w"]]
+HDL_paed_rec_tab2$k <- HDL_paed_rec_reg_ethnic[["k.w"]]
+HDL_paed_rec_tab2$p_z <- HDL_paed_rec_reg_ethnic[["pval.random.w"]]
+HDL_paed_rec_tab2$I2 <- HDL_paed_rec_reg_ethnic[["I2.w"]]
+HDL_paed_rec_tab2$p_q <- HDL_paed_rec_reg_ethnic[["pval.Q.w"]]
+HDL_paed_rec_tab2$group <- row.names(HDL_paed_rec_tab2)
+HDL_paed_rec_tab2$model <- "Recessive"
+HDL_paed_rec_tab2$outcome <- "HDL"
+
+HDL_paed_sumtab <- rbind(HDL_paed_add_tab, HDL_paed_add_tab2, HDL_paed_dom_tab, HDL_paed_dom_tab2, HDL_paed_rec_tab, HDL_paed_rec_tab2)
+
+
+
+
+LDL_adult <- read_excel("LDL_adult.xlsx")
+
+LDL_adult$LDL_CCCT_num <- LDL_adult$LDL_CC_num+LDL_adult$LDL_CT_num
+LDL_adult$LDL_CCCT_mean <- ((LDL_adult$LDL_CC_mean*LDL_adult$LDL_CC_num)+(LDL_adult$LDL_CT_mean*LDL_adult$LDL_CT_num))/LDL_adult$LDL_CCCT_num
+LDL_adult$LDL_CCCT_SD <- ((LDL_adult$LDL_CC_SD*LDL_adult$LDL_CC_num)+(LDL_adult$LDL_CT_SD*LDL_adult$LDL_CT_num))/LDL_adult$LDL_CCCT_num
+LDL_adult$LDL_CTTT_num <- LDL_adult$LDL_TT_num+LDL_adult$LDL_CT_num
+LDL_adult$LDL_CTTT_mean <- ((LDL_adult$LDL_TT_mean*LDL_adult$LDL_TT_num)+(LDL_adult$LDL_CT_mean*LDL_adult$LDL_CT_num))/LDL_adult$LDL_CTTT_num
+LDL_adult$LDL_CTTT_SD <- ((LDL_adult$LDL_TT_SD*LDL_adult$LDL_TT_num)+(LDL_adult$LDL_CT_SD*LDL_adult$LDL_CT_num))/LDL_adult$LDL_CTTT_num
+
+LDL_adult_add <- read_excel("LDL_adult_add.xlsx")
+LDL_adult_add_reg <- metagen(Beta, SE, data = LDL_adult_add, studlab = LDL_adult_add$Paper, sm = "ZCOR", method.tau = "DL")
+LDL_adult_add_reg_ethnic <- update(LDL_adult_add_reg, byvar = Ethnicity, bylab = "Ethnicity")
+
+LDL_adult_rec_reg <- metacont(LDL_TT_num, LDL_TT_mean, LDL_TT_SD, LDL_CCCT_num, LDL_CCCT_mean, LDL_CCCT_SD, data = LDL_adult, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "DL", hakn = TRUE, prediction = FALSE, sm = "MD")
+LDL_adult_rec_reg_ethnic <- update(LDL_adult_rec_reg, byvar = Ethnicity, bylab = "Ethnicity")
+
+LDL_adult_dom_reg <- metacont(LDL_CTTT_num, LDL_CTTT_mean, LDL_CTTT_SD, LDL_CC_num, LDL_CC_mean, LDL_CC_SD, data = LDL_adult, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "DL", hakn = TRUE, prediction = FALSE, sm = "MD")
+LDL_adult_dom_reg_ethnic <- update(LDL_adult_dom_reg, byvar = Ethnicity, bylab = "Ethnicity")
+
+LDL_adult_add_tab <- data.frame(LDL_adult_add_reg_ethnic[["TE.random"]])
+row.names(LDL_adult_add_tab) <- "Overall"
+LDL_adult_add_tab$MD <- LDL_adult_add_tab$LDL_adult_add_reg_ethnic...TE.random...
+LDL_adult_add_tab <- LDL_adult_add_tab[-c(1)]
+LDL_adult_add_tab$lower <- LDL_adult_add_reg_ethnic[["lower.random"]]
+LDL_adult_add_tab$upper <- LDL_adult_add_reg_ethnic[["upper.random"]]
+LDL_adult_add_tab$k <- LDL_adult_add_reg_ethnic[["k"]]
+LDL_adult_add_tab$p_z <- LDL_adult_add_reg_ethnic[["pval.random"]]
+LDL_adult_add_tab$I2 <- LDL_adult_add_reg_ethnic[["I2"]]
+LDL_adult_add_tab$p_q <- LDL_adult_add_reg_ethnic[["pval.Q"]]
+LDL_adult_add_tab$group <- "Overall"
+LDL_adult_add_tab$model <- "Additive"
+LDL_adult_add_tab$outcome <- "LDL"
+
+LDL_adult_add_tab2 <- data.frame(LDL_adult_add_reg_ethnic[["TE.random.w"]])
+row.names(LDL_adult_add_tab2) <- LDL_adult_add_reg_ethnic[["bylevs"]]
+LDL_adult_add_tab2$MD <- LDL_adult_add_tab2$LDL_adult_add_reg_ethnic...TE.random.w...
+LDL_adult_add_tab2 <- LDL_adult_add_tab2[-c(1)]
+LDL_adult_add_tab2$lower <- LDL_adult_add_reg_ethnic[["lower.random.w"]]
+LDL_adult_add_tab2$upper <- LDL_adult_add_reg_ethnic[["upper.random.w"]]
+LDL_adult_add_tab2$k <- LDL_adult_add_reg_ethnic[["k.w"]]
+LDL_adult_add_tab2$p_z <- LDL_adult_add_reg_ethnic[["pval.random.w"]]
+LDL_adult_add_tab2$I2 <- LDL_adult_add_reg_ethnic[["I2.w"]]
+LDL_adult_add_tab2$p_q <- LDL_adult_add_reg_ethnic[["pval.Q.w"]]
+LDL_adult_add_tab2$group <- row.names(LDL_adult_add_tab2)
+LDL_adult_add_tab2$model <- "Additive"
+LDL_adult_add_tab2$outcome <- "LDL"
+
+LDL_adult_dom_tab <- data.frame(LDL_adult_dom_reg_ethnic[["TE.random"]])
+row.names(LDL_adult_dom_tab) <- "Overall"
+LDL_adult_dom_tab$MD <- LDL_adult_dom_tab$LDL_adult_dom_reg_ethnic...TE.random...
+LDL_adult_dom_tab <- LDL_adult_dom_tab[-c(1)]
+LDL_adult_dom_tab$lower <- LDL_adult_dom_reg_ethnic[["lower.random"]]
+LDL_adult_dom_tab$upper <- LDL_adult_dom_reg_ethnic[["upper.random"]]
+LDL_adult_dom_tab$k <- LDL_adult_dom_reg_ethnic[["k"]]
+LDL_adult_dom_tab$p_z <- LDL_adult_dom_reg_ethnic[["pval.random"]]
+LDL_adult_dom_tab$I2 <- LDL_adult_dom_reg_ethnic[["I2"]]
+LDL_adult_dom_tab$p_q <- LDL_adult_dom_reg_ethnic[["pval.Q"]]
+LDL_adult_dom_tab$group <- "Overall"
+LDL_adult_dom_tab$model <- "Dominant"
+LDL_adult_dom_tab$outcome <- "LDL"
+
+LDL_adult_dom_tab2 <- data.frame(LDL_adult_dom_reg_ethnic[["TE.random.w"]])
+row.names(LDL_adult_dom_tab2) <- LDL_adult_dom_reg_ethnic[["bylevs"]]
+LDL_adult_dom_tab2$MD <- LDL_adult_dom_tab2$LDL_adult_dom_reg_ethnic...TE.random.w...
+LDL_adult_dom_tab2 <- LDL_adult_dom_tab2[-c(1)]
+LDL_adult_dom_tab2$lower <- LDL_adult_dom_reg_ethnic[["lower.random.w"]]
+LDL_adult_dom_tab2$upper <- LDL_adult_dom_reg_ethnic[["upper.random.w"]]
+LDL_adult_dom_tab2$k <- LDL_adult_dom_reg_ethnic[["k.w"]]
+LDL_adult_dom_tab2$p_z <- LDL_adult_dom_reg_ethnic[["pval.random.w"]]
+LDL_adult_dom_tab2$I2 <- LDL_adult_dom_reg_ethnic[["I2.w"]]
+LDL_adult_dom_tab2$p_q <- LDL_adult_dom_reg_ethnic[["pval.Q.w"]]
+LDL_adult_dom_tab2$group <- row.names(LDL_adult_dom_tab2)
+LDL_adult_dom_tab2$model <- "Dominant"
+LDL_adult_dom_tab2$outcome <- "LDL"
+
+LDL_adult_rec_tab <- data.frame(LDL_adult_rec_reg_ethnic[["TE.random"]])
+row.names(LDL_adult_rec_tab) <- "Overall"
+LDL_adult_rec_tab$MD <- LDL_adult_rec_tab$LDL_adult_rec_reg_ethnic...TE.random...
+LDL_adult_rec_tab <- LDL_adult_rec_tab[-c(1)]
+LDL_adult_rec_tab$lower <- LDL_adult_rec_reg_ethnic[["lower.random"]]
+LDL_adult_rec_tab$upper <- LDL_adult_rec_reg_ethnic[["upper.random"]]
+LDL_adult_rec_tab$k <- LDL_adult_rec_reg_ethnic[["k"]]
+LDL_adult_rec_tab$p_z <- LDL_adult_rec_reg_ethnic[["pval.random"]]
+LDL_adult_rec_tab$I2 <- LDL_adult_rec_reg_ethnic[["I2"]]
+LDL_adult_rec_tab$p_q <- LDL_adult_rec_reg_ethnic[["pval.Q"]]
+LDL_adult_rec_tab$group <- "Overall"
+LDL_adult_rec_tab$model <- "Recessive"
+LDL_adult_rec_tab$outcome <- "LDL"
+
+LDL_adult_rec_tab2 <- data.frame(LDL_adult_rec_reg_ethnic[["TE.random.w"]])
+row.names(LDL_adult_rec_tab2) <- LDL_adult_rec_reg_ethnic[["bylevs"]]
+LDL_adult_rec_tab2$MD <- LDL_adult_rec_tab2$LDL_adult_rec_reg_ethnic...TE.random.w...
+LDL_adult_rec_tab2 <- LDL_adult_rec_tab2[-c(1)]
+LDL_adult_rec_tab2$lower <- LDL_adult_rec_reg_ethnic[["lower.random.w"]]
+LDL_adult_rec_tab2$upper <- LDL_adult_rec_reg_ethnic[["upper.random.w"]]
+LDL_adult_rec_tab2$k <- LDL_adult_rec_reg_ethnic[["k.w"]]
+LDL_adult_rec_tab2$p_z <- LDL_adult_rec_reg_ethnic[["pval.random.w"]]
+LDL_adult_rec_tab2$I2 <- LDL_adult_rec_reg_ethnic[["I2.w"]]
+LDL_adult_rec_tab2$p_q <- LDL_adult_rec_reg_ethnic[["pval.Q.w"]]
+LDL_adult_rec_tab2$group <- row.names(LDL_adult_rec_tab2)
+LDL_adult_rec_tab2$model <- "Recessive"
+LDL_adult_rec_tab2$outcome <- "LDL"
+
+LDL_adult_sumtab <- rbind(LDL_adult_add_tab, LDL_adult_add_tab2, LDL_adult_dom_tab, LDL_adult_dom_tab2, LDL_adult_rec_tab, LDL_adult_rec_tab2)
+
+
+
+
+LDL_paed <- read_excel("LDL_paed.xlsx")
+
+LDL_paed$LDL_CCCT_num <- LDL_paed$LDL_CC_num+LDL_paed$LDL_CT_num
+LDL_paed$LDL_CCCT_mean <- ((LDL_paed$LDL_CC_mean*LDL_paed$LDL_CC_num)+(LDL_paed$LDL_CT_mean*LDL_paed$LDL_CT_num))/LDL_paed$LDL_CCCT_num
+LDL_paed$LDL_CCCT_SD <- ((LDL_paed$LDL_CC_SD*LDL_paed$LDL_CC_num)+(LDL_paed$LDL_CT_SD*LDL_paed$LDL_CT_num))/LDL_paed$LDL_CCCT_num
+LDL_paed$LDL_CTTT_num <- LDL_paed$LDL_TT_num+LDL_paed$LDL_CT_num
+LDL_paed$LDL_CTTT_mean <- ((LDL_paed$LDL_TT_mean*LDL_paed$LDL_TT_num)+(LDL_paed$LDL_CT_mean*LDL_paed$LDL_CT_num))/LDL_paed$LDL_CTTT_num
+LDL_paed$LDL_CTTT_SD <- ((LDL_paed$LDL_TT_SD*LDL_paed$LDL_TT_num)+(LDL_paed$LDL_CT_SD*LDL_paed$LDL_CT_num))/LDL_paed$LDL_CTTT_num
+
+LDL_paed_add <- read_excel("LDL_paed_add.xlsx")
+LDL_paed_add_reg <- metagen(Beta, SE, data = LDL_paed_add, studlab = LDL_paed_add$Paper, sm = "ZCOR", method.tau = "DL")
+LDL_paed_add_reg_ethnic <- update(LDL_paed_add_reg, byvar = Ethnicity, bylab = "Ethnicity")
+
+LDL_paed_rec_reg <- metacont(LDL_TT_num, LDL_TT_mean, LDL_TT_SD, LDL_CCCT_num, LDL_CCCT_mean, LDL_CCCT_SD, data = LDL_paed, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "DL", hakn = TRUE, prediction = FALSE, sm = "MD")
+LDL_paed_rec_reg_ethnic <- update(LDL_paed_rec_reg, byvar = Ethnicity, bylab = "Ethnicity")
+
+LDL_paed_dom_reg <- metacont(LDL_CTTT_num, LDL_CTTT_mean, LDL_CTTT_SD, LDL_CC_num, LDL_CC_mean, LDL_CC_SD, data = LDL_paed, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "DL", hakn = TRUE, prediction = FALSE, sm = "MD")
+LDL_paed_dom_reg_ethnic <- update(LDL_paed_dom_reg, byvar = Ethnicity, bylab = "Ethnicity")
+
+LDL_paed_add_tab <- data.frame(LDL_paed_add_reg_ethnic[["TE.random"]])
+row.names(LDL_paed_add_tab) <- "Overall"
+LDL_paed_add_tab$MD <- LDL_paed_add_tab$LDL_paed_add_reg_ethnic...TE.random...
+LDL_paed_add_tab <- LDL_paed_add_tab[-c(1)]
+LDL_paed_add_tab$lower <- LDL_paed_add_reg_ethnic[["lower.random"]]
+LDL_paed_add_tab$upper <- LDL_paed_add_reg_ethnic[["upper.random"]]
+LDL_paed_add_tab$k <- LDL_paed_add_reg_ethnic[["k"]]
+LDL_paed_add_tab$p_z <- LDL_paed_add_reg_ethnic[["pval.random"]]
+LDL_paed_add_tab$I2 <- LDL_paed_add_reg_ethnic[["I2"]]
+LDL_paed_add_tab$p_q <- LDL_paed_add_reg_ethnic[["pval.Q"]]
+LDL_paed_add_tab$group <- "Overall"
+LDL_paed_add_tab$model <- "Additive"
+LDL_paed_add_tab$outcome <- "LDL"
+
+LDL_paed_add_tab2 <- data.frame(LDL_paed_add_reg_ethnic[["TE.random.w"]])
+row.names(LDL_paed_add_tab2) <- LDL_paed_add_reg_ethnic[["bylevs"]]
+LDL_paed_add_tab2$MD <- LDL_paed_add_tab2$LDL_paed_add_reg_ethnic...TE.random.w...
+LDL_paed_add_tab2 <- LDL_paed_add_tab2[-c(1)]
+LDL_paed_add_tab2$lower <- LDL_paed_add_reg_ethnic[["lower.random.w"]]
+LDL_paed_add_tab2$upper <- LDL_paed_add_reg_ethnic[["upper.random.w"]]
+LDL_paed_add_tab2$k <- LDL_paed_add_reg_ethnic[["k.w"]]
+LDL_paed_add_tab2$p_z <- LDL_paed_add_reg_ethnic[["pval.random.w"]]
+LDL_paed_add_tab2$I2 <- LDL_paed_add_reg_ethnic[["I2.w"]]
+LDL_paed_add_tab2$p_q <- LDL_paed_add_reg_ethnic[["pval.Q.w"]]
+LDL_paed_add_tab2$group <- row.names(LDL_paed_add_tab2)
+LDL_paed_add_tab2$model <- "Additive"
+LDL_paed_add_tab2$outcome <- "LDL"
+
+LDL_paed_dom_tab <- data.frame(LDL_paed_dom_reg_ethnic[["TE.random"]])
+row.names(LDL_paed_dom_tab) <- "Overall"
+LDL_paed_dom_tab$MD <- LDL_paed_dom_tab$LDL_paed_dom_reg_ethnic...TE.random...
+LDL_paed_dom_tab <- LDL_paed_dom_tab[-c(1)]
+LDL_paed_dom_tab$lower <- LDL_paed_dom_reg_ethnic[["lower.random"]]
+LDL_paed_dom_tab$upper <- LDL_paed_dom_reg_ethnic[["upper.random"]]
+LDL_paed_dom_tab$k <- LDL_paed_dom_reg_ethnic[["k"]]
+LDL_paed_dom_tab$p_z <- LDL_paed_dom_reg_ethnic[["pval.random"]]
+LDL_paed_dom_tab$I2 <- LDL_paed_dom_reg_ethnic[["I2"]]
+LDL_paed_dom_tab$p_q <- LDL_paed_dom_reg_ethnic[["pval.Q"]]
+LDL_paed_dom_tab$group <- "Overall"
+LDL_paed_dom_tab$model <- "Dominant"
+LDL_paed_dom_tab$outcome <- "LDL"
+
+LDL_paed_dom_tab2 <- data.frame(LDL_paed_dom_reg_ethnic[["TE.random.w"]])
+row.names(LDL_paed_dom_tab2) <- LDL_paed_dom_reg_ethnic[["bylevs"]]
+LDL_paed_dom_tab2$MD <- LDL_paed_dom_tab2$LDL_paed_dom_reg_ethnic...TE.random.w...
+LDL_paed_dom_tab2 <- LDL_paed_dom_tab2[-c(1)]
+LDL_paed_dom_tab2$lower <- LDL_paed_dom_reg_ethnic[["lower.random.w"]]
+LDL_paed_dom_tab2$upper <- LDL_paed_dom_reg_ethnic[["upper.random.w"]]
+LDL_paed_dom_tab2$k <- LDL_paed_dom_reg_ethnic[["k.w"]]
+LDL_paed_dom_tab2$p_z <- LDL_paed_dom_reg_ethnic[["pval.random.w"]]
+LDL_paed_dom_tab2$I2 <- LDL_paed_dom_reg_ethnic[["I2.w"]]
+LDL_paed_dom_tab2$p_q <- LDL_paed_dom_reg_ethnic[["pval.Q.w"]]
+LDL_paed_dom_tab2$group <- row.names(LDL_paed_dom_tab2)
+LDL_paed_dom_tab2$model <- "Dominant"
+LDL_paed_dom_tab2$outcome <- "LDL"
+
+LDL_paed_rec_tab <- data.frame(LDL_paed_rec_reg_ethnic[["TE.random"]])
+row.names(LDL_paed_rec_tab) <- "Overall"
+LDL_paed_rec_tab$MD <- LDL_paed_rec_tab$LDL_paed_rec_reg_ethnic...TE.random...
+LDL_paed_rec_tab <- LDL_paed_rec_tab[-c(1)]
+LDL_paed_rec_tab$lower <- LDL_paed_rec_reg_ethnic[["lower.random"]]
+LDL_paed_rec_tab$upper <- LDL_paed_rec_reg_ethnic[["upper.random"]]
+LDL_paed_rec_tab$k <- LDL_paed_rec_reg_ethnic[["k"]]
+LDL_paed_rec_tab$p_z <- LDL_paed_rec_reg_ethnic[["pval.random"]]
+LDL_paed_rec_tab$I2 <- LDL_paed_rec_reg_ethnic[["I2"]]
+LDL_paed_rec_tab$p_q <- LDL_paed_rec_reg_ethnic[["pval.Q"]]
+LDL_paed_rec_tab$group <- "Overall"
+LDL_paed_rec_tab$model <- "Recessive"
+LDL_paed_rec_tab$outcome <- "LDL"
+
+LDL_paed_rec_tab2 <- data.frame(LDL_paed_rec_reg_ethnic[["TE.random.w"]])
+row.names(LDL_paed_rec_tab2) <- LDL_paed_rec_reg_ethnic[["bylevs"]]
+LDL_paed_rec_tab2$MD <- LDL_paed_rec_tab2$LDL_paed_rec_reg_ethnic...TE.random.w...
+LDL_paed_rec_tab2 <- LDL_paed_rec_tab2[-c(1)]
+LDL_paed_rec_tab2$lower <- LDL_paed_rec_reg_ethnic[["lower.random.w"]]
+LDL_paed_rec_tab2$upper <- LDL_paed_rec_reg_ethnic[["upper.random.w"]]
+LDL_paed_rec_tab2$k <- LDL_paed_rec_reg_ethnic[["k.w"]]
+LDL_paed_rec_tab2$p_z <- LDL_paed_rec_reg_ethnic[["pval.random.w"]]
+LDL_paed_rec_tab2$I2 <- LDL_paed_rec_reg_ethnic[["I2.w"]]
+LDL_paed_rec_tab2$p_q <- LDL_paed_rec_reg_ethnic[["pval.Q.w"]]
+LDL_paed_rec_tab2$group <- row.names(LDL_paed_rec_tab2)
+LDL_paed_rec_tab2$model <- "Recessive"
+LDL_paed_rec_tab2$outcome <- "LDL"
+
+LDL_paed_sumtab <- rbind(LDL_paed_add_tab, LDL_paed_add_tab2, LDL_paed_dom_tab, LDL_paed_dom_tab2, LDL_paed_rec_tab, LDL_paed_rec_tab2)
+
+
+
+
+Insul_adult <- read_excel("Insul_adult.xlsx")
+
+Insul_adult$Insul_CCCT_num <- Insul_adult$Insul_CC_num+Insul_adult$Insul_CT_num
+Insul_adult$Insul_CCCT_mean <- ((Insul_adult$Insul_CC_mean*Insul_adult$Insul_CC_num)+(Insul_adult$Insul_CT_mean*Insul_adult$Insul_CT_num))/Insul_adult$Insul_CCCT_num
+Insul_adult$Insul_CCCT_SD <- ((Insul_adult$Insul_CC_SD*Insul_adult$Insul_CC_num)+(Insul_adult$Insul_CT_SD*Insul_adult$Insul_CT_num))/Insul_adult$Insul_CCCT_num
+Insul_adult$Insul_CTTT_num <- Insul_adult$Insul_TT_num+Insul_adult$Insul_CT_num
+Insul_adult$Insul_CTTT_mean <- ((Insul_adult$Insul_TT_mean*Insul_adult$Insul_TT_num)+(Insul_adult$Insul_CT_mean*Insul_adult$Insul_CT_num))/Insul_adult$Insul_CTTT_num
+Insul_adult$Insul_CTTT_SD <- ((Insul_adult$Insul_TT_SD*Insul_adult$Insul_TT_num)+(Insul_adult$Insul_CT_SD*Insul_adult$Insul_CT_num))/Insul_adult$Insul_CTTT_num
+
+Insul_adult_add <- read_excel("Insul_adult_add.xlsx")
+Insul_adult_add_reg <- metagen(Beta, SE, data = Insul_adult_add, studlab = Insul_adult_add$Paper, sm = "ZCOR", method.tau = "DL")
+Insul_adult_add_reg_ethnic <- update(Insul_adult_add_reg, byvar = Ethnicity, bylab = "Ethnicity")
+
+Insul_adult_rec_reg <- metacont(Insul_TT_num, Insul_TT_mean, Insul_TT_SD, Insul_CCCT_num, Insul_CCCT_mean, Insul_CCCT_SD, data = Insul_adult, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "DL", hakn = TRUE, prediction = FALSE, sm = "MD")
+Insul_adult_rec_reg_ethnic <- update(Insul_adult_rec_reg, byvar = Ethnicity, bylab = "Ethnicity")
+
+Insul_adult_dom_reg <- metacont(Insul_CTTT_num, Insul_CTTT_mean, Insul_CTTT_SD, Insul_CC_num, Insul_CC_mean, Insul_CC_SD, data = Insul_adult, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "DL", hakn = TRUE, prediction = FALSE, sm = "MD")
+Insul_adult_dom_reg_ethnic <- update(Insul_adult_dom_reg, byvar = Ethnicity, bylab = "Ethnicity")
+
+Insul_adult_add_tab <- data.frame(Insul_adult_add_reg_ethnic[["TE.random"]])
+row.names(Insul_adult_add_tab) <- "Overall"
+Insul_adult_add_tab$MD <- Insul_adult_add_tab$Insul_adult_add_reg_ethnic...TE.random...
+Insul_adult_add_tab <- Insul_adult_add_tab[-c(1)]
+Insul_adult_add_tab$lower <- Insul_adult_add_reg_ethnic[["lower.random"]]
+Insul_adult_add_tab$upper <- Insul_adult_add_reg_ethnic[["upper.random"]]
+Insul_adult_add_tab$k <- Insul_adult_add_reg_ethnic[["k"]]
+Insul_adult_add_tab$p_z <- Insul_adult_add_reg_ethnic[["pval.random"]]
+Insul_adult_add_tab$I2 <- Insul_adult_add_reg_ethnic[["I2"]]
+Insul_adult_add_tab$p_q <- Insul_adult_add_reg_ethnic[["pval.Q"]]
+Insul_adult_add_tab$group <- "Overall"
+Insul_adult_add_tab$model <- "Additive"
+Insul_adult_add_tab$outcome <- "Insul"
+
+Insul_adult_add_tab2 <- data.frame(Insul_adult_add_reg_ethnic[["TE.random.w"]])
+row.names(Insul_adult_add_tab2) <- Insul_adult_add_reg_ethnic[["bylevs"]]
+Insul_adult_add_tab2$MD <- Insul_adult_add_tab2$Insul_adult_add_reg_ethnic...TE.random.w...
+Insul_adult_add_tab2 <- Insul_adult_add_tab2[-c(1)]
+Insul_adult_add_tab2$lower <- Insul_adult_add_reg_ethnic[["lower.random.w"]]
+Insul_adult_add_tab2$upper <- Insul_adult_add_reg_ethnic[["upper.random.w"]]
+Insul_adult_add_tab2$k <- Insul_adult_add_reg_ethnic[["k.w"]]
+Insul_adult_add_tab2$p_z <- Insul_adult_add_reg_ethnic[["pval.random.w"]]
+Insul_adult_add_tab2$I2 <- Insul_adult_add_reg_ethnic[["I2.w"]]
+Insul_adult_add_tab2$p_q <- Insul_adult_add_reg_ethnic[["pval.Q.w"]]
+Insul_adult_add_tab2$group <- row.names(Insul_adult_add_tab2)
+Insul_adult_add_tab2$model <- "Additive"
+Insul_adult_add_tab2$outcome <- "Insul"
+
+Insul_adult_dom_tab <- data.frame(Insul_adult_dom_reg_ethnic[["TE.random"]])
+row.names(Insul_adult_dom_tab) <- "Overall"
+Insul_adult_dom_tab$MD <- Insul_adult_dom_tab$Insul_adult_dom_reg_ethnic...TE.random...
+Insul_adult_dom_tab <- Insul_adult_dom_tab[-c(1)]
+Insul_adult_dom_tab$lower <- Insul_adult_dom_reg_ethnic[["lower.random"]]
+Insul_adult_dom_tab$upper <- Insul_adult_dom_reg_ethnic[["upper.random"]]
+Insul_adult_dom_tab$k <- Insul_adult_dom_reg_ethnic[["k"]]
+Insul_adult_dom_tab$p_z <- Insul_adult_dom_reg_ethnic[["pval.random"]]
+Insul_adult_dom_tab$I2 <- Insul_adult_dom_reg_ethnic[["I2"]]
+Insul_adult_dom_tab$p_q <- Insul_adult_dom_reg_ethnic[["pval.Q"]]
+Insul_adult_dom_tab$group <- "Overall"
+Insul_adult_dom_tab$model <- "Dominant"
+Insul_adult_dom_tab$outcome <- "Insul"
+
+Insul_adult_dom_tab2 <- data.frame(Insul_adult_dom_reg_ethnic[["TE.random.w"]])
+row.names(Insul_adult_dom_tab2) <- Insul_adult_dom_reg_ethnic[["bylevs"]]
+Insul_adult_dom_tab2$MD <- Insul_adult_dom_tab2$Insul_adult_dom_reg_ethnic...TE.random.w...
+Insul_adult_dom_tab2 <- Insul_adult_dom_tab2[-c(1)]
+Insul_adult_dom_tab2$lower <- Insul_adult_dom_reg_ethnic[["lower.random.w"]]
+Insul_adult_dom_tab2$upper <- Insul_adult_dom_reg_ethnic[["upper.random.w"]]
+Insul_adult_dom_tab2$k <- Insul_adult_dom_reg_ethnic[["k.w"]]
+Insul_adult_dom_tab2$p_z <- Insul_adult_dom_reg_ethnic[["pval.random.w"]]
+Insul_adult_dom_tab2$I2 <- Insul_adult_dom_reg_ethnic[["I2.w"]]
+Insul_adult_dom_tab2$p_q <- Insul_adult_dom_reg_ethnic[["pval.Q.w"]]
+Insul_adult_dom_tab2$group <- row.names(Insul_adult_dom_tab2)
+Insul_adult_dom_tab2$model <- "Dominant"
+Insul_adult_dom_tab2$outcome <- "Insul"
+
+Insul_adult_rec_tab <- data.frame(Insul_adult_rec_reg_ethnic[["TE.random"]])
+row.names(Insul_adult_rec_tab) <- "Overall"
+Insul_adult_rec_tab$MD <- Insul_adult_rec_tab$Insul_adult_rec_reg_ethnic...TE.random...
+Insul_adult_rec_tab <- Insul_adult_rec_tab[-c(1)]
+Insul_adult_rec_tab$lower <- Insul_adult_rec_reg_ethnic[["lower.random"]]
+Insul_adult_rec_tab$upper <- Insul_adult_rec_reg_ethnic[["upper.random"]]
+Insul_adult_rec_tab$k <- Insul_adult_rec_reg_ethnic[["k"]]
+Insul_adult_rec_tab$p_z <- Insul_adult_rec_reg_ethnic[["pval.random"]]
+Insul_adult_rec_tab$I2 <- Insul_adult_rec_reg_ethnic[["I2"]]
+Insul_adult_rec_tab$p_q <- Insul_adult_rec_reg_ethnic[["pval.Q"]]
+Insul_adult_rec_tab$group <- "Overall"
+Insul_adult_rec_tab$model <- "Recessive"
+Insul_adult_rec_tab$outcome <- "Insul"
+
+Insul_adult_rec_tab2 <- data.frame(Insul_adult_rec_reg_ethnic[["TE.random.w"]])
+row.names(Insul_adult_rec_tab2) <- Insul_adult_rec_reg_ethnic[["bylevs"]]
+Insul_adult_rec_tab2$MD <- Insul_adult_rec_tab2$Insul_adult_rec_reg_ethnic...TE.random.w...
+Insul_adult_rec_tab2 <- Insul_adult_rec_tab2[-c(1)]
+Insul_adult_rec_tab2$lower <- Insul_adult_rec_reg_ethnic[["lower.random.w"]]
+Insul_adult_rec_tab2$upper <- Insul_adult_rec_reg_ethnic[["upper.random.w"]]
+Insul_adult_rec_tab2$k <- Insul_adult_rec_reg_ethnic[["k.w"]]
+Insul_adult_rec_tab2$p_z <- Insul_adult_rec_reg_ethnic[["pval.random.w"]]
+Insul_adult_rec_tab2$I2 <- Insul_adult_rec_reg_ethnic[["I2.w"]]
+Insul_adult_rec_tab2$p_q <- Insul_adult_rec_reg_ethnic[["pval.Q.w"]]
+Insul_adult_rec_tab2$group <- row.names(Insul_adult_rec_tab2)
+Insul_adult_rec_tab2$model <- "Recessive"
+Insul_adult_rec_tab2$outcome <- "Insul"
+
+Insul_adult_sumtab <- rbind(Insul_adult_add_tab, Insul_adult_add_tab2, Insul_adult_dom_tab, Insul_adult_dom_tab2, Insul_adult_rec_tab, Insul_adult_rec_tab2)
+
+
+
+
+Insul_paed <- read_excel("Insul_paed.xlsx")
+
+Insul_paed$Insul_CCCT_num <- Insul_paed$Insul_CC_num+Insul_paed$Insul_CT_num
+Insul_paed$Insul_CCCT_mean <- ((Insul_paed$Insul_CC_mean*Insul_paed$Insul_CC_num)+(Insul_paed$Insul_CT_mean*Insul_paed$Insul_CT_num))/Insul_paed$Insul_CCCT_num
+Insul_paed$Insul_CCCT_SD <- ((Insul_paed$Insul_CC_SD*Insul_paed$Insul_CC_num)+(Insul_paed$Insul_CT_SD*Insul_paed$Insul_CT_num))/Insul_paed$Insul_CCCT_num
+Insul_paed$Insul_CTTT_num <- Insul_paed$Insul_TT_num+Insul_paed$Insul_CT_num
+Insul_paed$Insul_CTTT_mean <- ((Insul_paed$Insul_TT_mean*Insul_paed$Insul_TT_num)+(Insul_paed$Insul_CT_mean*Insul_paed$Insul_CT_num))/Insul_paed$Insul_CTTT_num
+Insul_paed$Insul_CTTT_SD <- ((Insul_paed$Insul_TT_SD*Insul_paed$Insul_TT_num)+(Insul_paed$Insul_CT_SD*Insul_paed$Insul_CT_num))/Insul_paed$Insul_CTTT_num
+
+Insul_paed_add <- read_excel("Insul_paed_add.xlsx")
+Insul_paed_add_reg <- metagen(Beta, SE, data = Insul_paed_add, studlab = Insul_paed_add$Paper, sm = "ZCOR", method.tau = "DL")
+Insul_paed_add_reg_ethnic <- update(Insul_paed_add_reg, byvar = Ethnicity, bylab = "Ethnicity")
+
+Insul_paed_rec_reg <- metacont(Insul_TT_num, Insul_TT_mean, Insul_TT_SD, Insul_CCCT_num, Insul_CCCT_mean, Insul_CCCT_SD, data = Insul_paed, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "DL", hakn = TRUE, prediction = FALSE, sm = "MD")
+Insul_paed_rec_reg_ethnic <- update(Insul_paed_rec_reg, byvar = Ethnicity, bylab = "Ethnicity")
+
+Insul_paed_dom_reg <- metacont(Insul_CTTT_num, Insul_CTTT_mean, Insul_CTTT_SD, Insul_CC_num, Insul_CC_mean, Insul_CC_SD, data = Insul_paed, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "DL", hakn = TRUE, prediction = FALSE, sm = "MD")
+Insul_paed_dom_reg_ethnic <- update(Insul_paed_dom_reg, byvar = Ethnicity, bylab = "Ethnicity")
+
+Insul_paed_add_tab <- data.frame(Insul_paed_add_reg_ethnic[["TE.random"]])
+row.names(Insul_paed_add_tab) <- "Overall"
+Insul_paed_add_tab$MD <- Insul_paed_add_tab$Insul_paed_add_reg_ethnic...TE.random...
+Insul_paed_add_tab <- Insul_paed_add_tab[-c(1)]
+Insul_paed_add_tab$lower <- Insul_paed_add_reg_ethnic[["lower.random"]]
+Insul_paed_add_tab$upper <- Insul_paed_add_reg_ethnic[["upper.random"]]
+Insul_paed_add_tab$k <- Insul_paed_add_reg_ethnic[["k"]]
+Insul_paed_add_tab$p_z <- Insul_paed_add_reg_ethnic[["pval.random"]]
+Insul_paed_add_tab$I2 <- Insul_paed_add_reg_ethnic[["I2"]]
+Insul_paed_add_tab$p_q <- Insul_paed_add_reg_ethnic[["pval.Q"]]
+Insul_paed_add_tab$group <- "Overall"
+Insul_paed_add_tab$model <- "Additive"
+Insul_paed_add_tab$outcome <- "Insul"
+
+Insul_paed_add_tab2 <- data.frame(Insul_paed_add_reg_ethnic[["TE.random.w"]])
+row.names(Insul_paed_add_tab2) <- Insul_paed_add_reg_ethnic[["bylevs"]]
+Insul_paed_add_tab2$MD <- Insul_paed_add_tab2$Insul_paed_add_reg_ethnic...TE.random.w...
+Insul_paed_add_tab2 <- Insul_paed_add_tab2[-c(1)]
+Insul_paed_add_tab2$lower <- Insul_paed_add_reg_ethnic[["lower.random.w"]]
+Insul_paed_add_tab2$upper <- Insul_paed_add_reg_ethnic[["upper.random.w"]]
+Insul_paed_add_tab2$k <- Insul_paed_add_reg_ethnic[["k.w"]]
+Insul_paed_add_tab2$p_z <- Insul_paed_add_reg_ethnic[["pval.random.w"]]
+Insul_paed_add_tab2$I2 <- Insul_paed_add_reg_ethnic[["I2.w"]]
+Insul_paed_add_tab2$p_q <- Insul_paed_add_reg_ethnic[["pval.Q.w"]]
+Insul_paed_add_tab2$group <- row.names(Insul_paed_add_tab2)
+Insul_paed_add_tab2$model <- "Additive"
+Insul_paed_add_tab2$outcome <- "Insul"
+
+Insul_paed_dom_tab <- data.frame(Insul_paed_dom_reg_ethnic[["TE.random"]])
+row.names(Insul_paed_dom_tab) <- "Overall"
+Insul_paed_dom_tab$MD <- Insul_paed_dom_tab$Insul_paed_dom_reg_ethnic...TE.random...
+Insul_paed_dom_tab <- Insul_paed_dom_tab[-c(1)]
+Insul_paed_dom_tab$lower <- Insul_paed_dom_reg_ethnic[["lower.random"]]
+Insul_paed_dom_tab$upper <- Insul_paed_dom_reg_ethnic[["upper.random"]]
+Insul_paed_dom_tab$k <- Insul_paed_dom_reg_ethnic[["k"]]
+Insul_paed_dom_tab$p_z <- Insul_paed_dom_reg_ethnic[["pval.random"]]
+Insul_paed_dom_tab$I2 <- Insul_paed_dom_reg_ethnic[["I2"]]
+Insul_paed_dom_tab$p_q <- Insul_paed_dom_reg_ethnic[["pval.Q"]]
+Insul_paed_dom_tab$group <- "Overall"
+Insul_paed_dom_tab$model <- "Dominant"
+Insul_paed_dom_tab$outcome <- "Insul"
+
+Insul_paed_dom_tab2 <- data.frame(Insul_paed_dom_reg_ethnic[["TE.random.w"]])
+row.names(Insul_paed_dom_tab2) <- Insul_paed_dom_reg_ethnic[["bylevs"]]
+Insul_paed_dom_tab2$MD <- Insul_paed_dom_tab2$Insul_paed_dom_reg_ethnic...TE.random.w...
+Insul_paed_dom_tab2 <- Insul_paed_dom_tab2[-c(1)]
+Insul_paed_dom_tab2$lower <- Insul_paed_dom_reg_ethnic[["lower.random.w"]]
+Insul_paed_dom_tab2$upper <- Insul_paed_dom_reg_ethnic[["upper.random.w"]]
+Insul_paed_dom_tab2$k <- Insul_paed_dom_reg_ethnic[["k.w"]]
+Insul_paed_dom_tab2$p_z <- Insul_paed_dom_reg_ethnic[["pval.random.w"]]
+Insul_paed_dom_tab2$I2 <- Insul_paed_dom_reg_ethnic[["I2.w"]]
+Insul_paed_dom_tab2$p_q <- Insul_paed_dom_reg_ethnic[["pval.Q.w"]]
+Insul_paed_dom_tab2$group <- row.names(Insul_paed_dom_tab2)
+Insul_paed_dom_tab2$model <- "Dominant"
+Insul_paed_dom_tab2$outcome <- "Insul"
+
+Insul_paed_rec_tab <- data.frame(Insul_paed_rec_reg_ethnic[["TE.random"]])
+row.names(Insul_paed_rec_tab) <- "Overall"
+Insul_paed_rec_tab$MD <- Insul_paed_rec_tab$Insul_paed_rec_reg_ethnic...TE.random...
+Insul_paed_rec_tab <- Insul_paed_rec_tab[-c(1)]
+Insul_paed_rec_tab$lower <- Insul_paed_rec_reg_ethnic[["lower.random"]]
+Insul_paed_rec_tab$upper <- Insul_paed_rec_reg_ethnic[["upper.random"]]
+Insul_paed_rec_tab$k <- Insul_paed_rec_reg_ethnic[["k"]]
+Insul_paed_rec_tab$p_z <- Insul_paed_rec_reg_ethnic[["pval.random"]]
+Insul_paed_rec_tab$I2 <- Insul_paed_rec_reg_ethnic[["I2"]]
+Insul_paed_rec_tab$p_q <- Insul_paed_rec_reg_ethnic[["pval.Q"]]
+Insul_paed_rec_tab$group <- "Overall"
+Insul_paed_rec_tab$model <- "Recessive"
+Insul_paed_rec_tab$outcome <- "Insul"
+
+Insul_paed_rec_tab2 <- data.frame(Insul_paed_rec_reg_ethnic[["TE.random.w"]])
+row.names(Insul_paed_rec_tab2) <- Insul_paed_rec_reg_ethnic[["bylevs"]]
+Insul_paed_rec_tab2$MD <- Insul_paed_rec_tab2$Insul_paed_rec_reg_ethnic...TE.random.w...
+Insul_paed_rec_tab2 <- Insul_paed_rec_tab2[-c(1)]
+Insul_paed_rec_tab2$lower <- Insul_paed_rec_reg_ethnic[["lower.random.w"]]
+Insul_paed_rec_tab2$upper <- Insul_paed_rec_reg_ethnic[["upper.random.w"]]
+Insul_paed_rec_tab2$k <- Insul_paed_rec_reg_ethnic[["k.w"]]
+Insul_paed_rec_tab2$p_z <- Insul_paed_rec_reg_ethnic[["pval.random.w"]]
+Insul_paed_rec_tab2$I2 <- Insul_paed_rec_reg_ethnic[["I2.w"]]
+Insul_paed_rec_tab2$p_q <- Insul_paed_rec_reg_ethnic[["pval.Q.w"]]
+Insul_paed_rec_tab2$group <- row.names(Insul_paed_rec_tab2)
+Insul_paed_rec_tab2$model <- "Recessive"
+Insul_paed_rec_tab2$outcome <- "Insul"
+
+Insul_paed_sumtab <- rbind(Insul_paed_add_tab, Insul_paed_add_tab2, Insul_paed_dom_tab, Insul_paed_dom_tab2, Insul_paed_rec_tab, Insul_paed_rec_tab2)
+
+
+
+
+TG_adult <- read_excel("TG_adult.xlsx")
+
+TG_adult$TG_CCCT_num <- TG_adult$TG_CC_num+TG_adult$TG_CT_num
+TG_adult$TG_CCCT_mean <- ((TG_adult$TG_CC_mean*TG_adult$TG_CC_num)+(TG_adult$TG_CT_mean*TG_adult$TG_CT_num))/TG_adult$TG_CCCT_num
+TG_adult$TG_CCCT_SD <- ((TG_adult$TG_CC_SD*TG_adult$TG_CC_num)+(TG_adult$TG_CT_SD*TG_adult$TG_CT_num))/TG_adult$TG_CCCT_num
+TG_adult$TG_CTTT_num <- TG_adult$TG_TT_num+TG_adult$TG_CT_num
+TG_adult$TG_CTTT_mean <- ((TG_adult$TG_TT_mean*TG_adult$TG_TT_num)+(TG_adult$TG_CT_mean*TG_adult$TG_CT_num))/TG_adult$TG_CTTT_num
+TG_adult$TG_CTTT_SD <- ((TG_adult$TG_TT_SD*TG_adult$TG_TT_num)+(TG_adult$TG_CT_SD*TG_adult$TG_CT_num))/TG_adult$TG_CTTT_num
+
+TG_adult_add <- read_excel("TG_adult_add.xlsx")
+TG_adult_add_reg <- metagen(Beta, SE, data = TG_adult_add, studlab = TG_adult_add$Paper, sm = "ZCOR", method.tau = "DL")
+TG_adult_add_reg_ethnic <- update(TG_adult_add_reg, byvar = Ethnicity, bylab = "Ethnicity")
+
+TG_adult_rec_reg <- metacont(TG_TT_num, TG_TT_mean, TG_TT_SD, TG_CCCT_num, TG_CCCT_mean, TG_CCCT_SD, data = TG_adult, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "DL", hakn = TRUE, prediction = FALSE, sm = "MD")
+TG_adult_rec_reg_ethnic <- update(TG_adult_rec_reg, byvar = Ethnicity, bylab = "Ethnicity")
+
+TG_adult_dom_reg <- metacont(TG_CTTT_num, TG_CTTT_mean, TG_CTTT_SD, TG_CC_num, TG_CC_mean, TG_CC_SD, data = TG_adult, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "DL", hakn = TRUE, prediction = FALSE, sm = "MD")
+TG_adult_dom_reg_ethnic <- update(TG_adult_dom_reg, byvar = Ethnicity, bylab = "Ethnicity")
+
+TG_adult_add_tab <- data.frame(TG_adult_add_reg_ethnic[["TE.random"]])
+row.names(TG_adult_add_tab) <- "Overall"
+TG_adult_add_tab$MD <- TG_adult_add_tab$TG_adult_add_reg_ethnic...TE.random...
+TG_adult_add_tab <- TG_adult_add_tab[-c(1)]
+TG_adult_add_tab$lower <- TG_adult_add_reg_ethnic[["lower.random"]]
+TG_adult_add_tab$upper <- TG_adult_add_reg_ethnic[["upper.random"]]
+TG_adult_add_tab$k <- TG_adult_add_reg_ethnic[["k"]]
+TG_adult_add_tab$p_z <- TG_adult_add_reg_ethnic[["pval.random"]]
+TG_adult_add_tab$I2 <- TG_adult_add_reg_ethnic[["I2"]]
+TG_adult_add_tab$p_q <- TG_adult_add_reg_ethnic[["pval.Q"]]
+TG_adult_add_tab$group <- "Overall"
+TG_adult_add_tab$model <- "Additive"
+TG_adult_add_tab$outcome <- "TG"
+
+TG_adult_add_tab2 <- data.frame(TG_adult_add_reg_ethnic[["TE.random.w"]])
+row.names(TG_adult_add_tab2) <- TG_adult_add_reg_ethnic[["bylevs"]]
+TG_adult_add_tab2$MD <- TG_adult_add_tab2$TG_adult_add_reg_ethnic...TE.random.w...
+TG_adult_add_tab2 <- TG_adult_add_tab2[-c(1)]
+TG_adult_add_tab2$lower <- TG_adult_add_reg_ethnic[["lower.random.w"]]
+TG_adult_add_tab2$upper <- TG_adult_add_reg_ethnic[["upper.random.w"]]
+TG_adult_add_tab2$k <- TG_adult_add_reg_ethnic[["k.w"]]
+TG_adult_add_tab2$p_z <- TG_adult_add_reg_ethnic[["pval.random.w"]]
+TG_adult_add_tab2$I2 <- TG_adult_add_reg_ethnic[["I2.w"]]
+TG_adult_add_tab2$p_q <- TG_adult_add_reg_ethnic[["pval.Q.w"]]
+TG_adult_add_tab2$group <- row.names(TG_adult_add_tab2)
+TG_adult_add_tab2$model <- "Additive"
+TG_adult_add_tab2$outcome <- "TG"
+
+TG_adult_dom_tab <- data.frame(TG_adult_dom_reg_ethnic[["TE.random"]])
+row.names(TG_adult_dom_tab) <- "Overall"
+TG_adult_dom_tab$MD <- TG_adult_dom_tab$TG_adult_dom_reg_ethnic...TE.random...
+TG_adult_dom_tab <- TG_adult_dom_tab[-c(1)]
+TG_adult_dom_tab$lower <- TG_adult_dom_reg_ethnic[["lower.random"]]
+TG_adult_dom_tab$upper <- TG_adult_dom_reg_ethnic[["upper.random"]]
+TG_adult_dom_tab$k <- TG_adult_dom_reg_ethnic[["k"]]
+TG_adult_dom_tab$p_z <- TG_adult_dom_reg_ethnic[["pval.random"]]
+TG_adult_dom_tab$I2 <- TG_adult_dom_reg_ethnic[["I2"]]
+TG_adult_dom_tab$p_q <- TG_adult_dom_reg_ethnic[["pval.Q"]]
+TG_adult_dom_tab$group <- "Overall"
+TG_adult_dom_tab$model <- "Dominant"
+TG_adult_dom_tab$outcome <- "TG"
+
+TG_adult_dom_tab2 <- data.frame(TG_adult_dom_reg_ethnic[["TE.random.w"]])
+row.names(TG_adult_dom_tab2) <- TG_adult_dom_reg_ethnic[["bylevs"]]
+TG_adult_dom_tab2$MD <- TG_adult_dom_tab2$TG_adult_dom_reg_ethnic...TE.random.w...
+TG_adult_dom_tab2 <- TG_adult_dom_tab2[-c(1)]
+TG_adult_dom_tab2$lower <- TG_adult_dom_reg_ethnic[["lower.random.w"]]
+TG_adult_dom_tab2$upper <- TG_adult_dom_reg_ethnic[["upper.random.w"]]
+TG_adult_dom_tab2$k <- TG_adult_dom_reg_ethnic[["k.w"]]
+TG_adult_dom_tab2$p_z <- TG_adult_dom_reg_ethnic[["pval.random.w"]]
+TG_adult_dom_tab2$I2 <- TG_adult_dom_reg_ethnic[["I2.w"]]
+TG_adult_dom_tab2$p_q <- TG_adult_dom_reg_ethnic[["pval.Q.w"]]
+TG_adult_dom_tab2$group <- row.names(TG_adult_dom_tab2)
+TG_adult_dom_tab2$model <- "Dominant"
+TG_adult_dom_tab2$outcome <- "TG"
+
+TG_adult_rec_tab <- data.frame(TG_adult_rec_reg_ethnic[["TE.random"]])
+row.names(TG_adult_rec_tab) <- "Overall"
+TG_adult_rec_tab$MD <- TG_adult_rec_tab$TG_adult_rec_reg_ethnic...TE.random...
+TG_adult_rec_tab <- TG_adult_rec_tab[-c(1)]
+TG_adult_rec_tab$lower <- TG_adult_rec_reg_ethnic[["lower.random"]]
+TG_adult_rec_tab$upper <- TG_adult_rec_reg_ethnic[["upper.random"]]
+TG_adult_rec_tab$k <- TG_adult_rec_reg_ethnic[["k"]]
+TG_adult_rec_tab$p_z <- TG_adult_rec_reg_ethnic[["pval.random"]]
+TG_adult_rec_tab$I2 <- TG_adult_rec_reg_ethnic[["I2"]]
+TG_adult_rec_tab$p_q <- TG_adult_rec_reg_ethnic[["pval.Q"]]
+TG_adult_rec_tab$group <- "Overall"
+TG_adult_rec_tab$model <- "Recessive"
+TG_adult_rec_tab$outcome <- "TG"
+
+TG_adult_rec_tab2 <- data.frame(TG_adult_rec_reg_ethnic[["TE.random.w"]])
+row.names(TG_adult_rec_tab2) <- TG_adult_rec_reg_ethnic[["bylevs"]]
+TG_adult_rec_tab2$MD <- TG_adult_rec_tab2$TG_adult_rec_reg_ethnic...TE.random.w...
+TG_adult_rec_tab2 <- TG_adult_rec_tab2[-c(1)]
+TG_adult_rec_tab2$lower <- TG_adult_rec_reg_ethnic[["lower.random.w"]]
+TG_adult_rec_tab2$upper <- TG_adult_rec_reg_ethnic[["upper.random.w"]]
+TG_adult_rec_tab2$k <- TG_adult_rec_reg_ethnic[["k.w"]]
+TG_adult_rec_tab2$p_z <- TG_adult_rec_reg_ethnic[["pval.random.w"]]
+TG_adult_rec_tab2$I2 <- TG_adult_rec_reg_ethnic[["I2.w"]]
+TG_adult_rec_tab2$p_q <- TG_adult_rec_reg_ethnic[["pval.Q.w"]]
+TG_adult_rec_tab2$group <- row.names(TG_adult_rec_tab2)
+TG_adult_rec_tab2$model <- "Recessive"
+TG_adult_rec_tab2$outcome <- "TG"
+
+TG_adult_sumtab <- rbind(TG_adult_add_tab, TG_adult_add_tab2, TG_adult_dom_tab, TG_adult_dom_tab2, TG_adult_rec_tab, TG_adult_rec_tab2)
+
+
+
+
+TG_paed <- read_excel("TG_paed.xlsx")
+
+TG_paed$TG_CCCT_num <- TG_paed$TG_CC_num+TG_paed$TG_CT_num
+TG_paed$TG_CCCT_mean <- ((TG_paed$TG_CC_mean*TG_paed$TG_CC_num)+(TG_paed$TG_CT_mean*TG_paed$TG_CT_num))/TG_paed$TG_CCCT_num
+TG_paed$TG_CCCT_SD <- ((TG_paed$TG_CC_SD*TG_paed$TG_CC_num)+(TG_paed$TG_CT_SD*TG_paed$TG_CT_num))/TG_paed$TG_CCCT_num
+TG_paed$TG_CTTT_num <- TG_paed$TG_TT_num+TG_paed$TG_CT_num
+TG_paed$TG_CTTT_mean <- ((TG_paed$TG_TT_mean*TG_paed$TG_TT_num)+(TG_paed$TG_CT_mean*TG_paed$TG_CT_num))/TG_paed$TG_CTTT_num
+TG_paed$TG_CTTT_SD <- ((TG_paed$TG_TT_SD*TG_paed$TG_TT_num)+(TG_paed$TG_CT_SD*TG_paed$TG_CT_num))/TG_paed$TG_CTTT_num
+
+TG_paed_add <- read_excel("TG_paed_add.xlsx")
+TG_paed_add_reg <- metagen(Beta, SE, data = TG_paed_add, studlab = TG_paed_add$Paper, sm = "ZCOR", method.tau = "DL")
+TG_paed_add_reg_ethnic <- update(TG_paed_add_reg, byvar = Ethnicity, bylab = "Ethnicity")
+
+TG_paed_rec_reg <- metacont(TG_TT_num, TG_TT_mean, TG_TT_SD, TG_CCCT_num, TG_CCCT_mean, TG_CCCT_SD, data = TG_paed, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "DL", hakn = TRUE, prediction = FALSE, sm = "MD")
+TG_paed_rec_reg_ethnic <- update(TG_paed_rec_reg, byvar = Ethnicity, bylab = "Ethnicity")
+
+TG_paed_dom_reg <- metacont(TG_CTTT_num, TG_CTTT_mean, TG_CTTT_SD, TG_CC_num, TG_CC_mean, TG_CC_SD, data = TG_paed, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "DL", hakn = TRUE, prediction = FALSE, sm = "MD")
+TG_paed_dom_reg_ethnic <- update(TG_paed_dom_reg, byvar = Ethnicity, bylab = "Ethnicity")
+
+TG_paed_add_tab <- data.frame(TG_paed_add_reg_ethnic[["TE.random"]])
+row.names(TG_paed_add_tab) <- "Overall"
+TG_paed_add_tab$MD <- TG_paed_add_tab$TG_paed_add_reg_ethnic...TE.random...
+TG_paed_add_tab <- TG_paed_add_tab[-c(1)]
+TG_paed_add_tab$lower <- TG_paed_add_reg_ethnic[["lower.random"]]
+TG_paed_add_tab$upper <- TG_paed_add_reg_ethnic[["upper.random"]]
+TG_paed_add_tab$k <- TG_paed_add_reg_ethnic[["k"]]
+TG_paed_add_tab$p_z <- TG_paed_add_reg_ethnic[["pval.random"]]
+TG_paed_add_tab$I2 <- TG_paed_add_reg_ethnic[["I2"]]
+TG_paed_add_tab$p_q <- TG_paed_add_reg_ethnic[["pval.Q"]]
+TG_paed_add_tab$group <- "Overall"
+TG_paed_add_tab$model <- "Additive"
+TG_paed_add_tab$outcome <- "TG"
+
+TG_paed_add_tab2 <- data.frame(TG_paed_add_reg_ethnic[["TE.random.w"]])
+row.names(TG_paed_add_tab2) <- TG_paed_add_reg_ethnic[["bylevs"]]
+TG_paed_add_tab2$MD <- TG_paed_add_tab2$TG_paed_add_reg_ethnic...TE.random.w...
+TG_paed_add_tab2 <- TG_paed_add_tab2[-c(1)]
+TG_paed_add_tab2$lower <- TG_paed_add_reg_ethnic[["lower.random.w"]]
+TG_paed_add_tab2$upper <- TG_paed_add_reg_ethnic[["upper.random.w"]]
+TG_paed_add_tab2$k <- TG_paed_add_reg_ethnic[["k.w"]]
+TG_paed_add_tab2$p_z <- TG_paed_add_reg_ethnic[["pval.random.w"]]
+TG_paed_add_tab2$I2 <- TG_paed_add_reg_ethnic[["I2.w"]]
+TG_paed_add_tab2$p_q <- TG_paed_add_reg_ethnic[["pval.Q.w"]]
+TG_paed_add_tab2$group <- row.names(TG_paed_add_tab2)
+TG_paed_add_tab2$model <- "Additive"
+TG_paed_add_tab2$outcome <- "TG"
+
+TG_paed_dom_tab <- data.frame(TG_paed_dom_reg_ethnic[["TE.random"]])
+row.names(TG_paed_dom_tab) <- "Overall"
+TG_paed_dom_tab$MD <- TG_paed_dom_tab$TG_paed_dom_reg_ethnic...TE.random...
+TG_paed_dom_tab <- TG_paed_dom_tab[-c(1)]
+TG_paed_dom_tab$lower <- TG_paed_dom_reg_ethnic[["lower.random"]]
+TG_paed_dom_tab$upper <- TG_paed_dom_reg_ethnic[["upper.random"]]
+TG_paed_dom_tab$k <- TG_paed_dom_reg_ethnic[["k"]]
+TG_paed_dom_tab$p_z <- TG_paed_dom_reg_ethnic[["pval.random"]]
+TG_paed_dom_tab$I2 <- TG_paed_dom_reg_ethnic[["I2"]]
+TG_paed_dom_tab$p_q <- TG_paed_dom_reg_ethnic[["pval.Q"]]
+TG_paed_dom_tab$group <- "Overall"
+TG_paed_dom_tab$model <- "Dominant"
+TG_paed_dom_tab$outcome <- "TG"
+
+TG_paed_dom_tab2 <- data.frame(TG_paed_dom_reg_ethnic[["TE.random.w"]])
+row.names(TG_paed_dom_tab2) <- TG_paed_dom_reg_ethnic[["bylevs"]]
+TG_paed_dom_tab2$MD <- TG_paed_dom_tab2$TG_paed_dom_reg_ethnic...TE.random.w...
+TG_paed_dom_tab2 <- TG_paed_dom_tab2[-c(1)]
+TG_paed_dom_tab2$lower <- TG_paed_dom_reg_ethnic[["lower.random.w"]]
+TG_paed_dom_tab2$upper <- TG_paed_dom_reg_ethnic[["upper.random.w"]]
+TG_paed_dom_tab2$k <- TG_paed_dom_reg_ethnic[["k.w"]]
+TG_paed_dom_tab2$p_z <- TG_paed_dom_reg_ethnic[["pval.random.w"]]
+TG_paed_dom_tab2$I2 <- TG_paed_dom_reg_ethnic[["I2.w"]]
+TG_paed_dom_tab2$p_q <- TG_paed_dom_reg_ethnic[["pval.Q.w"]]
+TG_paed_dom_tab2$group <- row.names(TG_paed_dom_tab2)
+TG_paed_dom_tab2$model <- "Dominant"
+TG_paed_dom_tab2$outcome <- "TG"
+
+TG_paed_rec_tab <- data.frame(TG_paed_rec_reg_ethnic[["TE.random"]])
+row.names(TG_paed_rec_tab) <- "Overall"
+TG_paed_rec_tab$MD <- TG_paed_rec_tab$TG_paed_rec_reg_ethnic...TE.random...
+TG_paed_rec_tab <- TG_paed_rec_tab[-c(1)]
+TG_paed_rec_tab$lower <- TG_paed_rec_reg_ethnic[["lower.random"]]
+TG_paed_rec_tab$upper <- TG_paed_rec_reg_ethnic[["upper.random"]]
+TG_paed_rec_tab$k <- TG_paed_rec_reg_ethnic[["k"]]
+TG_paed_rec_tab$p_z <- TG_paed_rec_reg_ethnic[["pval.random"]]
+TG_paed_rec_tab$I2 <- TG_paed_rec_reg_ethnic[["I2"]]
+TG_paed_rec_tab$p_q <- TG_paed_rec_reg_ethnic[["pval.Q"]]
+TG_paed_rec_tab$group <- "Overall"
+TG_paed_rec_tab$model <- "Recessive"
+TG_paed_rec_tab$outcome <- "TG"
+
+TG_paed_rec_tab2 <- data.frame(TG_paed_rec_reg_ethnic[["TE.random.w"]])
+row.names(TG_paed_rec_tab2) <- TG_paed_rec_reg_ethnic[["bylevs"]]
+TG_paed_rec_tab2$MD <- TG_paed_rec_tab2$TG_paed_rec_reg_ethnic...TE.random.w...
+TG_paed_rec_tab2 <- TG_paed_rec_tab2[-c(1)]
+TG_paed_rec_tab2$lower <- TG_paed_rec_reg_ethnic[["lower.random.w"]]
+TG_paed_rec_tab2$upper <- TG_paed_rec_reg_ethnic[["upper.random.w"]]
+TG_paed_rec_tab2$k <- TG_paed_rec_reg_ethnic[["k.w"]]
+TG_paed_rec_tab2$p_z <- TG_paed_rec_reg_ethnic[["pval.random.w"]]
+TG_paed_rec_tab2$I2 <- TG_paed_rec_reg_ethnic[["I2.w"]]
+TG_paed_rec_tab2$p_q <- TG_paed_rec_reg_ethnic[["pval.Q.w"]]
+TG_paed_rec_tab2$group <- row.names(TG_paed_rec_tab2)
+TG_paed_rec_tab2$model <- "Recessive"
+TG_paed_rec_tab2$outcome <- "TG"
+
+TG_paed_sumtab <- rbind(TG_paed_add_tab, TG_paed_add_tab2, TG_paed_dom_tab, TG_paed_dom_tab2, TG_paed_rec_tab, TG_paed_rec_tab2)
+
+Biochem_paed_sumtab <- rbind(TG_paed_sumtab, ALT_paed_sumtab, HDL_paed_sumtab, LDL_paed_sumtab, Insul_paed_sumtab, Chol_paed_sumtab)
+write.table(Biochem_paed_sumtab, file="Biochem_paed_sumtab.csv",sep=",")
+
+Biochem_adult_sumtab <- rbind(TG_adult_sumtab, ALT_adult_sumtab, HDL_adult_sumtab, LDL_adult_sumtab, Insul_adult_sumtab, Chol_adult_sumtab)
+write.table(Biochem_adult_sumtab, file="Biochem_adult_sumtab.csv",sep=",")
+
+
+
+
