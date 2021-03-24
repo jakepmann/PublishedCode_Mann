@@ -1,3 +1,7 @@
+## code for the paper: https://doi.org/10.7554/elife.56573
+
+## code to be run in R
+
 ## installations
 install.packages("tidyverse")
 install.packages("meta")
@@ -167,7 +171,8 @@ TG_class_droplist <- TG_class_less3$Drug_Class_new_1_all
 TG_data_min3class <- TG_data %>% filter(!Drug_Class_new_1_all %in% TG_class_droplist)
 
 
-## run metanTG_metan_class_main <- metacont(TG_Int_size, TG_Int_Mean, TG_Int_SD, TG_Pla_size, TG_Pla_Mean, TG_Pla_SD, data = TG_data_min3class, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "SJ", hakn = TRUE, prediction = TRUE, sm = "MD")
+## run metan
+TG_metan_class_main <- metacont(TG_Int_size, TG_Int_Mean, TG_Int_SD, TG_Pla_size, TG_Pla_Mean, TG_Pla_SD, data = TG_data_min3class, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "SJ", hakn = TRUE, prediction = TRUE, sm = "MD")
 
 TG_metan_class <- update(TG_metan_class_main, byvar = Drug_Class_new_1_all, bylab = "Drug Class")
 
@@ -314,7 +319,8 @@ TG_NoOutlier_class_droplist <- TG_NoOutlier_class_less3$Drug_Class_new_1_all
 TG_NoOutlier_data_min3class <- TG_NoOutlier_data %>% filter(!Drug_Class_new_1_all %in% TG_NoOutlier_class_droplist)
 
 
-## run metanTG_NoOutlier_metan_class_main <- metacont(TG_Int_size, TG_Int_Mean, TG_Int_SD, TG_Pla_size, TG_Pla_Mean, TG_Pla_SD, data = TG_NoOutlier_data_min3class, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "SJ", hakn = TRUE, prediction = TRUE, sm = "MD")
+## run metan
+TG_NoOutlier_metan_class_main <- metacont(TG_Int_size, TG_Int_Mean, TG_Int_SD, TG_Pla_size, TG_Pla_Mean, TG_Pla_SD, data = TG_NoOutlier_data_min3class, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "SJ", hakn = TRUE, prediction = TRUE, sm = "MD")
 
 TG_NoOutlier_metan_class <- update(TG_NoOutlier_metan_class_main, byvar = Drug_Class_new_1_all, bylab = "Drug Class")
 
@@ -414,7 +420,8 @@ TG_drugIndiv_droplist <- TG_drugIndiv_less3$Indiv_drug_class_3
 TG_data_min3drug <- TG_data %>% filter(!Indiv_drug_class_3 %in% TG_drugIndiv_droplist)
 
 
-## run metanTG_metan_drugIndiv <- metacont(TG_Int_size, TG_Int_Mean, TG_Int_SD, TG_Pla_size, TG_Pla_Mean, TG_Pla_SD, data = TG_data_min3drug, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "SJ", hakn = TRUE, prediction = TRUE, sm = "MD")
+## run metan
+TG_metan_drugIndiv <- metacont(TG_Int_size, TG_Int_Mean, TG_Int_SD, TG_Pla_size, TG_Pla_Mean, TG_Pla_SD, data = TG_data_min3drug, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "SJ", hakn = TRUE, prediction = TRUE, sm = "MD")
 
 TG_metan_drugIndiv <- update(TG_metan_drugIndiv, byvar = Indiv_drug_class_3, bylab = "Drug")
 
@@ -1254,7 +1261,8 @@ Stea_class_droplist <- Stea_class_less3$Drug_Class_new_1_all
 Stea_data_min3class <- Stea_data %>% filter(!Drug_Class_new_1_all %in% Stea_class_droplist)
 
 
-## run metanStea_metan_class_main <- metacont(Stea_Int_size, Stea_Int_Mean, Stea_Int_SD, Stea_Pla_size, Stea_Pla_Mean, Stea_Pla_SD, data = Stea_data_min3class, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "SJ", hakn = TRUE, prediction = TRUE, sm = "MD")
+## run metan
+Stea_metan_class_main <- metacont(Stea_Int_size, Stea_Int_Mean, Stea_Int_SD, Stea_Pla_size, Stea_Pla_Mean, Stea_Pla_SD, data = Stea_data_min3class, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "SJ", hakn = TRUE, prediction = TRUE, sm = "MD")
 
 Stea_metan_class <- update(Stea_metan_class_main, byvar = Drug_Class_new_1_all, bylab = "Drug Class")
 
@@ -1405,7 +1413,8 @@ Stea_NoOutlier_class_droplist <- Stea_NoOutlier_class_less3$Drug_Class_new_1_all
 Stea_NoOutlier_data_min3class <- Stea_NoOutlier_data %>% filter(!Drug_Class_new_1_all %in% Stea_NoOutlier_class_droplist)
 
 
-## run metanStea_NoOutlier_metan_class_main <- metacont(Stea_Int_size, Stea_Int_Mean, Stea_Int_SD, Stea_Pla_size, Stea_Pla_Mean, Stea_Pla_SD, data = Stea_NoOutlier_data_min3class, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "SJ", hakn = TRUE, prediction = TRUE, sm = "MD")
+## run metan
+Stea_NoOutlier_metan_class_main <- metacont(Stea_Int_size, Stea_Int_Mean, Stea_Int_SD, Stea_Pla_size, Stea_Pla_Mean, Stea_Pla_SD, data = Stea_NoOutlier_data_min3class, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "SJ", hakn = TRUE, prediction = TRUE, sm = "MD")
 
 Stea_NoOutlier_metan_class <- update(Stea_NoOutlier_metan_class_main, byvar = Drug_Class_new_1_all, bylab = "Drug Class")
 
@@ -1507,7 +1516,8 @@ Stea_drugIndiv_droplist <- Stea_drugIndiv_less3$Indiv_drug_class_3
 Stea_data_min3drug <- Stea_data %>% filter(!Indiv_drug_class_3 %in% Stea_drugIndiv_droplist)
 
 
-## run metanStea_metan_drugIndiv <- metacont(Stea_Int_size, Stea_Int_Mean, Stea_Int_SD, Stea_Pla_size, Stea_Pla_Mean, Stea_Pla_SD, data = Stea_data_min3drug, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "SJ", hakn = TRUE, prediction = TRUE, sm = "MD")
+## run metan
+Stea_metan_drugIndiv <- metacont(Stea_Int_size, Stea_Int_Mean, Stea_Int_SD, Stea_Pla_size, Stea_Pla_Mean, Stea_Pla_SD, data = Stea_data_min3drug, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "SJ", hakn = TRUE, prediction = TRUE, sm = "MD")
 
 Stea_metan_drugIndiv <- update(Stea_metan_drugIndiv, byvar = Indiv_drug_class_3, bylab = "Drug")
 
@@ -2230,7 +2240,8 @@ LobIn_class_droplist <- LobIn_class_less3$Drug_Class_new_1_all
 LobIn_data_min3class <- LobIn_data %>% filter(!Drug_Class_new_1_all %in% LobIn_class_droplist)
 
 
-## run metanLobIn_metan_class_main <- metacont(LobIn_Int_size, LobIn_Int_Mean, LobIn_Int_SD, LobIn_Pla_size, LobIn_Pla_Mean, LobIn_Pla_SD, data = LobIn_data_min3class, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "SJ", hakn = TRUE, prediction = TRUE, sm = "MD")
+## run metan
+LobIn_metan_class_main <- metacont(LobIn_Int_size, LobIn_Int_Mean, LobIn_Int_SD, LobIn_Pla_size, LobIn_Pla_Mean, LobIn_Pla_SD, data = LobIn_data_min3class, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "SJ", hakn = TRUE, prediction = TRUE, sm = "MD")
 
 LobIn_metan_class <- update(LobIn_metan_class_main, byvar = Drug_Class_new_1_all, bylab = "Drug Class")
 
@@ -2380,7 +2391,8 @@ LobIn_NoOutlier_class_droplist <- LobIn_NoOutlier_class_less3$Drug_Class_new_1_a
 LobIn_NoOutlier_data_min3class <- LobIn_NoOutlier_data %>% filter(!Drug_Class_new_1_all %in% LobIn_NoOutlier_class_droplist)
 
 
-## run metanLobIn_NoOutlier_metan_class_main <- metacont(LobIn_Int_size, LobIn_Int_Mean, LobIn_Int_SD, LobIn_Pla_size, LobIn_Pla_Mean, LobIn_Pla_SD, data = LobIn_NoOutlier_data_min3class, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "SJ", hakn = TRUE, prediction = TRUE, sm = "MD")
+## run metan
+LobIn_NoOutlier_metan_class_main <- metacont(LobIn_Int_size, LobIn_Int_Mean, LobIn_Int_SD, LobIn_Pla_size, LobIn_Pla_Mean, LobIn_Pla_SD, data = LobIn_NoOutlier_data_min3class, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "SJ", hakn = TRUE, prediction = TRUE, sm = "MD")
 
 LobIn_NoOutlier_metan_class <- update(LobIn_NoOutlier_metan_class_main, byvar = Drug_Class_new_1_all, bylab = "Drug Class")
 
@@ -2480,7 +2492,8 @@ LobIn_drugIndiv_droplist <- LobIn_drugIndiv_less3$Indiv_drug_class_3
 LobIn_data_min3drug <- LobIn_data %>% filter(!Indiv_drug_class_3 %in% LobIn_drugIndiv_droplist)
 
 
-## run metanLobIn_metan_drugIndiv <- metacont(LobIn_Int_size, LobIn_Int_Mean, LobIn_Int_SD, LobIn_Pla_size, LobIn_Pla_Mean, LobIn_Pla_SD, data = LobIn_data_min3drug, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "SJ", hakn = TRUE, prediction = TRUE, sm = "MD")
+## run metan
+LobIn_metan_drugIndiv <- metacont(LobIn_Int_size, LobIn_Int_Mean, LobIn_Int_SD, LobIn_Pla_size, LobIn_Pla_Mean, LobIn_Pla_SD, data = LobIn_data_min3drug, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "SJ", hakn = TRUE, prediction = TRUE, sm = "MD")
 
 LobIn_metan_drugIndiv <- update(LobIn_metan_drugIndiv, byvar = Indiv_drug_class_3, bylab = "Drug")
 
@@ -3123,7 +3136,8 @@ Bal_class_droplist <- Bal_class_less3$Drug_Class_new_1_all
 Bal_data_min3class <- Bal_data %>% filter(!Drug_Class_new_1_all %in% Bal_class_droplist)
 
 
-## run metanBal_metan_class_main <- metacont(Bal_Int_size, Bal_Int_Mean, Bal_Int_SD, Bal_Pla_size, Bal_Pla_Mean, Bal_Pla_SD, data = Bal_data_min3class, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "SJ", hakn = TRUE, prediction = TRUE, sm = "MD")
+## run metan
+Bal_metan_class_main <- metacont(Bal_Int_size, Bal_Int_Mean, Bal_Int_SD, Bal_Pla_size, Bal_Pla_Mean, Bal_Pla_SD, data = Bal_data_min3class, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "SJ", hakn = TRUE, prediction = TRUE, sm = "MD")
 
 Bal_metan_class <- update(Bal_metan_class_main, byvar = Drug_Class_new_1_all, bylab = "Drug Class")
 
@@ -3273,7 +3287,8 @@ Bal_NoOutlier_class_droplist <- Bal_NoOutlier_class_less3$Drug_Class_new_1_all
 Bal_NoOutlier_data_min3class <- Bal_NoOutlier_data %>% filter(!Drug_Class_new_1_all %in% Bal_NoOutlier_class_droplist)
 
 
-## run metanBal_NoOutlier_metan_class_main <- metacont(Bal_Int_size, Bal_Int_Mean, Bal_Int_SD, Bal_Pla_size, Bal_Pla_Mean, Bal_Pla_SD, data = Bal_NoOutlier_data_min3class, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "SJ", hakn = TRUE, prediction = TRUE, sm = "MD")
+## run metan
+Bal_NoOutlier_metan_class_main <- metacont(Bal_Int_size, Bal_Int_Mean, Bal_Int_SD, Bal_Pla_size, Bal_Pla_Mean, Bal_Pla_SD, data = Bal_NoOutlier_data_min3class, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "SJ", hakn = TRUE, prediction = TRUE, sm = "MD")
 
 Bal_NoOutlier_metan_class <- update(Bal_NoOutlier_metan_class_main, byvar = Drug_Class_new_1_all, bylab = "Drug Class")
 
@@ -3373,7 +3388,8 @@ Bal_drugIndiv_droplist <- Bal_drugIndiv_less3$Indiv_drug_class_3
 Bal_data_min3drug <- Bal_data %>% filter(!Indiv_drug_class_3 %in% Bal_drugIndiv_droplist)
 
 
-## run metanBal_metan_drugIndiv <- metacont(Bal_Int_size, Bal_Int_Mean, Bal_Int_SD, Bal_Pla_size, Bal_Pla_Mean, Bal_Pla_SD, data = Bal_data_min3drug, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "SJ", hakn = TRUE, prediction = TRUE, sm = "MD")
+## run metan
+Bal_metan_drugIndiv <- metacont(Bal_Int_size, Bal_Int_Mean, Bal_Int_SD, Bal_Pla_size, Bal_Pla_Mean, Bal_Pla_SD, data = Bal_data_min3drug, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "SJ", hakn = TRUE, prediction = TRUE, sm = "MD")
 
 Bal_metan_drugIndiv <- update(Bal_metan_drugIndiv, byvar = Indiv_drug_class_3, bylab = "Drug")
 
@@ -4027,7 +4043,8 @@ Fib_class_droplist <- Fib_class_less3$Drug_Class_new_1_all
 Fib_data_min3class <- Fib_data %>% filter(!Drug_Class_new_1_all %in% Fib_class_droplist)
 
 
-## run metanFib_metan_class_main <- metacont(Fib_Int_size, Fib_Int_Mean, Fib_Int_SD, Fib_Pla_size, Fib_Pla_Mean, Fib_Pla_SD, data = Fib_data_min3class, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "SJ", hakn = TRUE, prediction = TRUE, sm = "MD")
+## run metan
+Fib_metan_class_main <- metacont(Fib_Int_size, Fib_Int_Mean, Fib_Int_SD, Fib_Pla_size, Fib_Pla_Mean, Fib_Pla_SD, data = Fib_data_min3class, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "SJ", hakn = TRUE, prediction = TRUE, sm = "MD")
 
 Fib_metan_class <- update(Fib_metan_class_main, byvar = Drug_Class_new_1_all, bylab = "Drug Class")
 
@@ -4176,7 +4193,8 @@ Fib_NoOutlier_class_droplist <- Fib_NoOutlier_class_less3$Drug_Class_new_1_all
 Fib_NoOutlier_data_min3class <- Fib_NoOutlier_data %>% filter(!Drug_Class_new_1_all %in% Fib_NoOutlier_class_droplist)
 
 
-## run metanFib_NoOutlier_metan_class_main <- metacont(Fib_Int_size, Fib_Int_Mean, Fib_Int_SD, Fib_Pla_size, Fib_Pla_Mean, Fib_Pla_SD, data = Fib_NoOutlier_data_min3class, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "SJ", hakn = TRUE, prediction = TRUE, sm = "MD")
+## run metan
+Fib_NoOutlier_metan_class_main <- metacont(Fib_Int_size, Fib_Int_Mean, Fib_Int_SD, Fib_Pla_size, Fib_Pla_Mean, Fib_Pla_SD, data = Fib_NoOutlier_data_min3class, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "SJ", hakn = TRUE, prediction = TRUE, sm = "MD")
 
 Fib_NoOutlier_metan_class <- update(Fib_NoOutlier_metan_class_main, byvar = Drug_Class_new_1_all, bylab = "Drug Class")
 
@@ -4276,7 +4294,8 @@ Fib_drugIndiv_droplist <- Fib_drugIndiv_less3$Indiv_drug_class_3
 Fib_data_min3drug <- Fib_data %>% filter(!Indiv_drug_class_3 %in% Fib_drugIndiv_droplist)
 
 
-## run metanFib_metan_drugIndiv <- metacont(Fib_Int_size, Fib_Int_Mean, Fib_Int_SD, Fib_Pla_size, Fib_Pla_Mean, Fib_Pla_SD, data = Fib_data_min3drug, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "SJ", hakn = TRUE, prediction = TRUE, sm = "MD")
+## run metan
+Fib_metan_drugIndiv <- metacont(Fib_Int_size, Fib_Int_Mean, Fib_Int_SD, Fib_Pla_size, Fib_Pla_Mean, Fib_Pla_SD, data = Fib_data_min3drug, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "SJ", hakn = TRUE, prediction = TRUE, sm = "MD")
 
 Fib_metan_drugIndiv <- update(Fib_metan_drugIndiv, byvar = Indiv_drug_class_3, bylab = "Drug")
 
@@ -4878,7 +4897,8 @@ NAS_class_droplist <- NAS_class_less3$Drug_Class_new_1_all
 NAS_data_min3class <- NAS_data %>% filter(!Drug_Class_new_1_all %in% NAS_class_droplist)
 
 
-## run metanNAS_metan_class_main <- metacont(NAS_Int_size, NAS_Int_Mean, NAS_Int_SD, NAS_Pla_size, NAS_Pla_Mean, NAS_Pla_SD, data = NAS_data_min3class, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "SJ", hakn = TRUE, prediction = TRUE, sm = "MD")
+## run metan
+NAS_metan_class_main <- metacont(NAS_Int_size, NAS_Int_Mean, NAS_Int_SD, NAS_Pla_size, NAS_Pla_Mean, NAS_Pla_SD, data = NAS_data_min3class, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "SJ", hakn = TRUE, prediction = TRUE, sm = "MD")
 
 NAS_metan_class <- update(NAS_metan_class_main, byvar = Drug_Class_new_1_all, bylab = "Drug Class")
 
@@ -5029,7 +5049,8 @@ NAS_NoOutlier_class_droplist <- NAS_NoOutlier_class_less3$Drug_Class_new_1_all
 NAS_NoOutlier_data_min3class <- NAS_NoOutlier_data %>% filter(!Drug_Class_new_1_all %in% NAS_NoOutlier_class_droplist)
 
 
-## run metanNAS_NoOutlier_metan_class_main <- metacont(NAS_Int_size, NAS_Int_Mean, NAS_Int_SD, NAS_Pla_size, NAS_Pla_Mean, NAS_Pla_SD, data = NAS_NoOutlier_data_min3class, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "SJ", hakn = TRUE, prediction = TRUE, sm = "MD")
+## run metan
+NAS_NoOutlier_metan_class_main <- metacont(NAS_Int_size, NAS_Int_Mean, NAS_Int_SD, NAS_Pla_size, NAS_Pla_Mean, NAS_Pla_SD, data = NAS_NoOutlier_data_min3class, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "SJ", hakn = TRUE, prediction = TRUE, sm = "MD")
 
 NAS_NoOutlier_metan_class <- update(NAS_NoOutlier_metan_class_main, byvar = Drug_Class_new_1_all, bylab = "Drug Class")
 
@@ -5129,7 +5150,8 @@ NAS_drugIndiv_droplist <- NAS_drugIndiv_less3$Indiv_drug_class_3
 NAS_data_min3drug <- NAS_data %>% filter(!Indiv_drug_class_3 %in% NAS_drugIndiv_droplist)
 
 
-## run metanNAS_metan_drugIndiv <- metacont(NAS_Int_size, NAS_Int_Mean, NAS_Int_SD, NAS_Pla_size, NAS_Pla_Mean, NAS_Pla_SD, data = NAS_data_min3drug, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "SJ", hakn = TRUE, prediction = TRUE, sm = "MD")
+## run metan
+NAS_metan_drugIndiv <- metacont(NAS_Int_size, NAS_Int_Mean, NAS_Int_SD, NAS_Pla_size, NAS_Pla_Mean, NAS_Pla_SD, data = NAS_data_min3drug, studlab = paste(Paper), comb.fixed = FALSE, comb.random = TRUE, method.tau = "SJ", hakn = TRUE, prediction = TRUE, sm = "MD")
 
 NAS_metan_drugIndiv <- update(NAS_metan_drugIndiv, byvar = Indiv_drug_class_3, bylab = "Drug")
 
