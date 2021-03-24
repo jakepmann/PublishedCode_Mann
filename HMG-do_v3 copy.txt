@@ -1,0 +1,607 @@
+set matsize 2000
+
+**split randomly into discovery & validation
+generate svar = runiformint(1,2)
+
+**everything for group1 (i.e. discovery)
+
+**metabolite outputs
+
+foreach var of varlist std_ln_2_im* {
+eststo: quietly regress PNPLA3 `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==1
+}
+estout using PNPLA3_Jun20v1_g1_lipidom_v1.txt, cells("b se p")
+estimates clear
+
+foreach var of varlist std_ln_2_QC_bio* std_ln_2_QC_fa* std_ln_2_QC_bcaa* {
+eststo: quietly regress PNPLA3 `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==1
+}
+estout using PNPLA3_Jun20v1_g1_other_v1.txt, cells("b se p")
+estimates clear
+
+
+
+foreach var of varlist std_ln_2_im* {
+eststo: quietly regress TM6SF2 `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==1
+}
+estout using TM6SF2_Jun20v1_g1_lipidom_v1.txt, cells("b se p")
+estimates clear
+
+
+foreach var of varlist std_ln_2_QC_bio* std_ln_2_QC_fa* std_ln_2_QC_bcaa* {
+eststo: quietly regress TM6SF2 `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==1
+}
+estout using TM6SF2_Jun20v1_g1_other_v1.txt, cells("b se p")
+estimates clear
+
+
+
+foreach var of varlist std_ln_2_im* {
+eststo: quietly regress MBOAT7 `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==1
+}
+estout using MBOAT7_Jun20v1_g1_lipidom_v1.txt, cells("b se p")
+estimates clear
+
+
+foreach var of varlist std_ln_2_QC_bio* std_ln_2_QC_fa* std_ln_2_QC_bcaa* {
+eststo: quietly regress MBOAT7 `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==1
+}
+estout using MBOAT7_Jun20v1_g1_other_v1.txt, cells("b se p")
+estimates clear
+
+
+
+foreach var of varlist std_ln_2_im* {
+eststo: quietly regress MARC1 `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==1
+}
+estout using MARC1_Jun20v1_g1_lipidom_v1.txt, cells("b se p")
+estimates clear
+
+
+foreach var of varlist std_ln_2_QC_bio* std_ln_2_QC_fa* std_ln_2_QC_bcaa* {
+eststo: quietly regress MARC1 `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==1
+}
+estout using MARC1_Jun20v1_g1_other_v1.txt, cells("b se p")
+estimates clear
+
+
+
+foreach var of varlist std_ln_2_im* {
+eststo: quietly regress HSD17B13 `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==1
+}
+estout using HSD17B13_Jun20v1_g1_lipidom_v1.txt, cells("b se p")
+estimates clear
+
+
+foreach var of varlist std_ln_2_QC_bio* std_ln_2_QC_fa* std_ln_2_QC_bcaa* {
+eststo: quietly regress HSD17B13 `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==1
+}
+estout using HSD17B13_Jun20v1_g1_other_v1.txt, cells("b se p")
+estimates clear
+
+
+
+foreach var of varlist std_ln_2_im* {
+eststo: quietly regress GCKR `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==1
+}
+estout using GCKR_Jun20v1_g1_lipidom_v1.txt, cells("b se p")
+estimates clear
+
+
+foreach var of varlist std_ln_2_QC_bio* std_ln_2_QC_fa* std_ln_2_QC_bcaa* {
+eststo: quietly regress GCKR `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==1
+}
+estout using GCKR_Jun20v1_g1_other_v1.txt, cells("b se p")
+estimates clear
+
+
+
+foreach var of varlist std_ln_2_im* {
+eststo: quietly regress PPP1R3B `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==1
+}
+estout using PPP1R3B_Jun20v1_g1_lipidom_v1.txt, cells("b se p")
+estimates clear
+
+
+foreach var of varlist std_ln_2_QC_bio* std_ln_2_QC_fa* std_ln_2_QC_bcaa* {
+eststo: quietly regress PPP1R3B `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==1
+}
+estout using PPP1R3B_Jun20v1_g1_other_v1.txt, cells("b se p")
+estimates clear
+
+
+foreach var of varlist std_ln_2_im* {
+eststo: quietly regress LYPLAL1 `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==1
+}
+estout using LYPLAL1_Jun20v1_g1_lipidom_v1.txt, cells("b se p")
+estimates clear
+
+
+foreach var of varlist std_ln_2_QC_bio* std_ln_2_QC_fa* std_ln_2_QC_bcaa* {
+eststo: quietly regress LYPLAL1 `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==1
+}
+estout using LYPLAL1_Jun20v1_g1_other_v1.txt, cells("b se p")
+estimates clear
+
+
+
+foreach var of varlist std_ln_2_im* {
+eststo: quietly regress HFE `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==1
+}
+estout using HFE_Jun20v1_g1_lipidom_v1.txt, cells("b se p")
+estimates clear
+
+
+foreach var of varlist std_ln_2_QC_bio* std_ln_2_QC_fa* std_ln_2_QC_bcaa* {
+eststo: quietly regress HFE `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==1
+}
+estout using HFE_Jun20v1_g1_other_v1.txt, cells("b se p")
+estimates clear
+
+
+
+foreach var of varlist std_ln_2_im* {
+eststo: quietly regress SERPINA1 `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==1
+}
+estout using SERPINA1_Jun20v1_g1_lipidom_v1.txt, cells("b se p")
+estimates clear
+
+
+foreach var of varlist std_ln_2_QC_bio* std_ln_2_QC_fa* std_ln_2_QC_bcaa* {
+eststo: quietly regress SERPINA1 `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==1
+}
+estout using SERPINA1_Jun20v1_g1_other_v1.txt, cells("b se p")
+estimates clear
+
+
+**steatosis & metabolites
+
+
+foreach var of varlist std_ln_2_im* {
+eststo: quietly regress liver_score `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==1
+}
+estout using Steat_Jun20v1_g1_lipidom_v1.txt, cells("b se p")
+estimates clear
+
+
+foreach var of varlist std_ln_2_QC_bio* std_ln_2_QC_fa* std_ln_2_QC_bcaa* {
+eststo: quietly regress liver_score `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==1
+}
+estout using Steat_Jun20v1_g1_other_v1.txt, cells("b se p")
+estimates clear
+
+
+
+foreach var of varlist std_ln_2_im* {
+eststo: quietly regress liver_score `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip std_insulin i.t2d i.ifg std_bmi if svar==1
+}
+estout using Steat-corr_Jun20v1_g1_lipidom_v1.txt, cells("b se p")
+estimates clear
+
+
+foreach var of varlist std_ln_2_QC_bio* std_ln_2_QC_fa* std_ln_2_QC_bcaa* {
+eststo: quietly regress liver_score `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip std_insulin i.t2d i.ifg std_bmi if svar==1
+}
+estout using Steat-corr_Jun20v1_g1_other_v1.txt, cells("b se p")
+estimates clear
+
+
+**alt
+
+foreach var of varlist std_ln_2_im* {
+eststo: quietly regress std_alt `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==1
+}
+estout using ALT_Jun20v1_g1_lipidom_v1.txt, cells("b se p")
+estimates clear
+
+
+foreach var of varlist std_ln_2_QC_bio* std_ln_2_QC_fa* std_ln_2_QC_bcaa* {
+eststo: quietly regress std_alt `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==1
+}
+estout using ALT_Jun20v1_g1_other_v1.txt, cells("b se p")
+estimates clear
+
+**pgs
+
+
+foreach var of varlist std_ln_2_im* {
+eststo: quietly regress std_bmi_score `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==1
+}
+estout using bmi-score_Jun20v1_g1_lipidom_v1.txt, cells("b se p")
+estimates clear
+
+
+foreach var of varlist std_ln_2_QC_bio* std_ln_2_QC_fa* std_ln_2_QC_bcaa* {
+eststo: quietly regress std_bmi_score `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==1
+}
+estout using bmi-score_Jun20v1_g1_other_v1.txt, cells("b se p")
+estimates clear
+
+
+foreach var of varlist std_ln_2_im* {
+eststo: quietly regress std_bodyfat_score `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==1
+}
+estout using bodyfat-score_Jun20v1_g1_lipidom_v1.txt, cells("b se p")
+estimates clear
+
+
+foreach var of varlist std_ln_2_QC_bio* std_ln_2_QC_fa* std_ln_2_QC_bcaa* {
+eststo: quietly regress std_bodyfat_score `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==1
+}
+estout using bodyfat-score_Jun20v1_g1_other_v1.txt, cells("b se p")
+estimates clear
+
+
+
+foreach var of varlist std_ln_2_im* {
+eststo: quietly regress std_ir_score `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==1
+}
+estout using ir-score_Jun20v1_g1_lipidom_v1.txt, cells("b se p")
+estimates clear
+
+
+foreach var of varlist std_ln_2_QC_bio* std_ln_2_QC_fa* std_ln_2_QC_bcaa* {
+eststo: quietly regress std_ir_score `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==1
+}
+estout using ir-score_Jun20v1_g1_other_v1.txt, cells("b se p")
+estimates clear
+
+
+foreach var of varlist std_ln_2_im* {
+eststo: quietly regress std_WHR_score `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==1
+}
+estout using WHR-score_Jun20v1_g1_lipidom_v1.txt, cells("b se p")
+estimates clear
+
+
+foreach var of varlist std_ln_2_QC_bio* std_ln_2_QC_fa* std_ln_2_QC_bcaa* {
+eststo: quietly regress std_WHR_score `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==1
+}
+estout using WHR-score_Jun20v1_g1_other_v1.txt, cells("b se p")
+estimates clear
+
+
+
+***repeat all for validation
+
+**everything for group1 (i.e. discovery)
+
+**metabolite outputs
+
+foreach var of varlist std_ln_2_im* {
+eststo: quietly regress PNPLA3 `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==2
+}
+estout using PNPLA3_Jun20v1_g2_lipidom_v1.txt, cells("b se p")
+estimates clear
+
+foreach var of varlist std_ln_2_QC_bio* std_ln_2_QC_fa* std_ln_2_QC_bcaa* {
+eststo: quietly regress PNPLA3 `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==2
+}
+estout using PNPLA3_Jun20v1_g2_other_v1.txt, cells("b se p")
+estimates clear
+
+
+
+foreach var of varlist std_ln_2_im* {
+eststo: quietly regress TM6SF2 `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==2
+}
+estout using TM6SF2_Jun20v1_g2_lipidom_v1.txt, cells("b se p")
+estimates clear
+
+
+foreach var of varlist std_ln_2_QC_bio* std_ln_2_QC_fa* std_ln_2_QC_bcaa* {
+eststo: quietly regress TM6SF2 `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==2
+}
+estout using TM6SF2_Jun20v1_g2_other_v1.txt, cells("b se p")
+estimates clear
+
+
+
+foreach var of varlist std_ln_2_im* {
+eststo: quietly regress MBOAT7 `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==2
+}
+estout using MBOAT7_Jun20v1_g2_lipidom_v1.txt, cells("b se p")
+estimates clear
+
+
+foreach var of varlist std_ln_2_QC_bio* std_ln_2_QC_fa* std_ln_2_QC_bcaa* {
+eststo: quietly regress MBOAT7 `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==2
+}
+estout using MBOAT7_Jun20v1_g2_other_v1.txt, cells("b se p")
+estimates clear
+
+
+
+foreach var of varlist std_ln_2_im* {
+eststo: quietly regress MARC1 `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==2
+}
+estout using MARC1_Jun20v1_g2_lipidom_v1.txt, cells("b se p")
+estimates clear
+
+
+foreach var of varlist std_ln_2_QC_bio* std_ln_2_QC_fa* std_ln_2_QC_bcaa* {
+eststo: quietly regress MARC1 `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==2
+}
+estout using MARC1_Jun20v1_g2_other_v1.txt, cells("b se p")
+estimates clear
+
+
+
+foreach var of varlist std_ln_2_im* {
+eststo: quietly regress HSD17B13 `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==2
+}
+estout using HSD17B13_Jun20v1_g2_lipidom_v1.txt, cells("b se p")
+estimates clear
+
+
+foreach var of varlist std_ln_2_QC_bio* std_ln_2_QC_fa* std_ln_2_QC_bcaa* {
+eststo: quietly regress HSD17B13 `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==2
+}
+estout using HSD17B13_Jun20v1_g2_other_v1.txt, cells("b se p")
+estimates clear
+
+
+
+foreach var of varlist std_ln_2_im* {
+eststo: quietly regress GCKR `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==2
+}
+estout using GCKR_Jun20v1_g2_lipidom_v1.txt, cells("b se p")
+estimates clear
+
+
+foreach var of varlist std_ln_2_QC_bio* std_ln_2_QC_fa* std_ln_2_QC_bcaa* {
+eststo: quietly regress GCKR `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==2
+}
+estout using GCKR_Jun20v1_g2_other_v1.txt, cells("b se p")
+estimates clear
+
+
+
+foreach var of varlist std_ln_2_im* {
+eststo: quietly regress PPP1R3B `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==2
+}
+estout using PPP1R3B_Jun20v1_g2_lipidom_v1.txt, cells("b se p")
+estimates clear
+
+
+foreach var of varlist std_ln_2_QC_bio* std_ln_2_QC_fa* std_ln_2_QC_bcaa* {
+eststo: quietly regress PPP1R3B `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==2
+}
+estout using PPP1R3B_Jun20v1_g2_other_v1.txt, cells("b se p")
+estimates clear
+
+
+foreach var of varlist std_ln_2_im* {
+eststo: quietly regress LYPLAL1 `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==2
+}
+estout using LYPLAL1_Jun20v1_g2_lipidom_v1.txt, cells("b se p")
+estimates clear
+
+
+foreach var of varlist std_ln_2_QC_bio* std_ln_2_QC_fa* std_ln_2_QC_bcaa* {
+eststo: quietly regress LYPLAL1 `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==2
+}
+estout using LYPLAL1_Jun20v1_g2_other_v1.txt, cells("b se p")
+estimates clear
+
+
+
+foreach var of varlist std_ln_2_im* {
+eststo: quietly regress HFE `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==2
+}
+estout using HFE_Jun20v1_g2_lipidom_v1.txt, cells("b se p")
+estimates clear
+
+
+foreach var of varlist std_ln_2_QC_bio* std_ln_2_QC_fa* std_ln_2_QC_bcaa* {
+eststo: quietly regress HFE `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==2
+}
+estout using HFE_Jun20v1_g2_other_v1.txt, cells("b se p")
+estimates clear
+
+
+
+foreach var of varlist std_ln_2_im* {
+eststo: quietly regress SERPINA1 `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==2
+}
+estout using SERPINA1_Jun20v1_g2_lipidom_v1.txt, cells("b se p")
+estimates clear
+
+
+foreach var of varlist std_ln_2_QC_bio* std_ln_2_QC_fa* std_ln_2_QC_bcaa* {
+eststo: quietly regress SERPINA1 `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==2
+}
+estout using SERPINA1_Jun20v1_g2_other_v1.txt, cells("b se p")
+estimates clear
+
+
+**steatosis & metabolites
+
+
+foreach var of varlist std_ln_2_im* {
+eststo: quietly regress liver_score `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==2
+}
+estout using Steat_Jun20v1_g2_lipidom_v1.txt, cells("b se p")
+estimates clear
+
+
+foreach var of varlist std_ln_2_QC_bio* std_ln_2_QC_fa* std_ln_2_QC_bcaa* {
+eststo: quietly regress liver_score `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==2
+}
+estout using Steat_Jun20v1_g2_other_v1.txt, cells("b se p")
+estimates clear
+
+
+
+foreach var of varlist std_ln_2_im* {
+eststo: quietly regress liver_score `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip std_insulin i.t2d i.ifg std_bmi if svar==2
+}
+estout using Steat-corr_Jun20v1_g2_lipidom_v1.txt, cells("b se p")
+estimates clear
+
+
+foreach var of varlist std_ln_2_QC_bio* std_ln_2_QC_fa* std_ln_2_QC_bcaa* {
+eststo: quietly regress liver_score `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip std_insulin i.t2d i.ifg std_bmi if svar==2
+}
+estout using Steat-corr_Jun20v1_g2_other_v1.txt, cells("b se p")
+estimates clear
+
+
+**alt
+
+foreach var of varlist std_ln_2_im* {
+eststo: quietly regress std_alt `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==2
+}
+estout using ALT_Jun20v1_g2_lipidom_v1.txt, cells("b se p")
+estimates clear
+
+
+foreach var of varlist std_ln_2_QC_bio* std_ln_2_QC_fa* std_ln_2_QC_bcaa* {
+eststo: quietly regress std_alt `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==2
+}
+estout using ALT_Jun20v1_g2_other_v1.txt, cells("b se p")
+estimates clear
+
+**pgs
+
+
+foreach var of varlist std_ln_2_im* {
+eststo: quietly regress std_bmi_score `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==2
+}
+estout using bmi-score_Jun20v1_g2_lipidom_v1.txt, cells("b se p")
+estimates clear
+
+
+foreach var of varlist std_ln_2_QC_bio* std_ln_2_QC_fa* std_ln_2_QC_bcaa* {
+eststo: quietly regress std_bmi_score `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==2
+}
+estout using bmi-score_Jun20v1_g2_other_v1.txt, cells("b se p")
+estimates clear
+
+
+foreach var of varlist std_ln_2_im* {
+eststo: quietly regress std_bodyfat_score `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==2
+}
+estout using bodyfat-score_Jun20v1_g2_lipidom_v1.txt, cells("b se p")
+estimates clear
+
+
+foreach var of varlist std_ln_2_QC_bio* std_ln_2_QC_fa* std_ln_2_QC_bcaa* {
+eststo: quietly regress std_bodyfat_score `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==2
+}
+estout using bodyfat-score_Jun20v1_g2_other_v1.txt, cells("b se p")
+estimates clear
+
+
+
+foreach var of varlist std_ln_2_im* {
+eststo: quietly regress std_ir_score `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==2
+}
+estout using ir-score_Jun20v1_g2_lipidom_v1.txt, cells("b se p")
+estimates clear
+
+
+foreach var of varlist std_ln_2_QC_bio* std_ln_2_QC_fa* std_ln_2_QC_bcaa* {
+eststo: quietly regress std_ir_score `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==2
+}
+estout using ir-score_Jun20v1_g2_other_v1.txt, cells("b se p")
+estimates clear
+
+
+foreach var of varlist std_ln_2_im* {
+eststo: quietly regress std_WHR_score `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==2
+}
+estout using WHR-score_Jun20v1_g2_lipidom_v1.txt, cells("b se p")
+estimates clear
+
+
+foreach var of varlist std_ln_2_QC_bio* std_ln_2_QC_fa* std_ln_2_QC_bcaa* {
+eststo: quietly regress std_WHR_score `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip if svar==2
+}
+estout using WHR-score_Jun20v1_g2_other_v1.txt, cells("b se p")
+estimates clear
+
+
+
+
+**test effect of adjusting for major lipid classes on metabolites
+
+
+
+foreach var of varlist std_ln_2_im* {
+eststo: quietly regress TM6SF2 `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip triglyceride0 chol0
+}
+estout using TM6SF2_Jun20v1_adj_lipidom_v1.txt, cells("b se p")
+estimates clear
+
+
+foreach var of varlist std_ln_2_QC_bio* std_ln_2_QC_fa* std_ln_2_QC_bcaa* {
+eststo: quietly regress TM6SF2 `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip triglyceride0 chol0
+}
+estout using TM6SF2_Jun20v1_adj_other_v1.txt, cells("b se p")
+estimates clear
+
+
+
+
+foreach var of varlist std_ln_2_im* {
+eststo: quietly regress MARC1 `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip hdl0
+}
+estout using MARC1_Jun20v1_adj_lipidom_v1.txt, cells("b se p")
+estimates clear
+
+
+foreach var of varlist std_ln_2_QC_bio* std_ln_2_QC_fa* std_ln_2_QC_bcaa* {
+eststo: quietly regress MARC1 `var' age i.sex PC1 PC2 PC3 PC4 PC5 PC6 PC7 PC8 PC9 PC10 i.genochip hdl0
+}
+estout using MARC1_Jun20v1_adj_other_v1.txt, cells("b se p")
+estimates clear
+
+
+
+
+
+
+
+
+
+**baseline associations for SNPs and steatosis -- not re-done with discovery/valiation
+
+foreach var in ageattest_dm_attended sex cauc std_bmi std_ln_2_anthro_whr std_ln_2_bodyfatpercentage std_ln_2_anthro_bpsys std_ln_2_anthro_bpdia t2d ifg high_alcohol chol0 ldl0 hdl0 triglyceride0 NEFA albumin0 alkphos0 alt0 bilirubin0 gammagt0 creatinine0 urea0 glucose0 glucose120 g_insulin hba1c0_mm HOMA ADIPO_IR {
+eststo: quietly regress liver_score `var' age i.sex
+}
+estout using Steat_base_Sept19_v1.txt, cells("b se p")
+estimates clear
+
+
+foreach var in ageattest_dm_attended sex cauc std_bmi std_ln_2_anthro_whr std_ln_2_bodyfatpercentage std_ln_2_anthro_bpsys std_ln_2_anthro_bpdia liver_score t2d ifg high_alcohol chol0 ldl0 hdl0 triglyceride0 NEFA albumin0 alkphos0 alt0 bilirubin0 gammagt0 creatinine0 urea0 glucose0 glucose120 g_insulin hba1c0_mm HOMA ADIPO_IR {
+eststo: quietly regress PNPLA3 `var' age i.sex
+}
+estout using PNPLA3_base_Sept19_v1.txt, cells("b se p")
+estimates clear
+
+foreach var in ageattest_dm_attended sex cauc std_bmi std_ln_2_anthro_whr std_ln_2_bodyfatpercentage std_ln_2_anthro_bpsys std_ln_2_anthro_bpdia liver_score t2d ifg high_alcohol chol0 ldl0 hdl0 triglyceride0 NEFA albumin0 alkphos0 alt0 bilirubin0 gammagt0 creatinine0 urea0 glucose0 glucose120 g_insulin hba1c0_mm HOMA ADIPO_IR {
+eststo: quietly regress TM6SF2 `var' age i.sex
+}
+estout using TM6SF2_base_Sept19_v1.txt, cells("b se p")
+estimates clear
+
+foreach var in ageattest_dm_attended sex cauc std_bmi std_ln_2_anthro_whr std_ln_2_bodyfatpercentage std_ln_2_anthro_bpsys std_ln_2_anthro_bpdia liver_score t2d ifg high_alcohol chol0 ldl0 hdl0 triglyceride0 NEFA albumin0 alkphos0 alt0 bilirubin0 gammagt0 creatinine0 urea0 glucose0 glucose120 g_insulin hba1c0_mm HOMA ADIPO_IR {
+eststo: quietly regress MBOAT7 `var' age i.sex
+}
+estout using MBOAT7_base_Sept19_v1.txt, cells("b se p")
+estimates clear
+
+foreach var in ageattest_dm_attended sex cauc std_bmi std_ln_2_anthro_whr std_ln_2_bodyfatpercentage std_ln_2_anthro_bpsys std_ln_2_anthro_bpdia liver_score t2d ifg high_alcohol chol0 ldl0 hdl0 triglyceride0 NEFA albumin0 alkphos0 alt0 bilirubin0 gammagt0 creatinine0 urea0 glucose0 glucose120 g_insulin hba1c0_mm HOMA ADIPO_IR {
+eststo: quietly regress MARC1 `var' age i.sex
+}
+estout using MARC1_base_Sept19_v2.txt, cells("b se p")
+estimates clear
+
+foreach var in ageattest_dm_attended sex cauc std_bmi std_ln_2_anthro_whr std_ln_2_bodyfatpercentage std_ln_2_anthro_bpsys std_ln_2_anthro_bpdia liver_score t2d ifg high_alcohol chol0 ldl0 hdl0 triglyceride0 NEFA albumin0 alkphos0 alt0 bilirubin0 gammagt0 creatinine0 urea0 glucose0 glucose120 g_insulin hba1c0_mm HOMA ADIPO_IR {
+eststo: quietly regress HSD17B13 `var' age i.sex
+}
+estout using HSD17B13_base_Sept19_v1.txt, cells("b se p")
+estimates clear
+
+
