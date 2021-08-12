@@ -1,0 +1,671 @@
+## Code for analysis of mouse biochemstry
+
+##
+
+library(readxl)
+library(ggplot2)
+library(dplyr)
+library(ggpubr)
+library(ggsignif)
+library(rstatix)
+library(stringr)
+library(reshape2)
+
+
+## import mouse summary and all cbal biochem results
+
+Cbal_res1 <- read_excel('Cbal_res1.xlsx')
+Cbal_res2 <- read_excel('Cbal_res2.xlsx')
+Cbal_res3 <- read_excel('Cbal_res3.xlsx')
+Cbal_res4 <- read_excel('Cbal_res4.xlsx')
+Cbal_res5 <- read_excel('Cbal_res5.xlsx')
+Cbal_res6 <- read_excel('Cbal_res6.xlsx')
+Cbal_res7 <- read_excel('Cbal_res7.xlsx')
+Cbal_res8 <- read_excel('Cbal_res8.xlsx')
+Cbal_res9 <- read_excel('Cbal_res9.xlsx')
+Cbal_res10 <- read_excel('Cbal_res10.xlsx')
+Cbal_res11 <- read_excel('Cbal_res11.xlsx')
+Cbal_res12 <- read_excel('Cbal_res12.xlsx')
+Cbal_res13 <- read_excel('Cbal_res13.xlsx')
+Cbal_res14 <- read_excel('Cbal_res14.xlsx')
+Cbal_res15 <- read_excel('Cbal_res15.xlsx')
+Cbal_res16 <- read_excel('Cbal_res16.xlsx')
+Cbal_res17 <- read_excel('Cbal_res17.xlsx')
+Cbal_res18 <- read_excel('Cbal_res18.xlsx')
+Ms_summary <- read_excel("Ms_summary_simple_Aug21.xlsx")
+
+Cbal_res5$MouseID <- as.character(Cbal_res5$MouseID)
+Cbal_res16$MouseID <- as.character(Cbal_res16$MouseID)
+Cbal_res17$MouseID <- as.character(Cbal_res17$MouseID)
+Cbal_res18$MouseID <- as.character(Cbal_res18$MouseID)
+
+Cbal_res1_melt <- melt(Cbal_res1)
+Cbal_res2_melt <- melt(Cbal_res2)
+Cbal_res3_melt <- melt(Cbal_res3)
+Cbal_res4_melt <- melt(Cbal_res4)
+Cbal_res5_melt <- melt(Cbal_res5)
+Cbal_res6_melt <- melt(Cbal_res6)
+Cbal_res7_melt <- melt(Cbal_res7)
+Cbal_res8_melt <- melt(Cbal_res8)
+Cbal_res9_melt <- melt(Cbal_res9)
+Cbal_res10_melt <- melt(Cbal_res10)
+Cbal_res11_melt <- melt(Cbal_res11)
+Cbal_res12_melt <- melt(Cbal_res12)
+Cbal_res13_melt <- melt(Cbal_res13)
+Cbal_res14_melt <- melt(Cbal_res14)
+Cbal_res15_melt <- melt(Cbal_res15)
+Cbal_res16_melt <- melt(Cbal_res16)
+Cbal_res17_melt <- melt(Cbal_res17)
+Cbal_res18_melt <- melt(Cbal_res18)
+
+Cbal_res1_melt <- na.omit(Cbal_res1_melt)
+Cbal_res2_melt <- na.omit(Cbal_res2_melt)
+Cbal_res3_melt <- na.omit(Cbal_res3_melt)
+Cbal_res4_melt <- na.omit(Cbal_res4_melt)
+Cbal_res5_melt <- na.omit(Cbal_res5_melt)
+Cbal_res6_melt <- na.omit(Cbal_res6_melt)
+Cbal_res7_melt <- na.omit(Cbal_res7_melt)
+Cbal_res8_melt <- na.omit(Cbal_res8_melt)
+Cbal_res9_melt <- na.omit(Cbal_res9_melt)
+Cbal_res10_melt <- na.omit(Cbal_res10_melt)
+Cbal_res11_melt <- na.omit(Cbal_res11_melt)
+Cbal_res12_melt <- na.omit(Cbal_res12_melt)
+Cbal_res13_melt <- na.omit(Cbal_res13_melt)
+Cbal_res14_melt <- na.omit(Cbal_res14_melt)
+Cbal_res15_melt <- na.omit(Cbal_res15_melt)
+Cbal_res16_melt <- na.omit(Cbal_res16_melt)
+Cbal_res17_melt <- na.omit(Cbal_res17_melt)
+Cbal_res18_melt <- na.omit(Cbal_res18_melt)
+
+Cbal_melt_all <- rbind(Cbal_res1_melt, Cbal_res2_melt, Cbal_res3_melt, Cbal_res4_melt, Cbal_res5_melt, Cbal_res6_melt, Cbal_res7_melt, Cbal_res8_melt, Cbal_res9_melt, Cbal_res10_melt, Cbal_res11_melt, Cbal_res12_melt, Cbal_res13_melt, Cbal_res14_melt, Cbal_res15_melt, Cbal_res16_melt, Cbal_res17_melt, Cbal_res18_melt)
+
+Cbal_dcast_all <- dcast(Cbal_melt_all, MouseID ~ variable, value.var = "value", fun.aggregate = mean)
+
+Ms_biochem <- merge(Ms_summary, Cbal_dcast_all, by="MouseID")
+is.nan.data.frame <- function(x)
+  do.call(cbind, lapply(x, is.nan))
+Ms_biochem[is.nan(Ms_biochem)]<-NA
+write.table(Ms_biochem, file="Ms_biochem.csv", sep=",")
+
+Ms_biochem_33 = subset(Ms_biochem, Duration=="33wk")
+Ms_biochem_33 = subset(Ms_biochem_33, Group!="Female")
+write.table(Ms_biochem_33, file="Ms_biochem_33.csv", sep=",")
+Ms_biochem_33$Genotype <- factor(Ms_biochem_33$Genotype, levels = c("WT", "KI"))
+Ms_biochem_33$Group_unique <- paste(Ms_biochem_33$Diet, Ms_biochem_33$Genotype, sep = "_", collapse = NULL)
+Ms_biochem_33_counts <- Ms_biochem_33 %>% dplyr::group_by(Diet, Genotype) %>% dplyr::summarise(n = n())
+
+## make graphs
+
+## summarise data
+
+data_summary <- function(data, varname, groupnames){
+  require(plyr)
+  summary_func <- function(x, col){
+    c(mean = mean(x[[col]], na.rm=TRUE),
+      sd = sd(x[[col]], na.rm=TRUE))
+  }
+  data_sum<-ddply(data, groupnames, .fun=summary_func,
+                  varname)
+  data_sum <- rename(data_sum, c("mean" = varname))
+ return(data_sum)
+}
+
+cbp1 <- c("#999999", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
+cbp3 <- c("#56B4E9", "#D55E00")
+
+my_comparisons <- list( c("WT", "KI") )
+
+## make a graph comparing single variable across CD + HFD
+
+## Figs to make
+
+Lep_1
+Lep_2
+Lep_3
+Lep_6
+Adipo_1
+Adipo_2
+Adipo_3
+Adipo_6
+ALT_7
+FGF21_5
+FGF21_7
+GDF15_7
+Ins_G0
+Gluc_Sch1
+Ins_Sch1
+Lact_Sch1
+NEFA_Sch1
+TG_Sch1
+AST_Sch1
+Chol_Sch1
+
+## Lep_1
+
+Lep_1_max <- max(Ms_biochem_33$Lep_1, na.rm=T)
+Lep_1_sd <- (sd(Ms_biochem_33$Lep_1, na.rm=T))/2
+Lep_1_sum <- data_summary(Ms_biochem_33, varname="Lep_1", groupnames=c("Genotype", "Diet"))
+Lep_1_sum$Genotype <- factor(Lep_1_sum$Genotype, levels = c("WT", "KI"))
+Lep_1_sum <- merge(Lep_1_sum, Ms_biochem_33_counts, by=c("Genotype", "Diet"))
+Lep_1_sum$se = Lep_1_sum$sd/sqrt(Lep_1_sum$n)
+Lep_1_res.aov <- Ms_biochem_33 %>% anova_test(Lep_1 ~ Group_unique)
+
+Lep_1_stat.test <- Ms_biochem_33 %>% group_by(Diet) %>% t_test(Lep_1 ~ Genotype) %>% adjust_pvalue(method = "bonferroni") %>% add_significance("p.adj") 
+Lep_1_stat.test <- Lep_1_stat.test %>% add_xy_position(fun = "mean_sd", x = "Diet", dodge = 0.9)
+Lep_1_stat.test$text <- paste("p.adj", format(round(Lep_1_stat.test$p.adj, 2), nsmall = 2), sep = "=", collapse = NULL)
+
+Lep_1_fig <- ggplot(data=Lep_1_sum, aes(x=Diet, y=Lep_1)) + geom_bar(aes(fill=Genotype), stat="identity", color="black", position=position_dodge(), show.legend = FALSE) + geom_point(stroke=0.7, shape=21, data=Ms_biochem_33, aes(x=Diet, y=Lep_1, colour=Genotype), fill="white", size=2.3, alpha=0.9, show.legend=FALSE, position=position_jitterdodge(jitter.width = .2, dodge.width = .9)) + geom_errorbar(aes(group = Genotype, ymin=Lep_1-se, ymax=Lep_1+se), color="black", width=.2, size=.6, position=position_dodge(.9)) + theme_classic() + ylab("Serum\n leptin\n pg/ml") + theme(plot.title = element_text(hjust = 0.5), axis.text.x = element_text(face="bold",size=12), axis.title.y=element_text(size=12, angle=0, vjust=0.5), axis.title.x = element_blank()) + scale_colour_manual(values = c("black", "black")) + scale_fill_manual(values = cbp3) + scale_x_discrete(labels=c("Chow\n diet", "High fat\n diet")) + scale_y_continuous(labels = scales::comma, expand = c(0,0), breaks = seq(0, 40000, 10000), limits=c(0, 40000)) + stat_pvalue_manual(Lep_1_stat.test, label = "p.adj.signif", tip.length = 0.03, size = 4, y.position = 30000) + ggtitle("4 weeks")
+pdf(file="Lep_1_fig.pdf",width=4,height=5)
+Lep_1_fig
+dev.off()
+
+## Lep_2
+
+Lep_2_max <- max(Ms_biochem_33$Lep_2, na.rm=T)
+Lep_2_sd <- (sd(Ms_biochem_33$Lep_2, na.rm=T))/2
+Lep_2_sum <- data_summary(Ms_biochem_33, varname="Lep_2", groupnames=c("Genotype", "Diet"))
+Lep_2_sum$Genotype <- factor(Lep_2_sum$Genotype, levels = c("WT", "KI"))
+Lep_2_sum <- merge(Lep_2_sum, Ms_biochem_33_counts, by=c("Genotype", "Diet"))
+Lep_2_sum$se = Lep_2_sum$sd/sqrt(Lep_2_sum$n)
+Lep_2_res.aov <- Ms_biochem_33 %>% anova_test(Lep_2 ~ Group_unique)
+
+Lep_2_stat.test <- Ms_biochem_33 %>% group_by(Diet) %>% t_test(Lep_2 ~ Genotype) %>% adjust_pvalue(method = "bonferroni") %>% add_significance("p.adj") 
+Lep_2_stat.test <- Lep_2_stat.test %>% add_xy_position(fun = "mean_sd", x = "Diet", dodge = 0.9)
+Lep_2_stat.test$text <- paste("p.adj", format(round(Lep_2_stat.test$p.adj, 2), nsmall = 2), sep = "=", collapse = NULL)
+
+Lep_2_fig <- ggplot(data=Lep_2_sum, aes(x=Diet, y=Lep_2)) + geom_bar(aes(fill=Genotype), stat="identity", color="black", position=position_dodge(), show.legend = FALSE) + geom_point(stroke=0.7, shape=21, data=Ms_biochem_33, aes(x=Diet, y=Lep_2, colour=Genotype), fill="white", size=2.3, alpha=0.9, show.legend=FALSE, position=position_jitterdodge(jitter.width = .2, dodge.width = .9)) + geom_errorbar(aes(group = Genotype, ymin=Lep_2-se, ymax=Lep_2+se), color="black", width=.2, size=.6, position=position_dodge(.9)) + theme_classic() + ylab("Serum\n leptin\n pg/ml") + theme(plot.title = element_text(hjust = 0.5), axis.text.x = element_text(face="bold",size=12), axis.title.y=element_text(size=12, angle=0, vjust=0.5), axis.title.x = element_blank()) + scale_colour_manual(values = c("black", "black")) + scale_fill_manual(values = cbp3) + scale_x_discrete(labels=c("Chow\n diet", "High fat\n diet")) + scale_y_continuous(labels = scales::comma, expand = c(0,0), breaks = seq(0, 50000, 10000), limits=c(0, 50000)) + stat_pvalue_manual(Lep_2_stat.test, label = "p.adj.signif", tip.length = 0.03, size = 4, y.position = 40000)  + ggtitle("8 weeks")
+pdf(file="Lep_2_fig.pdf",width=4,height=5)
+Lep_2_fig
+dev.off()
+
+
+## Lep_3
+
+Lep_3_max <- max(Ms_biochem_33$Lep_3, na.rm=T)
+Lep_3_sd <- (sd(Ms_biochem_33$Lep_3, na.rm=T))/2
+Lep_3_sum <- data_summary(Ms_biochem_33, varname="Lep_3", groupnames=c("Genotype", "Diet"))
+Lep_3_sum$Genotype <- factor(Lep_3_sum$Genotype, levels = c("WT", "KI"))
+Lep_3_sum <- merge(Lep_3_sum, Ms_biochem_33_counts, by=c("Genotype", "Diet"))
+Lep_3_sum$se = Lep_3_sum$sd/sqrt(Lep_3_sum$n)
+Lep_3_res.aov <- Ms_biochem_33 %>% anova_test(Lep_3 ~ Group_unique)
+
+Lep_3_stat.test <- Ms_biochem_33 %>% group_by(Diet) %>% t_test(Lep_3 ~ Genotype) %>% adjust_pvalue(method = "bonferroni") %>% add_significance("p.adj") 
+Lep_3_stat.test <- Lep_3_stat.test %>% add_xy_position(fun = "mean_sd", x = "Diet", dodge = 0.9)
+Lep_3_stat.test$text <- paste("p.adj", format(round(Lep_3_stat.test$p.adj, 2), nsmall = 2), sep = "=", collapse = NULL)
+
+Lep_3_fig <- ggplot(data=Lep_3_sum, aes(x=Diet, y=Lep_3)) + geom_bar(aes(fill=Genotype), stat="identity", color="black", position=position_dodge(), show.legend = FALSE) + geom_point(stroke=0.7, shape=21, data=Ms_biochem_33, aes(x=Diet, y=Lep_3, colour=Genotype), fill="white", size=2.3, alpha=0.9, show.legend=FALSE, position=position_jitterdodge(jitter.width = .2, dodge.width = .9)) + geom_errorbar(aes(group = Genotype, ymin=Lep_3-se, ymax=Lep_3+se), color="black", width=.2, size=.6, position=position_dodge(.9)) + theme_classic() + ylab("Serum\n leptin\n pg/ml") + theme(plot.title = element_text(hjust = 0.5), axis.text.x = element_text(face="bold",size=12), axis.title.y=element_text(size=12, angle=0, vjust=0.5), axis.title.x = element_blank()) + scale_colour_manual(values = c("black", "black")) + scale_fill_manual(values = cbp3) + scale_x_discrete(labels=c("Chow\n diet", "High fat\n diet")) + scale_y_continuous(labels = scales::comma, expand = c(0,0), breaks = seq(0, 50000, 10000), limits=c(0, 50000)) + stat_pvalue_manual(Lep_2_stat.test, label = "p.adj.signif", tip.length = 0.03, size = 4, y.position = 37000) + ggtitle("12 weeks")
+pdf(file="Lep_3_fig.pdf",width=4,height=5)
+Lep_3_fig
+dev.off()
+
+## Lep_6
+
+Lep_6_max <- max(Ms_biochem_33$Lep_6, na.rm=T)
+Lep_6_sd <- (sd(Ms_biochem_33$Lep_6, na.rm=T))/2
+Lep_6_sum <- data_summary(Ms_biochem_33, varname="Lep_6", groupnames=c("Genotype", "Diet"))
+Lep_6_sum$Genotype <- factor(Lep_6_sum$Genotype, levels = c("WT", "KI"))
+Lep_6_sum <- merge(Lep_6_sum, Ms_biochem_33_counts, by=c("Genotype", "Diet"))
+Lep_6_sum$se = Lep_6_sum$sd/sqrt(Lep_6_sum$n)
+Lep_6_res.aov <- Ms_biochem_33 %>% anova_test(Lep_6 ~ Group_unique)
+
+Lep_6_stat.test <- Ms_biochem_33 %>% group_by(Diet) %>% t_test(Lep_6 ~ Genotype) %>% adjust_pvalue(method = "bonferroni") %>% add_significance("p.adj") 
+Lep_6_stat.test <- Lep_6_stat.test %>% add_xy_position(fun = "mean_sd", x = "Diet", dodge = 0.9)
+Lep_6_stat.test$text <- paste("p.adj", format(round(Lep_6_stat.test$p.adj, 2), nsmall = 2), sep = "=", collapse = NULL)
+
+Lep_6_fig <- ggplot(data=Lep_6_sum, aes(x=Diet, y=Lep_6)) + geom_bar(aes(fill=Genotype), stat="identity", color="black", position=position_dodge(), show.legend = FALSE) + geom_point(stroke=0.7, shape=21, data=Ms_biochem_33, aes(x=Diet, y=Lep_6, colour=Genotype), fill="white", size=2.3, alpha=0.9, show.legend=FALSE, position=position_jitterdodge(jitter.width = .2, dodge.width = .9)) + geom_errorbar(aes(group = Genotype, ymin=Lep_6-se, ymax=Lep_6+se), color="black", width=.2, size=.6, position=position_dodge(.9)) + theme_classic() + ylab("Serum\n leptin\n pg/ml") + theme(plot.title = element_text(hjust = 0.5), axis.text.x = element_text(face="bold",size=12), axis.title.y=element_text(size=12, angle=0, vjust=0.5), axis.title.x = element_blank()) + scale_colour_manual(values = c("black", "black")) + scale_fill_manual(values = cbp3) + scale_x_discrete(labels=c("Chow\n diet", "High fat\n diet")) + scale_y_continuous(labels = scales::comma, expand = c(0,0), breaks = seq(0, 1000000, 10000), limits=c(0, 100000)) + stat_pvalue_manual(Lep_6_stat.test, label = "p.adj.signif", tip.length = 0.03, size = 4, y.position = 72000) + ggtitle("24 weeks")
+pdf(file="Lep_6_fig.pdf",width=4,height=5)
+Lep_6_fig
+dev.off()
+
+
+## Adipo_1
+
+Adipo_1_max <- max(Ms_biochem_33$Adipo_1, na.rm=T)
+Adipo_1_sd <- (sd(Ms_biochem_33$Adipo_1, na.rm=T))/2
+Adipo_1_sum <- data_summary(Ms_biochem_33, varname="Adipo_1", groupnames=c("Genotype", "Diet"))
+Adipo_1_sum$Genotype <- factor(Adipo_1_sum$Genotype, levels = c("WT", "KI"))
+Adipo_1_sum <- merge(Adipo_1_sum, Ms_biochem_33_counts, by=c("Genotype", "Diet"))
+Adipo_1_sum$se = Adipo_1_sum$sd/sqrt(Adipo_1_sum$n)
+Adipo_1_res.aov <- Ms_biochem_33 %>% anova_test(Adipo_1 ~ Group_unique)
+
+Adipo_1_stat.test <- Ms_biochem_33 %>% group_by(Diet) %>% t_test(Adipo_1 ~ Genotype) %>% adjust_pvalue(method = "bonferroni") %>% add_significance("p.adj") 
+Adipo_1_stat.test <- Adipo_1_stat.test %>% add_xy_position(fun = "mean_sd", x = "Diet", dodge = 0.9)
+Adipo_1_stat.test$text <- paste("p.adj", format(round(Adipo_1_stat.test$p.adj, 2), nsmall = 2), sep = "=", collapse = NULL)
+
+Adipo_1_fig <- ggplot(data=Adipo_1_sum, aes(x=Diet, y=Adipo_1)) + geom_bar(aes(fill=Genotype), stat="identity", color="black", position=position_dodge(), show.legend = FALSE) + geom_point(stroke=0.7, shape=21, data=Ms_biochem_33, aes(x=Diet, y=Adipo_1, colour=Genotype), fill="white", size=2.3, alpha=0.9, show.legend=FALSE, position=position_jitterdodge(jitter.width = .2, dodge.width = .9)) + geom_errorbar(aes(group = Genotype, ymin=Adipo_1-se, ymax=Adipo_1+se), color="black", width=.2, size=.6, position=position_dodge(.9)) + theme_classic() + ylab("Serum\n adiponectin\n ng/ml") + theme(plot.title = element_text(hjust = 0.5), axis.text.x = element_text(face="bold",size=12), axis.title.y=element_text(size=12, angle=0, vjust=0.5), axis.title.x = element_blank()) + scale_colour_manual(values = c("black", "black")) + scale_fill_manual(values = cbp3) + scale_x_discrete(labels=c("Chow\n diet", "High fat\n diet")) + scale_y_continuous(labels = scales::comma, expand = c(0,0), breaks = seq(0, 40000, 10000), limits=c(0, 40000)) + stat_pvalue_manual(Adipo_1_stat.test, label = "p.adj.signif", tip.length = 0.03, size = 4, y.position = 35000) + ggtitle("4 weeks")
+pdf(file="Adipo_1_fig.pdf",width=4,height=5)
+Adipo_1_fig
+dev.off()
+
+## Adipo_2
+
+Adipo_2_max <- max(Ms_biochem_33$Adipo_2, na.rm=T)
+Adipo_2_sd <- (sd(Ms_biochem_33$Adipo_2, na.rm=T))/2
+Adipo_2_sum <- data_summary(Ms_biochem_33, varname="Adipo_2", groupnames=c("Genotype", "Diet"))
+Adipo_2_sum$Genotype <- factor(Adipo_2_sum$Genotype, levels = c("WT", "KI"))
+Adipo_2_sum <- merge(Adipo_2_sum, Ms_biochem_33_counts, by=c("Genotype", "Diet"))
+Adipo_2_sum$se = Adipo_2_sum$sd/sqrt(Adipo_2_sum$n)
+Adipo_2_res.aov <- Ms_biochem_33 %>% anova_test(Adipo_2 ~ Group_unique)
+
+Adipo_2_stat.test <- Ms_biochem_33 %>% group_by(Diet) %>% t_test(Adipo_2 ~ Genotype) %>% adjust_pvalue(method = "bonferroni") %>% add_significance("p.adj") 
+Adipo_2_stat.test <- Adipo_2_stat.test %>% add_xy_position(fun = "mean_sd", x = "Diet", dodge = 0.9)
+Adipo_2_stat.test$text <- paste("p.adj", format(round(Adipo_2_stat.test$p.adj, 2), nsmall = 2), sep = "=", collapse = NULL)
+
+Adipo_2_fig <- ggplot(data=Adipo_2_sum, aes(x=Diet, y=Adipo_2)) + geom_bar(aes(fill=Genotype), stat="identity", color="black", position=position_dodge(), show.legend = FALSE) + geom_point(stroke=0.7, shape=21, data=Ms_biochem_33, aes(x=Diet, y=Adipo_2, colour=Genotype), fill="white", size=2.3, alpha=0.9, show.legend=FALSE, position=position_jitterdodge(jitter.width = .2, dodge.width = .9)) + geom_errorbar(aes(group = Genotype, ymin=Adipo_2-se, ymax=Adipo_2+se), color="black", width=.2, size=.6, position=position_dodge(.9)) + theme_classic() + ylab("Serum\n adiponectin\n ng/ml") + theme(plot.title = element_text(hjust = 0.5), axis.text.x = element_text(face="bold",size=12), axis.title.y=element_text(size=12, angle=0, vjust=0.5), axis.title.x = element_blank()) + scale_colour_manual(values = c("black", "black")) + scale_fill_manual(values = cbp3) + scale_x_discrete(labels=c("Chow\n diet", "High fat\n diet")) + scale_y_continuous(labels = scales::comma, expand = c(0,0), breaks = seq(0, 50000, 10000), limits=c(0, 50000)) + stat_pvalue_manual(Adipo_2_stat.test, label = "p.adj.signif", tip.length = 0.03, size = 4, y.position = 45000)  + ggtitle("8 weeks")
+pdf(file="Adipo_2_fig.pdf",width=4,height=5)
+Adipo_2_fig
+dev.off()
+
+
+## Adipo_3
+
+Adipo_3_max <- max(Ms_biochem_33$Adipo_3, na.rm=T)
+Adipo_3_sd <- (sd(Ms_biochem_33$Adipo_3, na.rm=T))/2
+Adipo_3_sum <- data_summary(Ms_biochem_33, varname="Adipo_3", groupnames=c("Genotype", "Diet"))
+Adipo_3_sum$Genotype <- factor(Adipo_3_sum$Genotype, levels = c("WT", "KI"))
+Adipo_3_sum <- merge(Adipo_3_sum, Ms_biochem_33_counts, by=c("Genotype", "Diet"))
+Adipo_3_sum$se = Adipo_3_sum$sd/sqrt(Adipo_3_sum$n)
+Adipo_3_res.aov <- Ms_biochem_33 %>% anova_test(Adipo_3 ~ Group_unique)
+
+Adipo_3_stat.test <- Ms_biochem_33 %>% group_by(Diet) %>% t_test(Adipo_3 ~ Genotype) %>% adjust_pvalue(method = "bonferroni") %>% add_significance("p.adj") 
+Adipo_3_stat.test <- Adipo_3_stat.test %>%																																																																																																																																																																																																																																																																																																																																																										 add_xy_position(fun = "mean_sd", x = "Diet", dodge = 0.9)
+Adipo_3_stat.test$text <- paste("p.adj", format(round(Adipo_3_stat.test$p.adj, 2), nsmall = 2), sep = "=", collapse = NULL)
+
+Adipo_3_fig <- ggplot(data=Adipo_3_sum, aes(x=Diet, y=Adipo_3)) + geom_bar(aes(fill=Genotype), stat="identity", color="black", position=position_dodge(), show.legend = FALSE) + geom_point(stroke=0.7, shape=21, data=Ms_biochem_33, aes(x=Diet, y=Adipo_3, colour=Genotype), fill="white", size=2.3, alpha=0.9, show.legend=FALSE, position=position_jitterdodge(jitter.width = .2, dodge.width = .9)) + geom_errorbar(aes(group = Genotype, ymin=Adipo_3-se, ymax=Adipo_3+se), color="black", width=.2, size=.6, position=position_dodge(.9)) + theme_classic() + ylab("Serum\n adiponectin\n ng/ml") + theme(plot.title = element_text(hjust = 0.5), axis.text.x = element_text(face="bold",size=12), axis.title.y=element_text(size=12, angle=0, vjust=0.5), axis.title.x = element_blank()) + scale_colour_manual(values = c("black", "black")) + scale_fill_manual(values = cbp3) + scale_x_discrete(labels=c("Chow\n diet", "High fat\n diet")) + scale_y_continuous(labels = scales::comma, expand = c(0,0), breaks = seq(0, 50000, 10000), limits=c(0, 50000)) + stat_pvalue_manual(Adipo_2_stat.test, label = "p.adj.signif", tip.length = 0.03, size = 4, y.position = 40000) + ggtitle("12 weeks")
+pdf(file="Adipo_3_fig.pdf",width=4,height=5)
+Adipo_3_fig
+dev.off()
+
+## Adipo_6
+
+Adipo_6_max <- max(Ms_biochem_33$Adipo_6, na.rm=T)
+Adipo_6_sd <- (sd(Ms_biochem_33$Adipo_6, na.rm=T))/2
+Adipo_6_sum <- data_summary(Ms_biochem_33, varname="Adipo_6", groupnames=c("Genotype", "Diet"))
+Adipo_6_sum$Genotype <- factor(Adipo_6_sum$Genotype, levels = c("WT", "KI"))
+Adipo_6_sum <- merge(Adipo_6_sum, Ms_biochem_33_counts, by=c("Genotype", "Diet"))
+Adipo_6_sum$se = Adipo_6_sum$sd/sqrt(Adipo_6_sum$n)
+Adipo_6_res.aov <- Ms_biochem_33 %>% anova_test(Adipo_6 ~ Group_unique)
+
+Adipo_6_stat.test <- Ms_biochem_33 %>% group_by(Diet) %>% t_test(Adipo_6 ~ Genotype) %>% adjust_pvalue(method = "bonferroni") %>% add_significance("p.adj") 
+Adipo_6_stat.test <- Adipo_6_stat.test %>% add_xy_position(fun = "mean_sd", x = "Diet", dodge = 0.9)
+Adipo_6_stat.test$text <- paste("p.adj", format(round(Adipo_6_stat.test$p.adj, 2), nsmall = 2), sep = "=", collapse = NULL)
+
+Adipo_6_fig <- ggplot(data=Adipo_6_sum, aes(x=Diet, y=Adipo_6)) + geom_bar(aes(fill=Genotype), stat="identity", color="black", position=position_dodge(), show.legend = FALSE) + geom_point(stroke=0.7, shape=21, data=Ms_biochem_33, aes(x=Diet, y=Adipo_6, colour=Genotype), fill="white", size=2.3, alpha=0.9, show.legend=FALSE, position=position_jitterdodge(jitter.width = .2, dodge.width = .9)) + geom_errorbar(aes(group = Genotype, ymin=Adipo_6-se, ymax=Adipo_6+se), color="black", width=.2, size=.6, position=position_dodge(.9)) + theme_classic() + ylab("Serum\n adiponectin\n ng/ml") + theme(plot.title = element_text(hjust = 0.5), axis.text.x = element_text(face="bold",size=12), axis.title.y=element_text(size=12, angle=0, vjust=0.5), axis.title.x = element_blank()) + scale_colour_manual(values = c("black", "black")) + scale_fill_manual(values = cbp3) + scale_x_discrete(labels=c("Chow\n diet", "High fat\n diet")) + scale_y_continuous(labels = scales::comma, expand = c(0,0), breaks = seq(0, 50000, 10000), limits=c(0, 50000)) + stat_pvalue_manual(Adipo_6_stat.test, label = "p.adj.signif", tip.length = 0.03, size = 4, y.position = 45000) + ggtitle("24 weeks")
+pdf(file="Adipo_6_fig.pdf",width=4,height=5)
+Adipo_6_fig
+dev.off()
+
+
+## ALT_7
+
+ALT_7_max <- max(Ms_biochem_33$ALT_7, na.rm=T)
+ALT_7_sd <- (sd(Ms_biochem_33$ALT_7, na.rm=T))/2
+ALT_7_sum <- data_summary(Ms_biochem_33, varname="ALT_7", groupnames=c("Genotype", "Diet"))
+ALT_7_sum$Genotype <- factor(ALT_7_sum$Genotype, levels = c("WT", "KI"))
+ALT_7_sum <- merge(ALT_7_sum, Ms_biochem_33_counts, by=c("Genotype", "Diet"))
+ALT_7_sum$se = ALT_7_sum$sd/sqrt(ALT_7_sum$n)
+ALT_7_res.aov <- Ms_biochem_33 %>% anova_test(ALT_7 ~ Group_unique)
+
+ALT_7_stat.test <- Ms_biochem_33 %>% group_by(Diet) %>% t_test(ALT_7 ~ Genotype) %>% adjust_pvalue(method = "bonferroni") %>% add_significance("p.adj") 
+ALT_7_stat.test <- ALT_7_stat.test %>% add_xy_position(fun = "mean_sd", x = "Diet", dodge = 0.9)
+ALT_7_stat.test$text <- paste("p.adj", format(round(ALT_7_stat.test$p.adj, 2), nsmall = 2), sep = "=", collapse = NULL)
+
+ALT_7_fig <- ggplot(data=ALT_7_sum, aes(x=Diet, y=ALT_7)) + geom_bar(aes(fill=Genotype), stat="identity", color="black", position=position_dodge(), show.legend = FALSE) + geom_point(stroke=0.7, shape=21, data=Ms_biochem_33, aes(x=Diet, y=ALT_7, colour=Genotype), fill="white", size=2.3, alpha=0.9, show.legend=FALSE, position=position_jitterdodge(jitter.width = .2, dodge.width = .9)) + geom_errorbar(aes(group = Genotype, ymin=ALT_7-se, ymax=ALT_7+se), color="black", width=.2, size=.6, position=position_dodge(.9)) + theme_classic() + ylab("ALT\n IU/L") + theme(axis.text.x = element_text(face="bold",size=12), axis.title.y=element_text(size=12, angle=0, vjust=0.5), axis.title.x = element_blank()) + scale_colour_manual(values = c("black", "black")) + scale_fill_manual(values = cbp3) + scale_x_discrete(labels=c("Chow\n diet", "High fat\n diet")) + scale_y_continuous(labels = scales::comma, expand = c(0,0), breaks = seq(0, 350, 50), limits=c(0, 350)) + stat_pvalue_manual(ALT_7_stat.test, label = "p.adj.signif", tip.length = 0.03, size = 4, y.position = 260)
+pdf(file="ALT_7_fig.pdf",width=4,height=5)
+ALT_7_fig
+dev.off()
+
+
+
+## AST_Sch1
+
+AST_Sch1_max <- max(Ms_biochem_33$AST_Sch1, na.rm=T)
+AST_Sch1_sd <- (sd(Ms_biochem_33$AST_Sch1, na.rm=T))/2
+AST_Sch1_sum <- data_summary(Ms_biochem_33, varname="AST_Sch1", groupnames=c("Genotype", "Diet"))
+AST_Sch1_sum$Genotype <- factor(AST_Sch1_sum$Genotype, levels = c("WT", "KI"))
+AST_Sch1_sum <- merge(AST_Sch1_sum, Ms_biochem_33_counts, by=c("Genotype", "Diet"))
+AST_Sch1_sum$se = AST_Sch1_sum$sd/sqrt(AST_Sch1_sum$n)
+AST_Sch1_res.aov <- Ms_biochem_33 %>% anova_test(AST_Sch1 ~ Group_unique)
+
+AST_Sch1_stat.test <- Ms_biochem_33 %>% group_by(Diet) %>% t_test(AST_Sch1 ~ Genotype) %>% adjust_pvalue(method = "bonferroni") %>% add_significance("p.adj") 
+AST_Sch1_stat.test <- AST_Sch1_stat.test %>% add_xy_position(fun = "mean_sd", x = "Diet", dodge = 0.9)
+AST_Sch1_stat.test$text <- paste("p.adj", format(round(AST_Sch1_stat.test$p.adj, 2), nsmall = 2), sep = "=", collapse = NULL)
+
+AST_Sch1_fig <- ggplot(data=AST_Sch1_sum, aes(x=Diet, y=AST_Sch1)) + geom_bar(aes(fill=Genotype), stat="identity", color="black", position=position_dodge(), show.legend = FALSE) + geom_point(stroke=0.7, shape=21, data=Ms_biochem_33, aes(x=Diet, y=AST_Sch1, colour=Genotype), fill="white", size=2.3, alpha=0.9, show.legend=FALSE, position=position_jitterdodge(jitter.width = .2, dodge.width = .9)) + geom_errorbar(aes(group = Genotype, ymin=AST_Sch1-se, ymax=AST_Sch1+se), color="black", width=.2, size=.6, position=position_dodge(.9)) + theme_classic() + ylab("AST\n IU/L") + theme(axis.text.x = element_text(face="bold",size=12), axis.title.y=element_text(size=12, angle=0, vjust=0.5), axis.title.x = element_blank()) + scale_colour_manual(values = c("black", "black")) + scale_fill_manual(values = cbp3) + scale_x_discrete(labels=c("Chow\n diet", "High fat\n diet")) + scale_y_continuous(labels = scales::comma, expand = c(0,0), breaks = seq(0, 500, 100), limits=c(0, 500)) + stat_pvalue_manual(AST_Sch1_stat.test, label = "p.adj.signif", tip.length = 0.03, size = 4, y.position = 380)
+pdf(file="AST_Sch1_fig.pdf",width=4,height=5)
+AST_Sch1_fig
+dev.off()
+
+
+## FGF21_5
+
+FGF21_5_max <- max(Ms_biochem_33$FGF21_5, na.rm=T)
+FGF21_5_sd <- (sd(Ms_biochem_33$FGF21_5, na.rm=T))/2
+FGF21_5_sum <- data_summary(Ms_biochem_33, varname="FGF21_5", groupnames=c("Genotype", "Diet"))
+FGF21_5_sum$Genotype <- factor(FGF21_5_sum$Genotype, levels = c("WT", "KI"))
+FGF21_5_sum <- merge(FGF21_5_sum, Ms_biochem_33_counts, by=c("Genotype", "Diet"))
+FGF21_5_sum$se = FGF21_5_sum$sd/sqrt(FGF21_5_sum$n)
+FGF21_5_res.aov <- Ms_biochem_33 %>% anova_test(FGF21_5 ~ Group_unique)
+
+FGF21_5_stat.test <- Ms_biochem_33 %>% group_by(Diet) %>% t_test(FGF21_5 ~ Genotype) %>% adjust_pvalue(method = "bonferroni") %>% add_significance("p.adj") 
+FGF21_5_stat.test <- FGF21_5_stat.test %>% add_xy_position(fun = "mean_sd", x = "Diet", dodge = 0.9)
+FGF21_5_stat.test$text <- paste("p.adj", format(round(FGF21_5_stat.test$p.adj, 2), nsmall = 2), sep = "=", collapse = NULL)
+
+FGF21_5_fig <- ggplot(data=FGF21_5_sum, aes(x=Diet, y=FGF21_5)) + geom_bar(aes(fill=Genotype), stat="identity", color="black", position=position_dodge(), show.legend = FALSE) + geom_point(stroke=0.7, shape=21, data=Ms_biochem_33, aes(x=Diet, y=FGF21_5, colour=Genotype), fill="white", size=2.3, alpha=0.9, show.legend=FALSE, position=position_jitterdodge(jitter.width = .2, dodge.width = .9)) + geom_errorbar(aes(group = Genotype, ymin=FGF21_5-se, ymax=FGF21_5+se), color="black", width=.2, size=.6, position=position_dodge(.9)) + theme_classic() + ylab("FGF-21\n pg/ml") + theme(axis.text.x = element_text(face="bold",size=12), axis.title.y=element_text(size=12, angle=0, vjust=0.5), axis.title.x = element_blank()) + scale_colour_manual(values = c("black", "black")) + scale_fill_manual(values = cbp3) + scale_x_discrete(labels=c("Chow\n diet", "High fat\n diet")) + scale_y_continuous(labels = scales::comma, expand = c(0,0), breaks = seq(0, 5000, 1000), limits=c(0, 5000)) + stat_pvalue_manual(FGF21_5_stat.test, label = "p.adj.signif", tip.length = 0.03, size = 4, y.position = 4400)
+pdf(file="FGF21_5_fig.pdf",width=4,height=5)
+FGF21_5_fig
+dev.off()
+
+## FGF21_7
+
+FGF21_7_max <- max(Ms_biochem_33$FGF21_7, na.rm=T)
+FGF21_7_sd <- (sd(Ms_biochem_33$FGF21_7, na.rm=T))/2
+FGF21_7_sum <- data_summary(Ms_biochem_33, varname="FGF21_7", groupnames=c("Genotype", "Diet"))
+FGF21_7_sum$Genotype <- factor(FGF21_7_sum$Genotype, levels = c("WT", "KI"))
+FGF21_7_sum <- merge(FGF21_7_sum, Ms_biochem_33_counts, by=c("Genotype", "Diet"))
+FGF21_7_sum$se = FGF21_7_sum$sd/sqrt(FGF21_7_sum$n)
+FGF21_7_res.aov <- Ms_biochem_33 %>% anova_test(FGF21_7 ~ Group_unique)
+
+FGF21_7_stat.test <- Ms_biochem_33 %>% group_by(Diet) %>% t_test(FGF21_7 ~ Genotype) %>% adjust_pvalue(method = "bonferroni") %>% add_significance("p.adj") 
+FGF21_7_stat.test <- FGF21_7_stat.test %>% add_xy_position(fun = "mean_sd", x = "Diet", dodge = 0.9)
+FGF21_7_stat.test$text <- paste("p.adj", format(round(FGF21_7_stat.test$p.adj, 2), nsmall = 2), sep = "=", collapse = NULL)
+
+FGF21_7_fig <- ggplot(data=FGF21_7_sum, aes(x=Diet, y=FGF21_7)) + geom_bar(aes(fill=Genotype), stat="identity", color="black", position=position_dodge(), show.legend = FALSE) + geom_point(stroke=0.7, shape=21, data=Ms_biochem_33, aes(x=Diet, y=FGF21_7, colour=Genotype), fill="white", size=2.3, alpha=0.9, show.legend=FALSE, position=position_jitterdodge(jitter.width = .2, dodge.width = .9)) + geom_errorbar(aes(group = Genotype, ymin=FGF21_7-se, ymax=FGF21_7+se), color="black", width=.2, size=.6, position=position_dodge(.9)) + theme_classic() + ylab("FGF-21\n pg/ml") + theme(axis.text.x = element_text(face="bold",size=12), axis.title.y=element_text(size=12, angle=0, vjust=0.5), axis.title.x = element_blank()) + scale_colour_manual(values = c("black", "black")) + scale_fill_manual(values = cbp3) + scale_x_discrete(labels=c("Chow\n diet", "High fat\n diet")) + scale_y_continuous(labels = scales::comma, expand = c(0,0), breaks = seq(0, 7000, 1000), limits=c(0, 7000)) + stat_pvalue_manual(FGF21_5_stat.test, label = "p.adj.signif", tip.length = 0.03, size = 4, y.position = 5500)
+pdf(file="FGF21_7_fig.pdf",width=4,height=5)
+FGF21_7_fig
+dev.off()
+
+
+## GDF15_7
+
+GDF15_7_max <- max(Ms_biochem_33$GDF15_7, na.rm=T)
+GDF15_7_sd <- (sd(Ms_biochem_33$GDF15_7, na.rm=T))/2
+GDF15_7_sum <- data_summary(Ms_biochem_33, varname="GDF15_7", groupnames=c("Genotype", "Diet"))
+GDF15_7_sum$Genotype <- factor(GDF15_7_sum$Genotype, levels = c("WT", "KI"))
+GDF15_7_sum <- merge(GDF15_7_sum, Ms_biochem_33_counts, by=c("Genotype", "Diet"))
+GDF15_7_sum$se = GDF15_7_sum$sd/sqrt(GDF15_7_sum$n)
+GDF15_7_res.aov <- Ms_biochem_33 %>% anova_test(GDF15_7 ~ Group_unique)
+
+GDF15_7_stat.test <- Ms_biochem_33 %>% group_by(Diet) %>% t_test(GDF15_7 ~ Genotype) %>% adjust_pvalue(method = "bonferroni") %>% add_significance("p.adj") 
+GDF15_7_stat.test <- GDF15_7_stat.test %>% add_xy_position(fun = "mean_sd", x = "Diet", dodge = 0.9)
+GDF15_7_stat.test$text <- paste("p.adj", format(round(GDF15_7_stat.test$p.adj, 2), nsmall = 2), sep = "=", collapse = NULL)
+
+GDF15_7_fig <- ggplot(data=GDF15_7_sum, aes(x=Diet, y=GDF15_7)) + geom_bar(aes(fill=Genotype), stat="identity", color="black", position=position_dodge(), show.legend = FALSE) + geom_point(stroke=0.7, shape=21, data=Ms_biochem_33, aes(x=Diet, y=GDF15_7, colour=Genotype), fill="white", size=2.3, alpha=0.9, show.legend=FALSE, position=position_jitterdodge(jitter.width = .2, dodge.width = .9)) + geom_errorbar(aes(group = Genotype, ymin=GDF15_7-se, ymax=GDF15_7+se), color="black", width=.2, size=.6, position=position_dodge(.9)) + theme_classic() + ylab("GDF-15\n pg/ml") + theme(axis.text.x = element_text(face="bold",size=12), axis.title.y=element_text(size=12, angle=0, vjust=0.5), axis.title.x = element_blank()) + scale_colour_manual(values = c("black", "black")) + scale_fill_manual(values = cbp3) + scale_x_discrete(labels=c("Chow\n diet", "High fat\n diet")) + scale_y_continuous(labels = scales::comma, expand = c(0,0), breaks = seq(0, 600, 100), limits=c(0, 600)) + stat_pvalue_manual(GDF15_7_stat.test, label = "p.adj.signif", tip.length = 0.03, size = 4, y.position = 380)
+pdf(file="GDF15_7_fig.pdf",width=4,height=5)
+GDF15_7_fig
+dev.off()
+
+## Ins_G0
+
+Ins_G0_max <- max(Ms_biochem_33$Ins_G0, na.rm=T)
+Ins_G0_sd <- (sd(Ms_biochem_33$Ins_G0, na.rm=T))/2
+Ins_G0_sum <- data_summary(Ms_biochem_33, varname="Ins_G0", groupnames=c("Genotype", "Diet"))
+Ins_G0_sum$Genotype <- factor(Ins_G0_sum$Genotype, levels = c("WT", "KI"))
+Ins_G0_sum <- merge(Ins_G0_sum, Ms_biochem_33_counts, by=c("Genotype", "Diet"))
+Ins_G0_sum$se = Ins_G0_sum$sd/sqrt(Ins_G0_sum$n)
+Ins_G0_res.aov <- Ms_biochem_33 %>% anova_test(Ins_G0 ~ Group_unique)
+
+Ins_G0_stat.test <- Ms_biochem_33 %>% group_by(Diet) %>% t_test(Ins_G0 ~ Genotype) %>% adjust_pvalue(method = "bonferroni") %>% add_significance("p.adj") 
+Ins_G0_stat.test <- Ins_G0_stat.test %>% add_xy_position(fun = "mean_sd", x = "Diet", dodge = 0.9)
+Ins_G0_stat.test$text <- paste("p.adj", format(round(Ins_G0_stat.test$p.adj, 2), nsmall = 2), sep = "=", collapse = NULL)
+
+Ins_G0_fig <- ggplot(data=Ins_G0_sum, aes(x=Diet, y=Ins_G0)) + geom_bar(aes(fill=Genotype), stat="identity", color="black", position=position_dodge(), show.legend = FALSE) + geom_point(stroke=0.7, shape=21, data=Ms_biochem_33, aes(x=Diet, y=Ins_G0, colour=Genotype), fill="white", size=2.3, alpha=0.9, show.legend=FALSE, position=position_jitterdodge(jitter.width = .2, dodge.width = .9)) + geom_errorbar(aes(group = Genotype, ymin=Ins_G0-se, ymax=Ins_G0+se), color="black", width=.2, size=.6, position=position_dodge(.9)) + theme_classic() + ylab("Insulin\n ug/L") + theme(axis.text.x = element_text(face="bold",size=12), axis.title.y=element_text(size=12, angle=0, vjust=0.5), axis.title.x = element_blank()) + scale_colour_manual(values = c("black", "black")) + scale_fill_manual(values = cbp3) + scale_x_discrete(labels=c("Chow\n diet", "High fat\n diet")) + scale_y_continuous(labels = scales::comma, expand = c(0,0), breaks = seq(0, 8, 1), limits=c(0, 8)) + stat_pvalue_manual(Ins_G0_stat.test, label = "p.adj.signif", tip.length = 0.03, size = 4, y.position = 6.1)
+pdf(file="Ins_G0_fig.pdf",width=4,height=5)
+Ins_G0_fig
+dev.off()
+
+## Ins_Sch1
+
+Ins_Sch1_max <- max(Ms_biochem_33$Ins_Sch1, na.rm=T)
+Ins_Sch1_sd <- (sd(Ms_biochem_33$Ins_Sch1, na.rm=T))/2
+Ins_Sch1_sum <- data_summary(Ms_biochem_33, varname="Ins_Sch1", groupnames=c("Genotype", "Diet"))
+Ins_Sch1_sum$Genotype <- factor(Ins_Sch1_sum$Genotype, levels = c("WT", "KI"))
+Ins_Sch1_sum <- merge(Ins_Sch1_sum, Ms_biochem_33_counts, by=c("Genotype", "Diet"))
+Ins_Sch1_sum$se = Ins_Sch1_sum$sd/sqrt(Ins_Sch1_sum$n)
+Ins_Sch1_res.aov <- Ms_biochem_33 %>% anova_test(Ins_Sch1 ~ Group_unique)
+
+Ins_Sch1_stat.test <- Ms_biochem_33 %>% group_by(Diet) %>% t_test(Ins_Sch1 ~ Genotype) %>% adjust_pvalue(method = "bonferroni") %>% add_significance("p.adj") 
+Ins_Sch1_stat.test <- Ins_Sch1_stat.test %>% add_xy_position(fun = "mean_sd", x = "Diet", dodge = 0.9)
+Ins_Sch1_stat.test$text <- paste("p.adj", format(round(Ins_Sch1_stat.test$p.adj, 2), nsmall = 2), sep = "=", collapse = NULL)
+
+Ins_Sch1_fig <- ggplot(data=Ins_Sch1_sum, aes(x=Diet, y=Ins_Sch1)) + geom_bar(aes(fill=Genotype), stat="identity", color="black", position=position_dodge(), show.legend = FALSE) + geom_point(stroke=0.7, shape=21, data=Ms_biochem_33, aes(x=Diet, y=Ins_Sch1, colour=Genotype), fill="white", size=2.3, alpha=0.9, show.legend=FALSE, position=position_jitterdodge(jitter.width = .2, dodge.width = .9)) + geom_errorbar(aes(group = Genotype, ymin=Ins_Sch1-se, ymax=Ins_Sch1+se), color="black", width=.2, size=.6, position=position_dodge(.9)) + theme_classic() + ylab("Insulin\n ug/L") + theme(axis.text.x = element_text(face="bold",size=12), axis.title.y=element_text(size=12, angle=0, vjust=0.5), axis.title.x = element_blank()) + scale_colour_manual(values = c("black", "black")) + scale_fill_manual(values = cbp3) + scale_x_discrete(labels=c("Chow\n diet", "High fat\n diet")) + scale_y_continuous(labels = scales::comma, expand = c(0,0), breaks = seq(0, 5, 1), limits=c(0, 5)) + stat_pvalue_manual(Ins_G0_stat.test, label = "p.adj.signif", tip.length = 0.03, size = 4, y.position = 3.8)
+pdf(file="Ins_Sch1_fig.pdf",width=4,height=5)
+Ins_Sch1_fig
+dev.off()
+
+
+## Gluc_Sch1
+
+Gluc_Sch1_max <- max(Ms_biochem_33$Gluc_Sch1, na.rm=T)
+Gluc_Sch1_sd <- (sd(Ms_biochem_33$Gluc_Sch1, na.rm=T))/2
+Gluc_Sch1_sum <- data_summary(Ms_biochem_33, varname="Gluc_Sch1", groupnames=c("Genotype", "Diet"))
+Gluc_Sch1_sum$Genotype <- factor(Gluc_Sch1_sum$Genotype, levels = c("WT", "KI"))
+Gluc_Sch1_sum <- merge(Gluc_Sch1_sum, Ms_biochem_33_counts, by=c("Genotype", "Diet"))
+Gluc_Sch1_sum$se = Gluc_Sch1_sum$sd/sqrt(Gluc_Sch1_sum$n)
+Gluc_Sch1_res.aov <- Ms_biochem_33 %>% anova_test(Gluc_Sch1 ~ Group_unique)
+
+Gluc_Sch1_stat.test <- Ms_biochem_33 %>% group_by(Diet) %>% t_test(Gluc_Sch1 ~ Genotype) %>% adjust_pvalue(method = "bonferroni") %>% add_significance("p.adj") 
+Gluc_Sch1_stat.test <- Gluc_Sch1_stat.test %>% add_xy_position(fun = "mean_sd", x = "Diet", dodge = 0.9)
+Gluc_Sch1_stat.test$text <- paste("p.adj", format(round(Gluc_Sch1_stat.test$p.adj, 2), nsmall = 2), sep = "=", collapse = NULL)
+
+Gluc_Sch1_fig <- ggplot(data=Gluc_Sch1_sum, aes(x=Diet, y=Gluc_Sch1)) + geom_bar(aes(fill=Genotype), stat="identity", color="black", position=position_dodge(), show.legend = FALSE) + geom_point(stroke=0.7, shape=21, data=Ms_biochem_33, aes(x=Diet, y=Gluc_Sch1, colour=Genotype), fill="white", size=2.3, alpha=0.9, show.legend=FALSE, position=position_jitterdodge(jitter.width = .2, dodge.width = .9)) + geom_errorbar(aes(group = Genotype, ymin=Gluc_Sch1-se, ymax=Gluc_Sch1+se), color="black", width=.2, size=.6, position=position_dodge(.9)) + theme_classic() + ylab("Glucose\n mmol/L") + theme(axis.text.x = element_text(face="bold",size=12), axis.title.y=element_text(size=12, angle=0, vjust=0.5), axis.title.x = element_blank()) + scale_colour_manual(values = c("black", "black")) + scale_fill_manual(values = cbp3) + scale_x_discrete(labels=c("Chow\n diet", "High fat\n diet")) + scale_y_continuous(labels = scales::comma, expand = c(0,0), breaks = seq(0, 20, 5), limits=c(0, 20)) + stat_pvalue_manual(Ins_G0_stat.test, label = "p.adj.signif", tip.length = 0.03, size = 4, y.position = 17)
+pdf(file="Gluc_Sch1_fig.pdf",width=4,height=5)
+Gluc_Sch1_fig
+dev.off()
+
+
+## Lact_Sch1
+
+Lact_Sch1_max <- max(Ms_biochem_33$Lact_Sch1, na.rm=T)
+Lact_Sch1_sd <- (sd(Ms_biochem_33$Lact_Sch1, na.rm=T))/2
+Lact_Sch1_sum <- data_summary(Ms_biochem_33, varname="Lact_Sch1", groupnames=c("Genotype", "Diet"))
+Lact_Sch1_sum$Genotype <- factor(Lact_Sch1_sum$Genotype, levels = c("WT", "KI"))
+Lact_Sch1_sum <- merge(Lact_Sch1_sum, Ms_biochem_33_counts, by=c("Genotype", "Diet"))
+Lact_Sch1_sum$se = Lact_Sch1_sum$sd/sqrt(Lact_Sch1_sum$n)
+Lact_Sch1_res.aov <- Ms_biochem_33 %>% anova_test(Lact_Sch1 ~ Group_unique)
+
+Lact_Sch1_stat.test <- Ms_biochem_33 %>% group_by(Diet) %>% t_test(Lact_Sch1 ~ Genotype) %>% adjust_pvalue(method = "bonferroni") %>% add_significance("p.adj") 
+Lact_Sch1_stat.test <- Lact_Sch1_stat.test %>% add_xy_position(fun = "mean_sd", x = "Diet", dodge = 0.9)
+Lact_Sch1_stat.test$text <- paste("p.adj", format(round(Lact_Sch1_stat.test$p.adj, 2), nsmall = 2), sep = "=", collapse = NULL)
+
+Lact_Sch1_fig <- ggplot(data=Lact_Sch1_sum, aes(x=Diet, y=Lact_Sch1)) + geom_bar(aes(fill=Genotype), stat="identity", color="black", position=position_dodge(), show.legend = FALSE) + geom_point(stroke=0.7, shape=21, data=Ms_biochem_33, aes(x=Diet, y=Lact_Sch1, colour=Genotype), fill="white", size=2.3, alpha=0.9, show.legend=FALSE, position=position_jitterdodge(jitter.width = .2, dodge.width = .9)) + geom_errorbar(aes(group = Genotype, ymin=Lact_Sch1-se, ymax=Lact_Sch1+se), color="black", width=.2, size=.6, position=position_dodge(.9)) + theme_classic() + ylab("Lactate\n mmol/L") + theme(axis.text.x = element_text(face="bold",size=12), axis.title.y=element_text(size=12, angle=0, vjust=0.5), axis.title.x = element_blank()) + scale_colour_manual(values = c("black", "black")) + scale_fill_manual(values = cbp3) + scale_x_discrete(labels=c("Chow\n diet", "High fat\n diet")) + scale_y_continuous(labels = scales::comma, expand = c(0,0), breaks = seq(0, 8, 1), limits=c(0, 8)) + stat_pvalue_manual(Ins_G0_stat.test, label = "p.adj.signif", tip.length = 0.03, size = 4, y.position = 7.5)
+pdf(file="Lact_Sch1_fig.pdf",width=4,height=5)
+Lact_Sch1_fig
+dev.off()
+
+
+## NEFA_Sch1
+
+NEFA_Sch1_max <- max(Ms_biochem_33$NEFA_Sch1, na.rm=T)
+NEFA_Sch1_sd <- (sd(Ms_biochem_33$NEFA_Sch1, na.rm=T))/2
+NEFA_Sch1_sum <- data_summary(Ms_biochem_33, varname="NEFA_Sch1", groupnames=c("Genotype", "Diet"))
+NEFA_Sch1_sum$Genotype <- factor(NEFA_Sch1_sum$Genotype, levels = c("WT", "KI"))
+NEFA_Sch1_sum <- merge(NEFA_Sch1_sum, Ms_biochem_33_counts, by=c("Genotype", "Diet"))
+NEFA_Sch1_sum$se = NEFA_Sch1_sum$sd/sqrt(NEFA_Sch1_sum$n)
+NEFA_Sch1_res.aov <- Ms_biochem_33 %>% anova_test(NEFA_Sch1 ~ Group_unique)
+
+NEFA_Sch1_stat.test <- Ms_biochem_33 %>% group_by(Diet) %>% t_test(NEFA_Sch1 ~ Genotype) %>% adjust_pvalue(method = "bonferroni") %>% add_significance("p.adj") 
+NEFA_Sch1_stat.test <- NEFA_Sch1_stat.test %>% add_xy_position(fun = "mean_sd", x = "Diet", dodge = 0.9)
+NEFA_Sch1_stat.test$text <- paste("p.adj", format(round(NEFA_Sch1_stat.test$p.adj, 2), nsmall = 2), sep = "=", collapse = NULL)
+
+NEFA_Sch1_fig <- ggplot(data=NEFA_Sch1_sum, aes(x=Diet, y=NEFA_Sch1)) + geom_bar(aes(fill=Genotype), stat="identity", color="black", position=position_dodge(), show.legend = FALSE) + geom_point(stroke=0.7, shape=21, data=Ms_biochem_33, aes(x=Diet, y=NEFA_Sch1, colour=Genotype), fill="white", size=2.3, alpha=0.9, show.legend=FALSE, position=position_jitterdodge(jitter.width = .2, dodge.width = .9)) + geom_errorbar(aes(group = Genotype, ymin=NEFA_Sch1-se, ymax=NEFA_Sch1+se), color="black", width=.2, size=.6, position=position_dodge(.9)) + theme_classic() + ylab("NEFA\n umol/L") + theme(axis.text.x = element_text(face="bold",size=12), axis.title.y=element_text(size=12, angle=0, vjust=0.5), axis.title.x = element_blank()) + scale_colour_manual(values = c("black", "black")) + scale_fill_manual(values = cbp3) + scale_x_discrete(labels=c("Chow\n diet", "High fat\n diet")) + scale_y_continuous(labels = scales::comma, expand = c(0,0), breaks = seq(0, 2500, 500), limits=c(0, 2500)) + stat_pvalue_manual(Ins_G0_stat.test, label = "p.adj.signif", tip.length = 0.03, size = 4, y.position = 2200)
+pdf(file="NEFA_Sch1_fig.pdf",width=4,height=5)
+NEFA_Sch1_fig
+dev.off()
+
+
+## TG_Sch1
+
+TG_Sch1_max <- max(Ms_biochem_33$TG_Sch1, na.rm=T)
+TG_Sch1_sd <- (sd(Ms_biochem_33$TG_Sch1, na.rm=T))/2
+TG_Sch1_sum <- data_summary(Ms_biochem_33, varname="TG_Sch1", groupnames=c("Genotype", "Diet"))
+TG_Sch1_sum$Genotype <- factor(TG_Sch1_sum$Genotype, levels = c("WT", "KI"))
+TG_Sch1_sum <- merge(TG_Sch1_sum, Ms_biochem_33_counts, by=c("Genotype", "Diet"))
+TG_Sch1_sum$se = TG_Sch1_sum$sd/sqrt(TG_Sch1_sum$n)
+TG_Sch1_res.aov <- Ms_biochem_33 %>% anova_test(TG_Sch1 ~ Group_unique)
+
+TG_Sch1_stat.test <- Ms_biochem_33 %>% group_by(Diet) %>% t_test(TG_Sch1 ~ Genotype) %>% adjust_pvalue(method = "bonferroni") %>% add_significance("p.adj") 
+TG_Sch1_stat.test <- TG_Sch1_stat.test %>% add_xy_position(fun = "mean_sd", x = "Diet", dodge = 0.9)
+TG_Sch1_stat.test$text <- paste("p.adj", format(round(TG_Sch1_stat.test$p.adj, 2), nsmall = 2), sep = "=", collapse = NULL)
+
+TG_Sch1_fig <- ggplot(data=TG_Sch1_sum, aes(x=Diet, y=TG_Sch1)) + geom_bar(aes(fill=Genotype), stat="identity", color="black", position=position_dodge(), show.legend = FALSE) + geom_point(stroke=0.7, shape=21, data=Ms_biochem_33, aes(x=Diet, y=TG_Sch1, colour=Genotype), fill="white", size=2.3, alpha=0.9, show.legend=FALSE, position=position_jitterdodge(jitter.width = .2, dodge.width = .9)) + geom_errorbar(aes(group = Genotype, ymin=TG_Sch1-se, ymax=TG_Sch1+se), color="black", width=.2, size=.6, position=position_dodge(.9)) + theme_classic() + ylab("Serum\n trigylceride\n mmol/L") + theme(axis.text.x = element_text(face="bold",size=12), axis.title.y=element_text(size=12, angle=0, vjust=0.5), axis.title.x = element_blank()) + scale_colour_manual(values = c("black", "black")) + scale_fill_manual(values = cbp3) + scale_x_discrete(labels=c("Chow\n diet", "High fat\n diet")) + scale_y_continuous(labels = scales::comma, expand = c(0,0), breaks = seq(0, 2, .5), limits=c(0, 2)) + stat_pvalue_manual(Ins_G0_stat.test, label = "p.adj.signif", tip.length = 0.03, size = 4, y.position = 1.8)
+pdf(file="TG_Sch1_fig.pdf",width=4,height=5)
+TG_Sch1_fig
+dev.off()
+
+## Chol_Sch1
+
+Chol_Sch1_max <- max(Ms_biochem_33$Chol_Sch1, na.rm=T)
+Chol_Sch1_sd <- (sd(Ms_biochem_33$Chol_Sch1, na.rm=T))/2
+Chol_Sch1_sum <- data_summary(Ms_biochem_33, varname="Chol_Sch1", groupnames=c("Genotype", "Diet"))
+Chol_Sch1_sum$Genotype <- factor(Chol_Sch1_sum$Genotype, levels = c("WT", "KI"))
+Chol_Sch1_sum <- merge(Chol_Sch1_sum, Ms_biochem_33_counts, by=c("Genotype", "Diet"))
+Chol_Sch1_sum$se = Chol_Sch1_sum$sd/sqrt(Chol_Sch1_sum$n)
+Chol_Sch1_res.aov <- Ms_biochem_33 %>% anova_test(Chol_Sch1 ~ Group_unique)
+
+Chol_Sch1_stat.test <- Ms_biochem_33 %>% group_by(Diet) %>% t_test(Chol_Sch1 ~ Genotype) %>% adjust_pvalue(method = "bonferroni") %>% add_significance("p.adj") 
+Chol_Sch1_stat.test <- Chol_Sch1_stat.test %>% add_xy_position(fun = "mean_sd", x = "Diet", dodge = 0.9)
+Chol_Sch1_stat.test$text <- paste("p.adj", format(round(Chol_Sch1_stat.test$p.adj, 2), nsmall = 2), sep = "=", collapse = NULL)
+
+Chol_Sch1_fig <- ggplot(data=Chol_Sch1_sum, aes(x=Diet, y=Chol_Sch1)) + geom_bar(aes(fill=Genotype), stat="identity", color="black", position=position_dodge(), show.legend = FALSE) + geom_point(stroke=0.7, shape=21, data=Ms_biochem_33, aes(x=Diet, y=Chol_Sch1, colour=Genotype), fill="white", size=2.3, alpha=0.9, show.legend=FALSE, position=position_jitterdodge(jitter.width = .2, dodge.width = .9)) + geom_errorbar(aes(group = Genotype, ymin=Chol_Sch1-se, ymax=Chol_Sch1+se), color="black", width=.2, size=.6, position=position_dodge(.9)) + theme_classic() + ylab("Chol_Sch1\n units") + theme(axis.text.x = element_text(face="bold",size=12), axis.title.y=element_text(size=12, angle=0, vjust=0.5), axis.title.x = element_blank()) + scale_colour_manual(values = c("black", "black")) + scale_fill_manual(values = cbp3) + scale_x_discrete(labels=c("Chow\n diet", "High fat\n diet")) + scale_y_continuous(labels = scales::comma, expand = c(0,0), breaks = seq(0, 8, 1), limits=c(0, 8)) + stat_pvalue_manual(Ins_G0_stat.test, label = "p.adj.signif", tip.length = 0.03, size = 4, y.position = 7.6)
+pdf(file="Chol_Sch1_fig.pdf",width=4,height=5)
+Chol_Sch1_fig
+dev.off()
+
+###### ---- analysis of weight
+
+## import and format data
+
+Ms_wt <- read_excel("Ms_wt_Aug21_v1.xlsx")
+Ms_wt_geno <- merge(Ms_summary, Ms_wt, by="MouseID")
+Ms_wt_geno = subset(Ms_wt_geno, Group!="Female")
+Ms_wt_geno$MouseID <- as.character(Ms_wt_geno$MouseID)
+Ms_wt_geno <- Ms_wt_geno %>% arrange(Diet, Genotype)
+Ms_wt_geno_t <- as.data.frame(t(Ms_wt_geno))
+write.table(Ms_wt_geno_t, file="Ms_wt_geno_t.csv", sep=",")
+
+Ms_wt$MouseID <- as.character(Ms_wt$MouseID)
+Ms_wt_melt <- melt(Ms_wt)
+Ms_wt_melt_geno <- merge(Ms_summary, Ms_wt_melt, by="MouseID")
+Ms_wt_melt_geno$wk <- as.character(str_remove(Ms_wt_melt_geno$variable, "Wt_"))
+Ms_wt_melt_geno = subset(Ms_wt_melt_geno, Group!="Female")
+Ms_wt_melt_geno = subset(Ms_wt_melt_geno, select = -c(Other))
+Ms_wt_melt_geno <- na.omit(Ms_wt_melt_geno)
+
+library(dplyr)
+Wt_summary_counts <- Ms_wt_melt_geno %>% dplyr::group_by(Diet, Genotype, wk, .drop=FALSE) %>% dplyr::summarise(n = n())
+
+Wt_summary <- data_summary(Ms_wt_melt_geno, varname="value", groupnames=c("Genotype", "wk", "Diet"))
+Wt_summary <- merge(Wt_summary, Wt_summary_counts, by=c("Genotype", "Diet", "wk"))
+Wt_summary$se = Wt_summary$sd/sqrt(Wt_summary$n)
+Wt_summary$wk <- as.numeric(Wt_summary$wk)
+Wt_summary$Genotype <- factor(Wt_summary$Genotype, levels = c("WT", "KI"))
+Wt_summary$Diet <- factor(Wt_summary$Diet, levels = c("CD", "HFD"))
+Wt_summary <- Wt_summary %>% arrange(Diet, Genotype, wk)
+
+### absolute weight change figure
+
+Wt_fig <-ggplot(Wt_summary, aes(x=wk, y=value, group=interaction(Diet, Genotype), color=Genotype)) + geom_errorbar(aes(ymin=value-se, ymax= value+se), width=.3, size=0.4) + geom_line(aes(linetype=Diet)) + geom_point(size=1, alpha=0.9) + theme_classic() + ylab("Weight\n (g)") + theme(axis.title.y=element_text(size=12, angle=0, vjust=0.5)) + scale_y_continuous(labels = scales::comma, expand = c(0,0), limits=c(20,55), breaks=seq(20,55,5)) + scale_colour_manual(values = cbp3) + scale_fill_manual(values = cbp3) + scale_x_continuous(labels = scales::comma, expand = c(0.1,0.1), limits=c(0, 35), breaks=seq(0, 35, 5)) + xlab("Weeks on diet")
+pdf(file="Wt_fig.pdf",width=6,height=6)
+Wt_fig
+dev.off()
+
+### relative weight change figure
+
+Ms_wt_rel <- Ms_wt_geno
+Ms_wt_rel[8:41] <- (Ms_wt_geno[,8:41] / Ms_wt_geno[,8])*100
+
+Ms_wt_rel_t <- as.data.frame(t(Ms_wt_rel))
+write.table(Ms_wt_rel_t, file="Ms_wt_rel_t.csv", sep=",")
+
+Ms_wt_rel_simple =subset(Ms_wt_rel, select = -c(Genotype, Group, Other, Sex, Duration, Diet))
+Ms_wt_rel_simple$MouseID <- as.character(Ms_wt_rel_simple$MouseID)
+Ms_wt_rel_simple_melt <- melt(Ms_wt_rel_simple)
+Ms_wt_rel_simple_melt_geno <- merge(Ms_summary, Ms_wt_rel_simple_melt, by="MouseID")
+Ms_wt_rel_simple_melt_geno$wk <- as.character(str_remove(Ms_wt_rel_simple_melt_geno$variable, "Wt_"))
+Ms_wt_rel_simple_melt_geno = subset(Ms_wt_rel_simple_melt_geno, Group!="Female")
+Ms_wt_rel_simple_melt_geno = subset(Ms_wt_rel_simple_melt_geno, select = -c(Other))
+Ms_wt_rel_simple_melt_geno <- na.omit(Ms_wt_rel_simple_melt_geno)
+
+library(dplyr)
+Wt_rel_summary_counts <- Ms_wt_rel_simple_melt_geno %>% dplyr::group_by(Diet, Genotype, wk, .drop=FALSE) %>% dplyr::summarise(n = n())
+
+Wt_summary_rel <- data_summary(Ms_wt_rel_simple_melt_geno, varname="value", groupnames=c("Genotype", "wk", "Diet"))
+Wt_summary_rel <- merge(Wt_summary_rel, Wt_rel_summary_counts, by=c("Genotype", "Diet", "wk"))
+Wt_summary_rel$se = Wt_summary_rel$sd/sqrt(Wt_summary_rel$n)
+Wt_summary_rel$wk <- as.numeric(Wt_summary_rel$wk)
+Wt_summary_rel$Genotype <- factor(Wt_summary_rel$Genotype, levels = c("WT", "KI"))
+Wt_summary_rel$Diet <- factor(Wt_summary_rel$Diet, levels = c("CD", "HFD"))
+Wt_summary_rel <- Wt_summary_rel %>% arrange(Diet, Genotype, wk)
+
+Wt_fig_rel <-ggplot(Wt_summary_rel, aes(x=wk, y=value, group=interaction(Diet, Genotype), color=Genotype)) + geom_errorbar(aes(ymin=value-se, ymax= value+se), width=.3, size=0.4) + geom_line(aes(linetype=Diet)) + geom_point(size=1, alpha=0.9) + theme_classic() + ylab("Weight\n change\n (%)") + theme(axis.title.y=element_text(size=12, angle=0, vjust=0.5)) + scale_colour_manual(values = cbp3) + scale_fill_manual(values = cbp3) + scale_x_continuous(labels = scales::comma, expand = c(0.1,0.1), limits=c(0, 35), breaks=seq(0, 35, 5)) + xlab("Weeks on diet") + scale_y_continuous(labels = scales::comma, expand = c(0, 0), limits=c(100, 250), breaks=seq(100, 250, 25))
+pdf(file="Wt_fig_rel.pdf",width=6,height=6)
+Wt_fig_rel
+dev.off()
+
+
+
+
+### final weight fig
+
+### AUC weight fig
+
+
+
+###### ---- 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+gArea(Wt_fig)
+
+
+Wt_summary_CD = subset(Wt_summary, Diet=="CD")
+Wt_summary_CD_WT = subset(Wt_summary_CD, Genotype=="WT")
+id_CD_WT <- order(Wt_summary_CD_WT$wk)
+AUC_CD_WT <- sum(diff(Wt_summary_CD_WT$wk[id_CD_WT])*rollmean(Wt_summary_CD_WT$value[id_CD_WT],2))
+Wt_summary_CD_KI = subset(Wt_summary_CD, Genotype=="KI")
+id_CD_KI <- order(Wt_summary_CD_KI$wk)
+AUC_CD_KI <- sum(diff(Wt_summary_CD_KI$wk[id_CD_KI])*rollmean(Wt_summary_CD_KI$value[id_CD_KI],2))
+Wt_summary_HFD = subset(Wt_summary, Diet=="HFD")
+Wt_summary_HFD_WT = subset(Wt_summary_HFD, Genotype=="WT")
+id_HFD_WT <- order(Wt_summary_HFD_WT$wk)
+AUC_HFD_WT <- sum(diff(Wt_summary_HFD_WT$wk[id_HFD_WT])*rollmean(Wt_summary_HFD_WT$value[id_HFD_WT],2))
+Wt_summary_HFD_KI = subset(Wt_summary_HFD, Genotype=="KI")
+id_HFD_KI <- order(Wt_summary_HFD_KI$wk)
+AUC_HFD_KI <- sum(diff(Wt_summary_HFD_KI$wk[id_HFD_KI])*rollmean(Wt_summary_HFD_KI$value[id_HFD_KI],2))
+
+
+## integrate the normal density from -3 to 3
+x<-seq(-3,3,length=100)
+fx<-dnorm(x)
+estimate<-sintegral(x,fx)$int
+true.val<-diff(pnorm(c(-3,3)))
+cat(paste("Absolute error :",round(abs(estimate-true.val),7),"\n"))
+cat(paste("Relative percentage error :", 100*round((abs(estimate-true.val)/true.val),6),"%\n"))
+
+
+Wt_summary_CD_KI = subset(Wt_summary_CD, Genotype=="KI")
+
+
+Wt_summary_CD_WT_AUC <- sintegral(Wt_summary_CD_WT$wk, Wt_summary_CD_WT$value, n.pts = 256)
+
+
+
+
+p<-ggplot(Ms_wt_melt_geno, aes(x=wk, y=value, group=Genotype)) +
+  geom_line(aes(color= Genotype))+
+  geom_point(aes(color= Genotype))
+p
+
+
