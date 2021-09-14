@@ -19,6 +19,7 @@ install_github("vqv/ggbiplot")
 install.packages("rstatix")
 install.packages("devtools")
 install_github("phenoscanner/phenoscanner")
+install.packages("ggpubr")
 
 
 ## load packages
@@ -43,6 +44,7 @@ library(gtools)
 require(viridis)
 library(devtools)
 library(phenoscanner)
+library(ggpubr)
 
 
 ## load data
@@ -4149,8 +4151,9 @@ data_full_abs$Group <- factor(data_full_abs$Group, levels = c("Lean", "Obese", "
 
 plot.margin = margin(6, 10, 6, 6, "pt")
 
+my_comparisons <- list( c("Lean", "Obese"), c("Obese", "NAFLD"), c("Lean", "NAFLD"))
 
-TG_box <- ggplot(data=data_full_abs, aes(x=Group, y=TG_total)) + geom_boxplot(aes(fill=Group), outlier.shape=NA) + geom_point(position=position_jitterdodge(), size=0.4, alpha=0.5, aes(fill=Group), show.legend=FALSE) + ylab("") + theme_classic() + theme(plot.margin = margin(10, 10, 10, 10, "pt"), legend.position="FALSE", plot.title = element_text(hjust = 0.5, face = "bold", size=11), axis.title.y=element_text(size=12, angle=90, vjust=0.5), axis.text.x=element_text(angle=45, size=12, vjust=0.7)) + labs(fill = "") + xlab("") + scale_fill_viridis(discrete=TRUE, option = "C") + scale_color_manual(values = c("A" = "black", "B" = "red")) + ggtitle("Total TG") + ylab("Plasma TG \n (uM)") + scale_y_continuous(limits=c(0,6000), breaks=seq(0,6000,1000), expand = c(0,0))
+TG_box <- ggplot(data=data_full_abs, aes(x=Group, y=TG_total)) + geom_boxplot(aes(fill=Group), outlier.shape=NA) + geom_point(position=position_jitterdodge(), size=0.4, alpha=0.5, aes(fill=Group), show.legend=FALSE) + ylab("") + theme_classic() + theme(plot.margin = margin(10, 10, 10, 10, "pt"), legend.position="FALSE", plot.title = element_text(hjust = 0.5, face = "bold", size=11), axis.title.y=element_text(size=12, angle=90, vjust=0.5), axis.text.x=element_text(angle=45, size=12, vjust=0.7)) + labs(fill = "") + xlab("") + scale_fill_viridis(discrete=TRUE, option = "C") + scale_color_manual(values = c("A" = "black", "B" = "red")) + ggtitle("Total TG") + ylab("Plasma TG \n (uM)") + stat_compare_means(comparisons = my_comparisons, method = "t.test")
 TG_box
 
 TG_box_bmi <- ggplot(data= data_full_abs_bmi, aes(x= bmi_cat, y=TG_total)) + geom_boxplot(aes(fill= bmi_cat), outlier.shape=NA) + geom_point(position=position_jitterdodge(), size=0.4, alpha=0.5, aes(fill= bmi_cat), show.legend=FALSE) + ylab("") + theme_classic() + theme(plot.margin = margin(10, 10, 10, 10, "pt"), legend.position="FALSE", plot.title = element_text(hjust = 0.5, face = "bold", size=11), axis.title.y=element_text(size=12, angle=0, vjust=0.5), axis.text.x=element_text(angle=45, size=10, vjust=0.7)) + labs(fill = "") + xlab("") + scale_fill_viridis(discrete=TRUE, option = "C") + scale_color_manual(values = c("A" = "black", "B" = "red")) + ggtitle("Total TG \n BMI z-score") + scale_y_continuous(limits=c(0,6000), breaks=seq(0,6000,1000), expand = c(0,0))
@@ -4207,7 +4210,7 @@ dev.off()
 
 ############### ------- PC summary figure
 
-PC_box <- ggplot(data=data_full_abs, aes(x=Group, y=PC_total)) + geom_boxplot(aes(fill=Group), outlier.shape=NA) + geom_point(position=position_jitterdodge(), size=0.4, alpha=0.5, aes(fill=Group), show.legend=FALSE) + ylab("") + theme_classic() + theme(plot.margin = margin(10, 10, 10, 10, "pt"), legend.position="FALSE", plot.title = element_text(hjust = 0.5, face = "bold", size=11), axis.title.y=element_text(size=12, angle=90, vjust=0.5), axis.text.x=element_text(angle=45, size=12, vjust=0.7)) + labs(fill = "") + xlab("") + scale_fill_viridis(discrete=TRUE, option = "C") + scale_color_manual(values = c("A" = "black", "B" = "red")) + ggtitle("Total PC") + ylab("Plasma PC \n (uM)") + scale_y_continuous(limits=c(0, 3000), breaks=seq(0, 3000, 500), expand = c(0,0))
+PC_box <- ggplot(data=data_full_abs, aes(x=Group, y=PC_total)) + geom_boxplot(aes(fill=Group), outlier.shape=NA) + geom_point(position=position_jitterdodge(), size=0.4, alpha=0.5, aes(fill=Group), show.legend=FALSE) + ylab("") + theme_classic() + theme(plot.margin = margin(10, 10, 10, 10, "pt"), legend.position="FALSE", plot.title = element_text(hjust = 0.5, face = "bold", size=11), axis.title.y=element_text(size=12, angle=90, vjust=0.5), axis.text.x=element_text(angle=45, size=12, vjust=0.7)) + labs(fill = "") + xlab("") + scale_fill_viridis(discrete=TRUE, option = "C") + scale_color_manual(values = c("A" = "black", "B" = "red")) + ggtitle("Total PC") + ylab("Plasma PC \n (uM)") + stat_compare_means(comparisons = my_comparisons, method = "t.test")
 PC_box
 
 PC_box_bmi <- ggplot(data= data_full_abs_bmi, aes(x= bmi_cat, y=PC_total)) + geom_boxplot(aes(fill= bmi_cat), outlier.shape=NA) + geom_point(position=position_jitterdodge(), size=0.4, alpha=0.5, aes(fill= bmi_cat), show.legend=FALSE) + ylab("") + theme_classic() + theme(plot.margin = margin(10, 10, 10, 10, "pt"), legend.position="FALSE", plot.title = element_text(hjust = 0.5, face = "bold", size=11), axis.title.y=element_text(size=12, angle=0, vjust=0.5), axis.text.x=element_text(angle=45, size=10, vjust=0.7)) + labs(fill = "") + xlab("") + scale_fill_viridis(discrete=TRUE, option = "C") + scale_color_manual(values = c("A" = "black", "B" = "red")) + ggtitle("Total PC \n BMI z-score") + scale_y_continuous(limits=c(0, 3000), breaks=seq(0, 3000, 500), expand = c(0,0))
@@ -4264,7 +4267,7 @@ dev.off()
 
 ############### ------- Ceramide summary figure
 
-Cer_box <- ggplot(data=data_full_abs, aes(x=Group, y=Cer_total)) + geom_boxplot(aes(fill=Group), outlier.shape=NA) + geom_point(position=position_jitterdodge(), size=0.4, alpha=0.5, aes(fill=Group), show.legend=FALSE) + ylab("") + theme_classic() + theme(legend.position="FALSE", plot.title = element_text(hjust = 0.5, face = "bold", size=11), axis.title.y=element_text(size=12, angle=0, hjust=0.5), axis.text.x=element_text(angle=45, size=12, vjust=0.7)) + labs(fill = "") + xlab("") + scale_fill_viridis(discrete=TRUE, option = "C") + scale_color_manual(values = c("A" = "black", "B" = "red")) + ggtitle("Total ceramides")
+Cer_box <- ggplot(data=data_full_abs, aes(x=Group, y=Cer_total)) + geom_boxplot(aes(fill=Group), outlier.shape=NA) + geom_point(position=position_jitterdodge(), size=0.4, alpha=0.5, aes(fill=Group), show.legend=FALSE) + ylab("") + theme_classic() + theme(legend.position="FALSE", plot.title = element_text(hjust = 0.5, face = "bold", size=11), axis.title.y=element_text(size=12, angle=0, hjust=0.5), axis.text.x=element_text(angle=45, size=12, vjust=0.7)) + labs(fill = "") + xlab("") + scale_fill_viridis(discrete=TRUE, option = "C") + scale_color_manual(values = c("A" = "black", "B" = "red")) + ggtitle("Total ceramides")  + stat_compare_means(comparisons = my_comparisons, method = "t.test")
 Cer_box
 
 Cer_box_bmi <- ggplot(data= data_full_abs_bmi, aes(x= bmi_cat, y=Cer_total)) + geom_boxplot(aes(fill= bmi_cat), outlier.shape=NA) + geom_point(position=position_jitterdodge(), size=0.4, alpha=0.5, aes(fill= bmi_cat), show.legend=FALSE) + ylab("") + theme_classic() + theme(legend.position="FALSE", plot.title = element_text(hjust = 0.5, face = "bold", size=11), axis.title.y=element_text(size=12, angle=0, vjust=0.5), axis.text.x=element_text(angle=45, size=10, vjust=0.7)) + labs(fill = "") + xlab("") + scale_fill_viridis(discrete=TRUE, option = "C") + scale_color_manual(values = c("A" = "black", "B" = "red")) + ggtitle("Total ceramides \n BMI z-score")
@@ -4320,7 +4323,7 @@ dev.off()
 
 ############### ------- Ganglioside summary figure
 
-GM_box <- ggplot(data=data_full_abs, aes(x=Group, y=GM_total)) + geom_boxplot(aes(fill=Group), outlier.shape=NA) + geom_point(position=position_jitterdodge(), size=0.4, alpha=0.5, aes(fill=Group), show.legend=FALSE) + ylab("") + theme_classic() + theme(legend.position="FALSE", plot.title = element_text(hjust = 0.5, face = "bold", size=11), axis.title.y=element_text(size=12, angle=0, hjust=0.5), axis.text.x=element_text(angle=45, size=12, vjust=0.7)) + labs(fill = "") + xlab("") + scale_fill_viridis(discrete=TRUE, option = "C") + scale_color_manual(values = c("A" = "black", "B" = "red")) + ggtitle("Total Ganglioside")
+GM_box <- ggplot(data=data_full_abs, aes(x=Group, y=GM_total)) + geom_boxplot(aes(fill=Group), outlier.shape=NA) + geom_point(position=position_jitterdodge(), size=0.4, alpha=0.5, aes(fill=Group), show.legend=FALSE) + ylab("") + theme_classic() + theme(legend.position="FALSE", plot.title = element_text(hjust = 0.5, face = "bold", size=11), axis.title.y=element_text(size=12, angle=0, hjust=0.5), axis.text.x=element_text(angle=45, size=12, vjust=0.7)) + labs(fill = "") + xlab("") + scale_fill_viridis(discrete=TRUE, option = "C") + scale_color_manual(values = c("A" = "black", "B" = "red")) + ggtitle("Total Ganglioside")  + stat_compare_means(comparisons = my_comparisons, method = "t.test")
 GM_box
 
 GM_box_bmi <- ggplot(data= data_full_abs_bmi, aes(x= bmi_cat, y=GM_total)) + geom_boxplot(aes(fill= bmi_cat), outlier.shape=NA) + geom_point(position=position_jitterdodge(), size=0.4, alpha=0.5, aes(fill= bmi_cat), show.legend=FALSE) + ylab("") + theme_classic() + theme(legend.position="FALSE", plot.title = element_text(hjust = 0.5, face = "bold", size=11), axis.title.y=element_text(size=12, angle=0, vjust=0.5), axis.text.x=element_text(angle=45, size=10, vjust=0.7)) + labs(fill = "") + xlab("") + scale_fill_viridis(discrete=TRUE, option = "C") + scale_color_manual(values = c("A" = "black", "B" = "red")) + ggtitle("Total Ganglioside \n BMI z-score")
@@ -4376,7 +4379,7 @@ dev.off()
 
 ############### ------- Hexosylceramide summary figure
 
-HexCer_box <- ggplot(data=data_full_abs, aes(x=Group, y=HexCer_total)) + geom_boxplot(aes(fill=Group), outlier.shape=NA) + geom_point(position=position_jitterdodge(), size=0.4, alpha=0.5, aes(fill=Group), show.legend=FALSE) + ylab("") + theme_classic() + theme(legend.position="FALSE", plot.title = element_text(hjust = 0.5, face = "bold", size=11), axis.title.y=element_text(size=12, angle=0, hjust=0.5), axis.text.x=element_text(angle=45, size=12, vjust=0.7)) + labs(fill = "") + xlab("") + scale_fill_viridis(discrete=TRUE, option = "C") + scale_color_manual(values = c("A" = "black", "B" = "red")) + ggtitle("Total Hexosylceramide")
+HexCer_box <- ggplot(data=data_full_abs, aes(x=Group, y=HexCer_total)) + geom_boxplot(aes(fill=Group), outlier.shape=NA) + geom_point(position=position_jitterdodge(), size=0.4, alpha=0.5, aes(fill=Group), show.legend=FALSE) + ylab("") + theme_classic() + theme(legend.position="FALSE", plot.title = element_text(hjust = 0.5, face = "bold", size=11), axis.title.y=element_text(size=12, angle=0, hjust=0.5), axis.text.x=element_text(angle=45, size=12, vjust=0.7)) + labs(fill = "") + xlab("") + scale_fill_viridis(discrete=TRUE, option = "C") + scale_color_manual(values = c("A" = "black", "B" = "red")) + ggtitle("Total Hexosylceramide")  + stat_compare_means(comparisons = my_comparisons, method = "t.test")
 HexCer_box
 
 HexCer_box_bmi <- ggplot(data= data_full_abs_bmi, aes(x= bmi_cat, y=HexCer_total)) + geom_boxplot(aes(fill= bmi_cat), outlier.shape=NA) + geom_point(position=position_jitterdodge(), size=0.4, alpha=0.5, aes(fill= bmi_cat), show.legend=FALSE) + ylab("") + theme_classic() + theme(legend.position="FALSE", plot.title = element_text(hjust = 0.5, face = "bold", size=11), axis.title.y=element_text(size=12, angle=0, vjust=0.5), axis.text.x=element_text(angle=45, size=10, vjust=0.7)) + labs(fill = "") + xlab("") + scale_fill_viridis(discrete=TRUE, option = "C") + scale_color_manual(values = c("A" = "black", "B" = "red")) + ggtitle("Total Hexosylceramide \n BMI z-score")
@@ -4432,7 +4435,7 @@ dev.off()
 
 ############### ------- LysoPC summary figure
 
-LPC_box <- ggplot(data=data_full_abs, aes(x=Group, y=LPC_total)) + geom_boxplot(aes(fill=Group), outlier.shape=NA) + geom_point(position=position_jitterdodge(), size=0.4, alpha=0.5, aes(fill=Group), show.legend=FALSE) + ylab("") + theme_classic() + theme(legend.position="FALSE", plot.title = element_text(hjust = 0.5, face = "bold", size=11), axis.title.y=element_text(size=12, angle=0, hjust=0.5), axis.text.x=element_text(angle=45, size=12, vjust=0.7)) + labs(fill = "") + xlab("") + scale_fill_viridis(discrete=TRUE, option = "C") + scale_color_manual(values = c("A" = "black", "B" = "red")) + ggtitle("Total LysoPC")
+LPC_box <- ggplot(data=data_full_abs, aes(x=Group, y=LPC_total)) + geom_boxplot(aes(fill=Group), outlier.shape=NA) + geom_point(position=position_jitterdodge(), size=0.4, alpha=0.5, aes(fill=Group), show.legend=FALSE) + ylab("") + theme_classic() + theme(legend.position="FALSE", plot.title = element_text(hjust = 0.5, face = "bold", size=11), axis.title.y=element_text(size=12, angle=0, hjust=0.5), axis.text.x=element_text(angle=45, size=12, vjust=0.7)) + labs(fill = "") + xlab("") + scale_fill_viridis(discrete=TRUE, option = "C") + scale_color_manual(values = c("A" = "black", "B" = "red")) + ggtitle("Total LysoPC")  + stat_compare_means(comparisons = my_comparisons, method = "t.test")
 LPC_box
 
 LPC_box_bmi <- ggplot(data= data_full_abs_bmi, aes(x= bmi_cat, y=LPC_total)) + geom_boxplot(aes(fill= bmi_cat), outlier.shape=NA) + geom_point(position=position_jitterdodge(), size=0.4, alpha=0.5, aes(fill= bmi_cat), show.legend=FALSE) + ylab("") + theme_classic() + theme(legend.position="FALSE", plot.title = element_text(hjust = 0.5, face = "bold", size=11), axis.title.y=element_text(size=12, angle=0, vjust=0.5), axis.text.x=element_text(angle=45, size=10, vjust=0.7)) + labs(fill = "") + xlab("") + scale_fill_viridis(discrete=TRUE, option = "C") + scale_color_manual(values = c("A" = "black", "B" = "red")) + ggtitle("Total LysoPC \n BMI z-score")
@@ -4489,7 +4492,7 @@ dev.off()
 
 ############### ------- PE summary figure
 
-PE_box <- ggplot(data=data_full_abs, aes(x=Group, y=PE_total)) + geom_boxplot(aes(fill=Group), outlier.shape=NA) + geom_point(position=position_jitterdodge(), size=0.4, alpha=0.5, aes(fill=Group), show.legend=FALSE) + ylab("") + theme_classic() + theme(legend.position="FALSE", plot.title = element_text(hjust = 0.5, face = "bold", size=11), axis.title.y=element_text(size=12, angle=0, hjust=0.5), axis.text.x=element_text(angle=45, size=12, vjust=0.7)) + labs(fill = "") + xlab("") + scale_fill_viridis(discrete=TRUE, option = "C") + scale_color_manual(values = c("A" = "black", "B" = "red")) + ggtitle("Total PE")
+PE_box <- ggplot(data=data_full_abs, aes(x=Group, y=PE_total)) + geom_boxplot(aes(fill=Group), outlier.shape=NA) + geom_point(position=position_jitterdodge(), size=0.4, alpha=0.5, aes(fill=Group), show.legend=FALSE) + ylab("") + theme_classic() + theme(legend.position="FALSE", plot.title = element_text(hjust = 0.5, face = "bold", size=11), axis.title.y=element_text(size=12, angle=0, hjust=0.5), axis.text.x=element_text(angle=45, size=12, vjust=0.7)) + labs(fill = "") + xlab("") + scale_fill_viridis(discrete=TRUE, option = "C") + scale_color_manual(values = c("A" = "black", "B" = "red")) + ggtitle("Total PE")  + stat_compare_means(comparisons = my_comparisons, method = "t.test")
 PE_box
 
 PE_box_bmi <- ggplot(data= data_full_abs_bmi, aes(x= bmi_cat, y=PE_total)) + geom_boxplot(aes(fill= bmi_cat), outlier.shape=NA) + geom_point(position=position_jitterdodge(), size=0.4, alpha=0.5, aes(fill= bmi_cat), show.legend=FALSE) + ylab("") + theme_classic() + theme(legend.position="FALSE", plot.title = element_text(hjust = 0.5, face = "bold", size=11), axis.title.y=element_text(size=12, angle=0, vjust=0.5), axis.text.x=element_text(angle=45, size=10, vjust=0.7)) + labs(fill = "") + xlab("") + scale_fill_viridis(discrete=TRUE, option = "C") + scale_color_manual(values = c("A" = "black", "B" = "red")) + ggtitle("Total PE \n BMI z-score")
@@ -4546,7 +4549,7 @@ dev.off()
 
 ############### ------- PG summary figure
 
-PG_box <- ggplot(data=data_full_abs, aes(x=Group, y=PG_total)) + geom_boxplot(aes(fill=Group), outlier.shape=NA) + geom_point(position=position_jitterdodge(), size=0.4, alpha=0.5, aes(fill=Group), show.legend=FALSE) + ylab("") + theme_classic() + theme(legend.position="FALSE", plot.title = element_text(hjust = 0.5, face = "bold", size=11), axis.title.y=element_text(size=12, angle=0, hjust=0.5), axis.text.x=element_text(angle=45, size=12, vjust=0.7)) + labs(fill = "") + xlab("") + scale_fill_viridis(discrete=TRUE, option = "C") + scale_color_manual(values = c("A" = "black", "B" = "red")) + ggtitle("Total PG")
+PG_box <- ggplot(data=data_full_abs, aes(x=Group, y=PG_total)) + geom_boxplot(aes(fill=Group), outlier.shape=NA) + geom_point(position=position_jitterdodge(), size=0.4, alpha=0.5, aes(fill=Group), show.legend=FALSE) + ylab("") + theme_classic() + theme(legend.position="FALSE", plot.title = element_text(hjust = 0.5, face = "bold", size=11), axis.title.y=element_text(size=12, angle=0, hjust=0.5), axis.text.x=element_text(angle=45, size=12, vjust=0.7)) + labs(fill = "") + xlab("") + scale_fill_viridis(discrete=TRUE, option = "C") + scale_color_manual(values = c("A" = "black", "B" = "red")) + ggtitle("Total PG")  + stat_compare_means(comparisons = my_comparisons, method = "t.test")
 PG_box
 
 PG_box_bmi <- ggplot(data= data_full_abs_bmi, aes(x= bmi_cat, y=PG_total)) + geom_boxplot(aes(fill= bmi_cat), outlier.shape=NA) + geom_point(position=position_jitterdodge(), size=0.4, alpha=0.5, aes(fill= bmi_cat), show.legend=FALSE) + ylab("") + theme_classic() + theme(legend.position="FALSE", plot.title = element_text(hjust = 0.5, face = "bold", size=11), axis.title.y=element_text(size=12, angle=0, vjust=0.5), axis.text.x=element_text(angle=45, size=10, vjust=0.7)) + labs(fill = "") + xlab("") + scale_fill_viridis(discrete=TRUE, option = "C") + scale_color_manual(values = c("A" = "black", "B" = "red")) + ggtitle("Total PG \n BMI z-score")
@@ -4602,7 +4605,7 @@ dev.off()
 
 ############### ------- PI summary figure
 
-PI_box <- ggplot(data=data_full_abs, aes(x=Group, y=PI_total)) + geom_boxplot(aes(fill=Group), outlier.shape=NA) + geom_point(position=position_jitterdodge(), size=0.4, alpha=0.5, aes(fill=Group), show.legend=FALSE) + ylab("") + theme_classic() + theme(legend.position="FALSE", plot.title = element_text(hjust = 0.5, face = "bold", size=11), axis.title.y=element_text(size=12, angle=0, hjust=0.5), axis.text.x=element_text(angle=45, size=12, vjust=0.7)) + labs(fill = "") + xlab("") + scale_fill_viridis(discrete=TRUE, option = "C") + scale_color_manual(values = c("A" = "black", "B" = "red")) + ggtitle("Total PI")
+PI_box <- ggplot(data=data_full_abs, aes(x=Group, y=PI_total)) + geom_boxplot(aes(fill=Group), outlier.shape=NA) + geom_point(position=position_jitterdodge(), size=0.4, alpha=0.5, aes(fill=Group), show.legend=FALSE) + ylab("") + theme_classic() + theme(legend.position="FALSE", plot.title = element_text(hjust = 0.5, face = "bold", size=11), axis.title.y=element_text(size=12, angle=0, hjust=0.5), axis.text.x=element_text(angle=45, size=12, vjust=0.7)) + labs(fill = "") + xlab("") + scale_fill_viridis(discrete=TRUE, option = "C") + scale_color_manual(values = c("A" = "black", "B" = "red")) + ggtitle("Total PI")  + stat_compare_means(comparisons = my_comparisons, method = "t.test")
 PI_box
 
 PI_box_bmi <- ggplot(data= data_full_abs_bmi, aes(x= bmi_cat, y=PI_total)) + geom_boxplot(aes(fill= bmi_cat), outlier.shape=NA) + geom_point(position=position_jitterdodge(), size=0.4, alpha=0.5, aes(fill= bmi_cat), show.legend=FALSE) + ylab("") + theme_classic() + theme(legend.position="FALSE", plot.title = element_text(hjust = 0.5, face = "bold", size=11), axis.title.y=element_text(size=12, angle=0, vjust=0.5), axis.text.x=element_text(angle=45, size=10, vjust=0.7)) + labs(fill = "") + xlab("") + scale_fill_viridis(discrete=TRUE, option = "C") + scale_color_manual(values = c("A" = "black", "B" = "red")) + ggtitle("Total PI \n BMI z-score")
@@ -4658,7 +4661,7 @@ dev.off()
 
 ############### ------- PS summary figure
 
-PS_box <- ggplot(data=data_full_abs, aes(x=Group, y=PS_total)) + geom_boxplot(aes(fill=Group), outlier.shape=NA) + geom_point(position=position_jitterdodge(), size=0.4, alpha=0.5, aes(fill=Group), show.legend=FALSE) + ylab("") + theme_classic() + theme(legend.position="FALSE", plot.title = element_text(hjust = 0.5, face = "bold", size=11), axis.title.y=element_text(size=12, angle=0, hjust=0.5), axis.text.x=element_text(angle=45, size=12, vjust=0.7)) + labs(fill = "") + xlab("") + scale_fill_viridis(discrete=TRUE, option = "C") + scale_color_manual(values = c("A" = "black", "B" = "red")) + ggtitle("Total PS")
+PS_box <- ggplot(data=data_full_abs, aes(x=Group, y=PS_total)) + geom_boxplot(aes(fill=Group), outlier.shape=NA) + geom_point(position=position_jitterdodge(), size=0.4, alpha=0.5, aes(fill=Group), show.legend=FALSE) + ylab("") + theme_classic() + theme(legend.position="FALSE", plot.title = element_text(hjust = 0.5, face = "bold", size=11), axis.title.y=element_text(size=12, angle=0, hjust=0.5), axis.text.x=element_text(angle=45, size=12, vjust=0.7)) + labs(fill = "") + xlab("") + scale_fill_viridis(discrete=TRUE, option = "C") + scale_color_manual(values = c("A" = "black", "B" = "red")) + ggtitle("Total PS")  + stat_compare_means(comparisons = my_comparisons, method = "t.test")
 PS_box
 
 PS_box_bmi <- ggplot(data= data_full_abs_bmi, aes(x= bmi_cat, y=PS_total)) + geom_boxplot(aes(fill= bmi_cat), outlier.shape=NA) + geom_point(position=position_jitterdodge(), size=0.4, alpha=0.5, aes(fill= bmi_cat), show.legend=FALSE) + ylab("") + theme_classic() + theme(legend.position="FALSE", plot.title = element_text(hjust = 0.5, face = "bold", size=11), axis.title.y=element_text(size=12, angle=0, vjust=0.5), axis.text.x=element_text(angle=45, size=10, vjust=0.7)) + labs(fill = "") + xlab("") + scale_fill_viridis(discrete=TRUE, option = "C") + scale_color_manual(values = c("A" = "black", "B" = "red")) + ggtitle("Total PS \n BMI z-score")
@@ -4716,7 +4719,7 @@ dev.off()
 
 ############### ------- Sphingolipid summary figure
 
-Sphingolipid_box <- ggplot(data=data_full_abs, aes(x=Group, y=S_total)) + geom_boxplot(aes(fill=Group), outlier.shape=NA) + geom_point(position=position_jitterdodge(), size=0.4, alpha=0.5, aes(fill=Group), show.legend=FALSE) + ylab("") + theme_classic() + theme(legend.position="FALSE", plot.title = element_text(hjust = 0.5, face = "bold", size=11), axis.title.y=element_text(size=12, angle=0, hjust=0.5), axis.text.x=element_text(angle=45, size=12, vjust=0.7)) + labs(fill = "") + xlab("") + scale_fill_viridis(discrete=TRUE, option = "C") + scale_color_manual(values = c("A" = "black", "B" = "red")) + ggtitle("Total Sphingolipid")
+Sphingolipid_box <- ggplot(data=data_full_abs, aes(x=Group, y=S_total)) + geom_boxplot(aes(fill=Group), outlier.shape=NA) + geom_point(position=position_jitterdodge(), size=0.4, alpha=0.5, aes(fill=Group), show.legend=FALSE) + ylab("") + theme_classic() + theme(legend.position="FALSE", plot.title = element_text(hjust = 0.5, face = "bold", size=11), axis.title.y=element_text(size=12, angle=0, hjust=0.5), axis.text.x=element_text(angle=45, size=12, vjust=0.7)) + labs(fill = "") + xlab("") + scale_fill_viridis(discrete=TRUE, option = "C") + scale_color_manual(values = c("A" = "black", "B" = "red")) + ggtitle("Total Sphingolipid")  + stat_compare_means(comparisons = my_comparisons, method = "t.test")
 Sphingolipid_box
 
 Sphingolipid_box_bmi <- ggplot(data= data_full_abs_bmi, aes(x= bmi_cat, y=S_total)) + geom_boxplot(aes(fill= bmi_cat), outlier.shape=NA) + geom_point(position=position_jitterdodge(), size=0.4, alpha=0.5, aes(fill= bmi_cat), show.legend=FALSE) + ylab("") + theme_classic() + theme(legend.position="FALSE", plot.title = element_text(hjust = 0.5, face = "bold", size=11), axis.title.y=element_text(size=12, angle=0, vjust=0.5), axis.text.x=element_text(angle=45, size=10, vjust=0.7)) + labs(fill = "") + xlab("") + scale_fill_viridis(discrete=TRUE, option = "C") + scale_color_manual(values = c("A" = "black", "B" = "red")) + ggtitle("Total Sphingolipid \n BMI z-score")
@@ -4773,7 +4776,7 @@ dev.off()
 
 ############### ------- SM summary figure
 
-SM_box <- ggplot(data=data_full_abs, aes(x=Group, y=SM_total)) + geom_boxplot(aes(fill=Group), outlier.shape=NA) + geom_point(position=position_jitterdodge(), size=0.4, alpha=0.5, aes(fill=Group), show.legend=FALSE) + ylab("") + theme_classic() + theme(legend.position="FALSE", plot.title = element_text(hjust = 0.5, face = "bold", size=11), axis.title.y=element_text(size=12, angle=0, hjust=0.5), axis.text.x=element_text(angle=45, size=12, vjust=0.7)) + labs(fill = "") + xlab("") + scale_fill_viridis(discrete=TRUE, option = "C") + scale_color_manual(values = c("A" = "black", "B" = "red")) + ggtitle("Total SM") + scale_y_continuous(limits = c(0,1000), expand = c(.05,0))
+SM_box <- ggplot(data=data_full_abs, aes(x=Group, y=SM_total)) + geom_boxplot(aes(fill=Group), outlier.shape=NA) + geom_point(position=position_jitterdodge(), size=0.4, alpha=0.5, aes(fill=Group), show.legend=FALSE) + ylab("") + theme_classic() + theme(legend.position="FALSE", plot.title = element_text(hjust = 0.5, face = "bold", size=11), axis.title.y=element_text(size=12, angle=0, hjust=0.5), axis.text.x=element_text(angle=45, size=12, vjust=0.7)) + labs(fill = "") + xlab("") + scale_fill_viridis(discrete=TRUE, option = "C") + scale_color_manual(values = c("A" = "black", "B" = "red")) + ggtitle("Total SM")  + stat_compare_means(comparisons = my_comparisons, method = "t.test")
 SM_box
 
 SM_box_bmi <- ggplot(data= data_full_abs_bmi, aes(x= bmi_cat, y=SM_total)) + geom_boxplot(aes(fill= bmi_cat), outlier.shape=NA) + geom_point(position=position_jitterdodge(), size=0.4, alpha=0.5, aes(fill= bmi_cat), show.legend=FALSE) + ylab("") + theme_classic() + theme(legend.position="FALSE", plot.title = element_text(hjust = 0.5, face = "bold", size=11), axis.title.y=element_text(size=12, angle=0, vjust=0.5), axis.text.x=element_text(angle=45, size=10, vjust=0.7)) + labs(fill = "") + xlab("") + scale_fill_viridis(discrete=TRUE, option = "C") + scale_color_manual(values = c("A" = "black", "B" = "red")) + ggtitle("Total SM \n BMI z-score")  + scale_y_continuous(limits = c(0,1000), expand = c(.05,0))
@@ -5149,7 +5152,7 @@ write.table(hm_metareg_sumtab, file="Table S3.csv",sep=",")
 ### last summary figure from multiple lipid classes
 
 
-LPC_box <- ggplot(data=data_full_abs, aes(x=Group, y=LPC_total)) + geom_boxplot(aes(fill=Group), outlier.shape=NA) + geom_point(position=position_jitterdodge(), size=0.4, alpha=0.5, aes(fill=Group), show.legend=FALSE) + ylab("") + theme_classic() + theme(legend.position="FALSE", plot.title = element_text(hjust = 0.5, face = "bold", size=11), axis.title.y=element_text(size=12, angle=90, hjust=0.5), axis.text.x=element_text(angle=45, size=12, vjust=0.7)) + labs(fill = "") + xlab("") + scale_fill_viridis(discrete=TRUE, option = "C") + scale_color_manual(values = c("A" = "black", "B" = "red")) + ggtitle("Total LysoPC") + ylab("Plasma lysoPC (uM)")
+LPC_box <- ggplot(data=data_full_abs, aes(x=Group, y=LPC_total)) + geom_boxplot(aes(fill=Group), outlier.shape=NA) + geom_point(position=position_jitterdodge(), size=0.4, alpha=0.5, aes(fill=Group), show.legend=FALSE) + ylab("") + theme_classic() + theme(legend.position="FALSE", plot.title = element_text(hjust = 0.5, face = "bold", size=11), axis.title.y=element_text(size=12, angle=90, hjust=0.5), axis.text.x=element_text(angle=45, size=12, vjust=0.7)) + labs(fill = "") + xlab("") + scale_fill_viridis(discrete=TRUE, option = "C") + scale_color_manual(values = c("A" = "black", "B" = "red")) + ggtitle("Total LysoPC") + ylab("Plasma lysoPC (uM)")  + stat_compare_means(comparisons = my_comparisons, method = "t.test")
 LPC_box
 
 LPC_box_NAS <- ggplot(data=data_full_abs_Rome, aes(x=NAS, y=LPC_total)) + geom_boxplot(aes(fill=NAS), outlier.shape=NA) + geom_point(position=position_jitterdodge(), size=0.4, alpha=0.5, aes(fill=NAS), show.legend=FALSE) + ylab("") + theme_classic() + theme(legend.position="FALSE", plot.title = element_text(hjust = 0.5, face = "bold", size=11), axis.title.y=element_text(size=12, angle=90, vjust=0.5), axis.text.x=element_text(size=12)) + labs(fill = "") + xlab("") + scale_fill_viridis(discrete=TRUE, option = "C") + scale_color_manual(values = c("A" = "black", "B" = "red")) + ggtitle("Total LysoPC \n NAFLD Activity Score") + ylab("Plasma lysoPC (uM)")
@@ -5158,10 +5161,10 @@ LPC_box_NAS
 LPC_18_0_box_NAS <- ggplot(data=data_full_abs_Rome, aes(x=NAS, y=LPC_18_0)) + geom_boxplot(aes(fill=NAS), outlier.shape=NA) + geom_point(position=position_jitterdodge(), size=0.4, alpha=0.5, aes(fill=NAS), show.legend=FALSE) + ylab("") + theme_classic() + theme(legend.position="FALSE", plot.title = element_text(hjust = 0.5, face = "bold", size=11), axis.title.y=element_text(size=12, angle=90, vjust=0.5), axis.text.x=element_text(size=12)) + labs(fill = "") + xlab("") + scale_fill_viridis(discrete=TRUE, option = "C") + scale_color_manual(values = c("A" = "black", "B" = "red")) + ggtitle("LPC_18_0\n NAFLD Activity \n Score") + ylab("Plasma lysoPC(18:0) (uM)")
 LPC_18_0_box_NAS
 
-PG_box <- ggplot(data=data_full_abs, aes(x=Group, y=PG_total)) + geom_boxplot(aes(fill=Group), outlier.shape=NA) + geom_point(position=position_jitterdodge(), size=0.4, alpha=0.5, aes(fill=Group), show.legend=FALSE) + ylab("") + theme_classic() + theme(legend.position="FALSE", plot.title = element_text(hjust = 0.5, face = "bold", size=11), axis.title.y=element_text(size=12, angle=90, hjust=0.5), axis.text.x=element_text(angle=45, size=12, vjust=0.7)) + labs(fill = "") + xlab("") + scale_fill_viridis(discrete=TRUE, option = "C") + scale_color_manual(values = c("A" = "black", "B" = "red")) + ggtitle("Total PG") + ylab("Plasma PG (uM)")
+PG_box <- ggplot(data=data_full_abs, aes(x=Group, y=PG_total)) + geom_boxplot(aes(fill=Group), outlier.shape=NA) + geom_point(position=position_jitterdodge(), size=0.4, alpha=0.5, aes(fill=Group), show.legend=FALSE) + ylab("") + theme_classic() + theme(legend.position="FALSE", plot.title = element_text(hjust = 0.5, face = "bold", size=11), axis.title.y=element_text(size=12, angle=90, hjust=0.5), axis.text.x=element_text(angle=45, size=12, vjust=0.7)) + labs(fill = "") + xlab("") + scale_fill_viridis(discrete=TRUE, option = "C") + scale_color_manual(values = c("A" = "black", "B" = "red")) + ggtitle("Total PG") + ylab("Plasma PG (uM)")  + stat_compare_means(comparisons = my_comparisons, method = "t.test")
 PG_box
 
-GM_box <- ggplot(data=data_full_abs, aes(x=Group, y=GM_total)) + geom_boxplot(aes(fill=Group), outlier.shape=NA) + geom_point(position=position_jitterdodge(), size=0.4, alpha=0.5, aes(fill=Group), show.legend=FALSE) + ylab("") + theme_classic() + theme(legend.position="FALSE", plot.title = element_text(hjust = 0.5, face = "bold", size=11), axis.title.y=element_text(size=12, angle=90, hjust=0.5), axis.text.x=element_text(angle=45, size=12, vjust=0.7)) + labs(fill = "") + xlab("") + scale_fill_viridis(discrete=TRUE, option = "C") + scale_color_manual(values = c("A" = "black", "B" = "red")) + ggtitle("Total Ganglioside") + ylab("Plasma gangliosides (uM)")
+GM_box <- ggplot(data=data_full_abs, aes(x=Group, y=GM_total)) + geom_boxplot(aes(fill=Group), outlier.shape=NA) + geom_point(position=position_jitterdodge(), size=0.4, alpha=0.5, aes(fill=Group), show.legend=FALSE) + ylab("") + theme_classic() + theme(legend.position="FALSE", plot.title = element_text(hjust = 0.5, face = "bold", size=11), axis.title.y=element_text(size=12, angle=90, hjust=0.5), axis.text.x=element_text(angle=45, size=12, vjust=0.7)) + labs(fill = "") + xlab("") + scale_fill_viridis(discrete=TRUE, option = "C") + scale_color_manual(values = c("A" = "black", "B" = "red")) + ggtitle("Total Ganglioside") + ylab("Plasma gangliosides (uM)")  + stat_compare_means(comparisons = my_comparisons, method = "t.test")
 GM_box
 
 NAFLDBx_NAS_PI_Carb <- ggplot(subset(NAFLDBx_data_NAS_lm_sum2, LipidGroup %in% c("PI")), aes(x=Carb, y=NAFLD_NAS_beta)) + geom_point(size=2, aes(colour=sig)) + xlab("Carbons in PI") + ylab("") + theme_classic() + theme(legend.position="FALSE", axis.title.y=element_text(size=12, angle=90, vjust=0.5), plot.title = element_text(hjust = 0.5, face = "bold", size=11), legend.title = element_blank()) + theme(plot.title = element_text(face = "bold")) + geom_line(y = 0, color = "black", linetype = "dashed") + scale_color_manual(values = c("grey42", "red1")) + geom_smooth(method='lm', color="Black", fill="dodgerblue4", alpha = 0.2, size = 0.2) + ggtitle("PI chain legnth \n NAFLD Activity Score") + ylab("Beta-regression coefficient") 
@@ -5413,6 +5416,409 @@ TabS7_final_dedup <- TabS7_final %>% distinct(Nearest_gene, PheWAS_outcome, .kee
 TabS7_final_dedup = subset(TabS7_final_dedup, select = c("Nearest_gene", "PheWAS_outcome"))
 ## export for manual annotation of genes/gene lists
 write.table(TabS7_final_dedup, file="TabS7_final_dedup.csv",sep=",")
+
+
+###### ----- use regression to assess the association between baseline traits and histology severity
+
+
+## NAS
+
+data_full_abs_Rome$NAS_num <- as.numeric(data_full_abs_Rome$NAS)
+
+Age_NAS_reg <- lm(NAS_num ~ log_Age, data=data_full_abs_Rome)
+Age_NAS_reg_sm <- summary(Age_NAS_reg)
+Age_NAS_reg_coef <- as.data.frame(Age_NAS_reg_sm$coefficients)
+Age_NAS_reg_coef$Histol <- "NAS"
+Age_NAS_reg_coef$var <- "Age"
+Age_NAS_reg_coef <- Age_NAS_reg_coef[-c(1),]
+Age_NAS_reg_coef$r_sq <- Age_NAS_reg_sm$adj.r.squared
+bmi_NAS_reg <- lm(NAS_num ~ log_bmi, data=data_full_abs_Rome)
+bmi_NAS_reg_sm <- summary(bmi_NAS_reg)
+bmi_NAS_reg_coef <- as.data.frame(bmi_NAS_reg_sm$coefficients)
+bmi_NAS_reg_coef$Histol <- "NAS"
+bmi_NAS_reg_coef$var <- "bmi"
+bmi_NAS_reg_coef <- bmi_NAS_reg_coef[-c(1),]
+bmi_NAS_reg_coef$r_sq <- bmi_NAS_reg_sm$adj.r.squared
+HOMA_NAS_reg <- lm(NAS_num ~ log_HOMA, data=data_full_abs_Rome)
+HOMA_NAS_reg_sm <- summary(HOMA_NAS_reg)
+HOMA_NAS_reg_coef <- as.data.frame(HOMA_NAS_reg_sm$coefficients)
+HOMA_NAS_reg_coef$Histol <- "NAS"
+HOMA_NAS_reg_coef$var <- "HOMA"
+HOMA_NAS_reg_coef <- HOMA_NAS_reg_coef[-c(1),]
+HOMA_NAS_reg_coef$r_sq <- HOMA_NAS_reg_sm$adj.r.squared
+Chol_NAS_reg <- lm(NAS_num ~ log_Chol, data=data_full_abs_Rome)
+Chol_NAS_reg_sm <- summary(Chol_NAS_reg)
+Chol_NAS_reg_coef <- as.data.frame(Chol_NAS_reg_sm$coefficients)
+Chol_NAS_reg_coef$Histol <- "NAS"
+Chol_NAS_reg_coef$var <- "Chol"
+Chol_NAS_reg_coef <- Chol_NAS_reg_coef[-c(1),]
+Chol_NAS_reg_coef$r_sq <- Chol_NAS_reg_sm$adj.r.squared
+HDL_NAS_reg <- lm(NAS_num ~ log_HDL, data=data_full_abs_Rome)
+HDL_NAS_reg_sm <- summary(HDL_NAS_reg)
+HDL_NAS_reg_coef <- as.data.frame(HDL_NAS_reg_sm$coefficients)
+HDL_NAS_reg_coef$Histol <- "NAS"
+HDL_NAS_reg_coef$var <- "HDL"
+HDL_NAS_reg_coef <- HDL_NAS_reg_coef[-c(1),]
+HDL_NAS_reg_coef$r_sq <- HDL_NAS_reg_sm$adj.r.squared
+LDL_NAS_reg <- lm(NAS_num ~ log_LDL, data=data_full_abs_Rome)
+LDL_NAS_reg_sm <- summary(LDL_NAS_reg)
+LDL_NAS_reg_coef <- as.data.frame(LDL_NAS_reg_sm$coefficients)
+LDL_NAS_reg_coef$Histol <- "NAS"
+LDL_NAS_reg_coef$var <- "LDL"
+LDL_NAS_reg_coef <- LDL_NAS_reg_coef[-c(1),]
+LDL_NAS_reg_coef$r_sq <- LDL_NAS_reg_sm$adj.r.squared
+Trig_NAS_reg <- lm(NAS_num ~ log_Trig, data=data_full_abs_Rome)
+Trig_NAS_reg_sm <- summary(Trig_NAS_reg)
+Trig_NAS_reg_coef <- as.data.frame(Trig_NAS_reg_sm$coefficients)
+Trig_NAS_reg_coef$Histol <- "NAS"
+Trig_NAS_reg_coef$var <- "Trig"
+Trig_NAS_reg_coef <- Trig_NAS_reg_coef[-c(1),]
+Trig_NAS_reg_coef$r_sq <- Trig_NAS_reg_sm$adj.r.squared
+ALT_NAS_reg <- lm(NAS_num ~ log_ALT, data=data_full_abs_Rome)
+ALT_NAS_reg_sm <- summary(ALT_NAS_reg)
+ALT_NAS_reg_coef <- as.data.frame(ALT_NAS_reg_sm$coefficients)
+ALT_NAS_reg_coef$Histol <- "NAS"
+ALT_NAS_reg_coef$var <- "ALT"
+ALT_NAS_reg_coef <- ALT_NAS_reg_coef[-c(1),]
+ALT_NAS_reg_coef$r_sq <- ALT_NAS_reg_sm$adj.r.squared
+AST_NAS_reg <- lm(NAS_num ~ log_AST, data=data_full_abs_Rome)
+AST_NAS_reg_sm <- summary(AST_NAS_reg)
+AST_NAS_reg_coef <- as.data.frame(AST_NAS_reg_sm$coefficients)
+AST_NAS_reg_coef$Histol <- "NAS"
+AST_NAS_reg_coef$var <- "AST"
+AST_NAS_reg_coef <- AST_NAS_reg_coef[-c(1),]
+AST_NAS_reg_coef$r_sq <- AST_NAS_reg_sm$adj.r.squared
+
+NAS_baseline_sumtab <- rbind(Age_NAS_reg_coef, bmi_NAS_reg_coef, HOMA_NAS_reg_coef, Chol_NAS_reg_coef, HDL_NAS_reg_coef, LDL_NAS_reg_coef, Trig_NAS_reg_coef, ALT_NAS_reg_coef, AST_NAS_reg_coef)
+
+## Portal inflammation
+
+data_full_abs_Rome$Portal_num <- as.numeric(data_full_abs_Rome$Portal)
+
+Age_Portal_reg <- lm(Portal_num ~ log_Age, data=data_full_abs_Rome)
+Age_Portal_reg_sm <- summary(Age_Portal_reg)
+Age_Portal_reg_coef <- as.data.frame(Age_Portal_reg_sm$coefficients)
+Age_Portal_reg_coef$Histol <- "Portal"
+Age_Portal_reg_coef$var <- "Age"
+Age_Portal_reg_coef <- Age_Portal_reg_coef[-c(1),]
+Age_Portal_reg_coef$r_sq <- Age_Portal_reg_sm$adj.r.squared
+bmi_Portal_reg <- lm(Portal_num ~ log_bmi, data=data_full_abs_Rome)
+bmi_Portal_reg_sm <- summary(bmi_Portal_reg)
+bmi_Portal_reg_coef <- as.data.frame(bmi_Portal_reg_sm$coefficients)
+bmi_Portal_reg_coef$Histol <- "Portal"
+bmi_Portal_reg_coef$var <- "bmi"
+bmi_Portal_reg_coef <- bmi_Portal_reg_coef[-c(1),]
+bmi_Portal_reg_coef$r_sq <- bmi_Portal_reg_sm$adj.r.squared
+HOMA_Portal_reg <- lm(Portal_num ~ log_HOMA, data=data_full_abs_Rome)
+HOMA_Portal_reg_sm <- summary(HOMA_Portal_reg)
+HOMA_Portal_reg_coef <- as.data.frame(HOMA_Portal_reg_sm$coefficients)
+HOMA_Portal_reg_coef$Histol <- "Portal"
+HOMA_Portal_reg_coef$var <- "HOMA"
+HOMA_Portal_reg_coef <- HOMA_Portal_reg_coef[-c(1),]
+HOMA_Portal_reg_coef$r_sq <- HOMA_Portal_reg_sm$adj.r.squared
+Chol_Portal_reg <- lm(Portal_num ~ log_Chol, data=data_full_abs_Rome)
+Chol_Portal_reg_sm <- summary(Chol_Portal_reg)
+Chol_Portal_reg_coef <- as.data.frame(Chol_Portal_reg_sm$coefficients)
+Chol_Portal_reg_coef$Histol <- "Portal"
+Chol_Portal_reg_coef$var <- "Chol"
+Chol_Portal_reg_coef <- Chol_Portal_reg_coef[-c(1),]
+Chol_Portal_reg_coef$r_sq <- Chol_Portal_reg_sm$adj.r.squared
+HDL_Portal_reg <- lm(Portal_num ~ log_HDL, data=data_full_abs_Rome)
+HDL_Portal_reg_sm <- summary(HDL_Portal_reg)
+HDL_Portal_reg_coef <- as.data.frame(HDL_Portal_reg_sm$coefficients)
+HDL_Portal_reg_coef$Histol <- "Portal"
+HDL_Portal_reg_coef$var <- "HDL"
+HDL_Portal_reg_coef <- HDL_Portal_reg_coef[-c(1),]
+HDL_Portal_reg_coef$r_sq <- HDL_Portal_reg_sm$adj.r.squared
+LDL_Portal_reg <- lm(Portal_num ~ log_LDL, data=data_full_abs_Rome)
+LDL_Portal_reg_sm <- summary(LDL_Portal_reg)
+LDL_Portal_reg_coef <- as.data.frame(LDL_Portal_reg_sm$coefficients)
+LDL_Portal_reg_coef$Histol <- "Portal"
+LDL_Portal_reg_coef$var <- "LDL"
+LDL_Portal_reg_coef <- LDL_Portal_reg_coef[-c(1),]
+LDL_Portal_reg_coef$r_sq <- LDL_Portal_reg_sm$adj.r.squared
+Trig_Portal_reg <- lm(Portal_num ~ log_Trig, data=data_full_abs_Rome)
+Trig_Portal_reg_sm <- summary(Trig_Portal_reg)
+Trig_Portal_reg_coef <- as.data.frame(Trig_Portal_reg_sm$coefficients)
+Trig_Portal_reg_coef$Histol <- "Portal"
+Trig_Portal_reg_coef$var <- "Trig"
+Trig_Portal_reg_coef <- Trig_Portal_reg_coef[-c(1),]
+Trig_Portal_reg_coef$r_sq <- Trig_Portal_reg_sm$adj.r.squared
+ALT_Portal_reg <- lm(Portal_num ~ log_ALT, data=data_full_abs_Rome)
+ALT_Portal_reg_sm <- summary(ALT_Portal_reg)
+ALT_Portal_reg_coef <- as.data.frame(ALT_Portal_reg_sm$coefficients)
+ALT_Portal_reg_coef$Histol <- "Portal"
+ALT_Portal_reg_coef$var <- "ALT"
+ALT_Portal_reg_coef <- ALT_Portal_reg_coef[-c(1),]
+ALT_Portal_reg_coef$r_sq <- ALT_Portal_reg_sm$adj.r.squared
+AST_Portal_reg <- lm(Portal_num ~ log_AST, data=data_full_abs_Rome)
+AST_Portal_reg_sm <- summary(AST_Portal_reg)
+AST_Portal_reg_coef <- as.data.frame(AST_Portal_reg_sm$coefficients)
+AST_Portal_reg_coef$Histol <- "Portal"
+AST_Portal_reg_coef$var <- "AST"
+AST_Portal_reg_coef <- AST_Portal_reg_coef[-c(1),]
+AST_Portal_reg_coef$r_sq <- AST_Portal_reg_sm$adj.r.squared
+
+Portal_baseline_sumtab <- rbind(Age_Portal_reg_coef, bmi_Portal_reg_coef, HOMA_Portal_reg_coef, Chol_Portal_reg_coef, HDL_Portal_reg_coef, LDL_Portal_reg_coef, Trig_Portal_reg_coef, ALT_Portal_reg_coef, AST_Portal_reg_coef)
+
+## Fibrosis
+
+data_full_abs_Rome$Fib_num <- as.numeric(data_full_abs_Rome$Fib)
+
+Age_Fib_reg <- lm(Fib_num ~ log_Age, data=data_full_abs_Rome)
+Age_Fib_reg_sm <- summary(Age_Fib_reg)
+Age_Fib_reg_coef <- as.data.frame(Age_Fib_reg_sm$coefficients)
+Age_Fib_reg_coef$Histol <- "Fib"
+Age_Fib_reg_coef$var <- "Age"
+Age_Fib_reg_coef <- Age_Fib_reg_coef[-c(1),]
+Age_Fib_reg_coef$r_sq <- Age_Fib_reg_sm$adj.r.squared
+bmi_Fib_reg <- lm(Fib_num ~ log_bmi, data=data_full_abs_Rome)
+bmi_Fib_reg_sm <- summary(bmi_Fib_reg)
+bmi_Fib_reg_coef <- as.data.frame(bmi_Fib_reg_sm$coefficients)
+bmi_Fib_reg_coef$Histol <- "Fib"
+bmi_Fib_reg_coef$var <- "bmi"
+bmi_Fib_reg_coef <- bmi_Fib_reg_coef[-c(1),]
+bmi_Fib_reg_coef$r_sq <- bmi_Fib_reg_sm$adj.r.squared
+HOMA_Fib_reg <- lm(Fib_num ~ log_HOMA, data=data_full_abs_Rome)
+HOMA_Fib_reg_sm <- summary(HOMA_Fib_reg)
+HOMA_Fib_reg_coef <- as.data.frame(HOMA_Fib_reg_sm$coefficients)
+HOMA_Fib_reg_coef$Histol <- "Fib"
+HOMA_Fib_reg_coef$var <- "HOMA"
+HOMA_Fib_reg_coef <- HOMA_Fib_reg_coef[-c(1),]
+HOMA_Fib_reg_coef$r_sq <- HOMA_Fib_reg_sm$adj.r.squared
+Chol_Fib_reg <- lm(Fib_num ~ log_Chol, data=data_full_abs_Rome)
+Chol_Fib_reg_sm <- summary(Chol_Fib_reg)
+Chol_Fib_reg_coef <- as.data.frame(Chol_Fib_reg_sm$coefficients)
+Chol_Fib_reg_coef$Histol <- "Fib"
+Chol_Fib_reg_coef$var <- "Chol"
+Chol_Fib_reg_coef <- Chol_Fib_reg_coef[-c(1),]
+Chol_Fib_reg_coef$r_sq <- Chol_Fib_reg_sm$adj.r.squared
+HDL_Fib_reg <- lm(Fib_num ~ log_HDL, data=data_full_abs_Rome)
+HDL_Fib_reg_sm <- summary(HDL_Fib_reg)
+HDL_Fib_reg_coef <- as.data.frame(HDL_Fib_reg_sm$coefficients)
+HDL_Fib_reg_coef$Histol <- "Fib"
+HDL_Fib_reg_coef$var <- "HDL"
+HDL_Fib_reg_coef <- HDL_Fib_reg_coef[-c(1),]
+HDL_Fib_reg_coef$r_sq <- HDL_Fib_reg_sm$adj.r.squared
+LDL_Fib_reg <- lm(Fib_num ~ log_LDL, data=data_full_abs_Rome)
+LDL_Fib_reg_sm <- summary(LDL_Fib_reg)
+LDL_Fib_reg_coef <- as.data.frame(LDL_Fib_reg_sm$coefficients)
+LDL_Fib_reg_coef$Histol <- "Fib"
+LDL_Fib_reg_coef$var <- "LDL"
+LDL_Fib_reg_coef <- LDL_Fib_reg_coef[-c(1),]
+LDL_Fib_reg_coef$r_sq <- LDL_Fib_reg_sm$adj.r.squared
+Trig_Fib_reg <- lm(Fib_num ~ log_Trig, data=data_full_abs_Rome)
+Trig_Fib_reg_sm <- summary(Trig_Fib_reg)
+Trig_Fib_reg_coef <- as.data.frame(Trig_Fib_reg_sm$coefficients)
+Trig_Fib_reg_coef$Histol <- "Fib"
+Trig_Fib_reg_coef$var <- "Trig"
+Trig_Fib_reg_coef <- Trig_Fib_reg_coef[-c(1),]
+Trig_Fib_reg_coef$r_sq <- Trig_Fib_reg_sm$adj.r.squared
+ALT_Fib_reg <- lm(Fib_num ~ log_ALT, data=data_full_abs_Rome)
+ALT_Fib_reg_sm <- summary(ALT_Fib_reg)
+ALT_Fib_reg_coef <- as.data.frame(ALT_Fib_reg_sm$coefficients)
+ALT_Fib_reg_coef$Histol <- "Fib"
+ALT_Fib_reg_coef$var <- "ALT"
+ALT_Fib_reg_coef <- ALT_Fib_reg_coef[-c(1),]
+ALT_Fib_reg_coef$r_sq <- ALT_Fib_reg_sm$adj.r.squared
+AST_Fib_reg <- lm(Fib_num ~ log_AST, data=data_full_abs_Rome)
+AST_Fib_reg_sm <- summary(AST_Fib_reg)
+AST_Fib_reg_coef <- as.data.frame(AST_Fib_reg_sm$coefficients)
+AST_Fib_reg_coef$Histol <- "Fib"
+AST_Fib_reg_coef$var <- "AST"
+AST_Fib_reg_coef <- AST_Fib_reg_coef[-c(1),]
+AST_Fib_reg_coef$r_sq <- AST_Fib_reg_sm$adj.r.squared
+
+Fib_baseline_sumtab <- rbind(Age_Fib_reg_coef, bmi_Fib_reg_coef, HOMA_Fib_reg_coef, Chol_Fib_reg_coef, HDL_Fib_reg_coef, LDL_Fib_reg_coef, Trig_Fib_reg_coef, ALT_Fib_reg_coef, AST_Fib_reg_coef)
+
+## Steatosis
+
+data_full_abs_Rome$Steat_num <- as.numeric(data_full_abs_Rome$Steat)
+
+Age_Steat_reg <- lm(Steat_num ~ log_Age, data=data_full_abs_Rome)
+Age_Steat_reg_sm <- summary(Age_Steat_reg)
+Age_Steat_reg_coef <- as.data.frame(Age_Steat_reg_sm$coefficients)
+Age_Steat_reg_coef$Histol <- "Steat"
+Age_Steat_reg_coef$var <- "Age"
+Age_Steat_reg_coef <- Age_Steat_reg_coef[-c(1),]
+Age_Steat_reg_coef$r_sq <- Age_Steat_reg_sm$adj.r.squared
+bmi_Steat_reg <- lm(Steat_num ~ log_bmi, data=data_full_abs_Rome)
+bmi_Steat_reg_sm <- summary(bmi_Steat_reg)
+bmi_Steat_reg_coef <- as.data.frame(bmi_Steat_reg_sm$coefficients)
+bmi_Steat_reg_coef$Histol <- "Steat"
+bmi_Steat_reg_coef$var <- "bmi"
+bmi_Steat_reg_coef <- bmi_Steat_reg_coef[-c(1),]
+bmi_Steat_reg_coef$r_sq <- bmi_Steat_reg_sm$adj.r.squared
+HOMA_Steat_reg <- lm(Steat_num ~ log_HOMA, data=data_full_abs_Rome)
+HOMA_Steat_reg_sm <- summary(HOMA_Steat_reg)
+HOMA_Steat_reg_coef <- as.data.frame(HOMA_Steat_reg_sm$coefficients)
+HOMA_Steat_reg_coef$Histol <- "Steat"
+HOMA_Steat_reg_coef$var <- "HOMA"
+HOMA_Steat_reg_coef <- HOMA_Steat_reg_coef[-c(1),]
+HOMA_Steat_reg_coef$r_sq <- HOMA_Steat_reg_sm$adj.r.squared
+Chol_Steat_reg <- lm(Steat_num ~ log_Chol, data=data_full_abs_Rome)
+Chol_Steat_reg_sm <- summary(Chol_Steat_reg)
+Chol_Steat_reg_coef <- as.data.frame(Chol_Steat_reg_sm$coefficients)
+Chol_Steat_reg_coef$Histol <- "Steat"
+Chol_Steat_reg_coef$var <- "Chol"
+Chol_Steat_reg_coef <- Chol_Steat_reg_coef[-c(1),]
+Chol_Steat_reg_coef$r_sq <- Chol_Steat_reg_sm$adj.r.squared
+HDL_Steat_reg <- lm(Steat_num ~ log_HDL, data=data_full_abs_Rome)
+HDL_Steat_reg_sm <- summary(HDL_Steat_reg)
+HDL_Steat_reg_coef <- as.data.frame(HDL_Steat_reg_sm$coefficients)
+HDL_Steat_reg_coef$Histol <- "Steat"
+HDL_Steat_reg_coef$var <- "HDL"
+HDL_Steat_reg_coef <- HDL_Steat_reg_coef[-c(1),]
+HDL_Steat_reg_coef$r_sq <- HDL_Steat_reg_sm$adj.r.squared
+LDL_Steat_reg <- lm(Steat_num ~ log_LDL, data=data_full_abs_Rome)
+LDL_Steat_reg_sm <- summary(LDL_Steat_reg)
+LDL_Steat_reg_coef <- as.data.frame(LDL_Steat_reg_sm$coefficients)
+LDL_Steat_reg_coef$Histol <- "Steat"
+LDL_Steat_reg_coef$var <- "LDL"
+LDL_Steat_reg_coef <- LDL_Steat_reg_coef[-c(1),]
+LDL_Steat_reg_coef$r_sq <- LDL_Steat_reg_sm$adj.r.squared
+Trig_Steat_reg <- lm(Steat_num ~ log_Trig, data=data_full_abs_Rome)
+Trig_Steat_reg_sm <- summary(Trig_Steat_reg)
+Trig_Steat_reg_coef <- as.data.frame(Trig_Steat_reg_sm$coefficients)
+Trig_Steat_reg_coef$Histol <- "Steat"
+Trig_Steat_reg_coef$var <- "Trig"
+Trig_Steat_reg_coef <- Trig_Steat_reg_coef[-c(1),]
+Trig_Steat_reg_coef$r_sq <- Trig_Steat_reg_sm$adj.r.squared
+ALT_Steat_reg <- lm(Steat_num ~ log_ALT, data=data_full_abs_Rome)
+ALT_Steat_reg_sm <- summary(ALT_Steat_reg)
+ALT_Steat_reg_coef <- as.data.frame(ALT_Steat_reg_sm$coefficients)
+ALT_Steat_reg_coef$Histol <- "Steat"
+ALT_Steat_reg_coef$var <- "ALT"
+ALT_Steat_reg_coef <- ALT_Steat_reg_coef[-c(1),]
+ALT_Steat_reg_coef$r_sq <- ALT_Steat_reg_sm$adj.r.squared
+AST_Steat_reg <- lm(Steat_num ~ log_AST, data=data_full_abs_Rome)
+AST_Steat_reg_sm <- summary(AST_Steat_reg)
+AST_Steat_reg_coef <- as.data.frame(AST_Steat_reg_sm$coefficients)
+AST_Steat_reg_coef$Histol <- "Steat"
+AST_Steat_reg_coef$var <- "AST"
+AST_Steat_reg_coef <- AST_Steat_reg_coef[-c(1),]
+AST_Steat_reg_coef$r_sq <- AST_Steat_reg_sm$adj.r.squared
+
+Steat_baseline_sumtab <- rbind(Age_Steat_reg_coef, bmi_Steat_reg_coef, HOMA_Steat_reg_coef, Chol_Steat_reg_coef, HDL_Steat_reg_coef, LDL_Steat_reg_coef, Trig_Steat_reg_coef, ALT_Steat_reg_coef, AST_Steat_reg_coef)
+
+## full summary table
+
+histol_reg_sumtab <-rbind(NAS_baseline_sumtab, Portal_baseline_sumtab, Fib_baseline_sumtab, Steat_baseline_sumtab)
+names(histol_reg_sumtab)[names(histol_reg_sumtab) == 'Pr(>|t|)'] <- 'pval'
+histol_reg_sumtab$qval <- p.adjust(histol_reg_sumtab$pval, method = "hochberg")
+write.table(histol_reg_sumtab, file="histol_reg_sumtab.csv",sep=",")
+
+
+## other additional calculations
+
+## for figure 2
+
+TG_total_bmi <- lm(TG_total ~ log_bmi, data= data_full_abs_bmi)
+TG_total_bmi_sm <- summary(TG_total_bmi)
+TG_total_bmi_sm[["coefficients"]]
+TG_total_bmi_sm[["adj.r.squared"]]
+
+TG_total_NAS <- lm(TG_total ~ NAS_num, data=data_full_abs_Rome)
+TG_total_NAS_sm <- summary(TG_total_NAS)
+TG_total_NAS_sm[["coefficients"]]
+TG_total_NAS_sm[["adj.r.squared"]]
+
+View(Obese_ALT_metareg_summary)
+View(Obese_HFF_metareg_summary)
+View(NAFLDBx_NAS_metareg_summary)
+
+TG_46_1_ob_ALT <- lm(TG_46_1 ~ log_ALT + Sex + Age, data= obese_data)
+TG_46_1_ob_ALT_sm <- summary(TG_46_1_ob_ALT)
+TG_46_1_ob_ALT_sm[["coefficients"]]
+TG_46_1_ob_ALT_sm[["adj.r.squared"]]
+
+TG_52_1_ob_HFF <- lm(TG_52_1 ~ log_HFF + Sex + Age, data= obese_data)
+TG_52_1_ob_HFF_sm <- summary(TG_52_1_ob_HFF)
+TG_52_1_ob_HFF_sm[["coefficients"]]
+TG_52_1_ob_HFF_sm[["adj.r.squared"]]
+
+TG_58_9_NAS <- lm(TG_58_9 ~ NAS + Sex + Age, data= NAFLDBx_data)
+TG_58_9_NAS_sm <- summary(TG_58_9_NAS)
+TG_58_9_NAS_sm[["coefficients"]]
+TG_58_9_NAS_sm[["adj.r.squared"]]
+
+
+## for figure 3
+
+
+PC_total_bmi <- lm(PC_total ~ log_bmi, data= data_full_abs_bmi)
+PC_total_bmi_sm <- summary(PC_total_bmi)
+PC_total_bmi_sm[["coefficients"]]
+PC_total_bmi_sm[["adj.r.squared"]]
+
+PC_total_NAS <- lm(PC_total ~ NAS_num, data=data_full_abs_Rome)
+PC_total_NAS_sm <- summary(PC_total_NAS)
+PC_total_NAS_sm[["coefficients"]]
+PC_total_NAS_sm[["adj.r.squared"]]
+
+View(Obese_ALT_metareg_summary)
+View(Obese_HFF_metareg_summary)
+View(NAFLDBx_NAS_metareg_summary)
+
+PC_30_0_ob_ALT <- lm(PC_30_0 ~ log_ALT + Sex + Age, data= obese_data)
+PC_30_0_ob_ALT_sm <- summary(PC_30_0_ob_ALT)
+PC_30_0_ob_ALT_sm[["coefficients"]]
+PC_30_0_ob_ALT_sm[["adj.r.squared"]]
+
+PC_52_1_ob_HFF <- lm(PC_52_1 ~ log_HFF + Sex + Age, data= obese_data)
+PC_52_1_ob_HFF_sm <- summary(PC_52_1_ob_HFF)
+PC_52_1_ob_HFF_sm[["coefficients"]]
+PC_52_1_ob_HFF_sm[["adj.r.squared"]]
+
+PC_58_9_NAS <- lm(PC_58_9 ~ NAS + Sex + Age, data= NAFLDBx_data)
+PC_58_9_NAS_sm <- summary(PC_58_9_NAS)
+PC_58_9_NAS_sm[["coefficients"]]
+PC_58_9_NAS_sm[["adj.r.squared"]]
+
+## for figure 4
+
+
+LPC_total_NAS <- lm(LPC_total ~ NAS_num, data=data_full_abs_Rome)
+LPC_total_NAS_sm <- summary(LPC_total_NAS)
+LPC_total_NAS_sm[["coefficients"]]
+LPC_total_NAS_sm[["adj.r.squared"]]
+
+LPC_18_0_NAS <- lm(LPC_18_0 ~ NAS + Sex + Age, data= NAFLDBx_data)
+LPC_18_0_NAS_sm <- summary(LPC_18_0_NAS)
+LPC_18_0_NAS_sm[["coefficients"]]
+LPC_18_0_NAS_sm[["adj.r.squared"]]
+
+PG_40_4_NAS <- lm(PG_40_4 ~ NAS + Sex + Age, data= NAFLDBx_data)
+PG_40_4_NAS_sm <- summary(PG_40_4_NAS)
+PG_40_4_NAS_sm[["coefficients"]]
+PG_40_4_NAS_sm[["adj.r.squared"]]
+
+HexCer_40_1_NAS <- lm(Hex_Cer_40_1 ~ NAS + Sex + Age, data= NAFLDBx_data)
+HexCer_40_1_NAS_sm <- summary(HexCer_40_1_NAS)
+HexCer_40_1_NAS_sm[["coefficients"]]
+HexCer_40_1_NAS_sm[["adj.r.squared"]]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
