@@ -1,0 +1,510 @@
+##thesis lipidomics analysis code
+
+## Installations
+install.packages("tidyverse")
+install.packages("readxl")
+install.packages("corrplot")
+library(devtools)
+install_github("vqv/ggbiplot")
+install.packages("factoextra")
+install.packages("FactoMineR")
+install.packages("paran")
+install.packages("cowplot")
+install.packages("ggplotify")
+install.packages("grid")
+install.packages("Hmisc")
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install("mixOmics")
+install.packages("rstatix")
+
+
+
+## load packages
+library(tidyverse)
+library(readxl)
+library(corrplot)
+library(tidyr)
+library(factoextra)
+library(FactoMineR)
+library(paran)
+library(cowplot)
+library(ggplotify)
+library(grid)
+library(dplyr)
+library(ggplot2)
+library(ggrepel)
+library(Hmisc)
+library(ggbiplot)
+library(rstatix)
+
+## load data
+data <- read_excel("Mfn2_lipidom_data.xlsx")
+annotation <- read_excel("Annotation.xlsx")
+
+## create datasets to analyse separately
+Liver_data <- subset(data, Tissue=="Liver")
+IngWAT_data <- subset(data, Tissue=="IngWAT")
+LiverChow_data <- subset(Liver_data, Condition=="Chow")
+LiverHFD_data <- subset(Liver_data, Condition=="HighFat")
+IngWATChow_data <- subset(IngWAT_data, Condition=="Chow")
+IngWATHFD_data <- subset(IngWAT_data, Condition=="HighFat")
+
+## only keep lipids with >70% complete
+LiverChow_data <- LiverChow_data[colSums(is.na(LiverChow_data))/nrow(LiverChow_data) < .3]
+LiverHFD_data <- LiverHFD_data[colSums(is.na(LiverHFD_data))/nrow(LiverHFD_data) < .3]
+IngWATChow_data <- IngWATChow_data[colSums(is.na(IngWATChow_data))/nrow(IngWATChow_data) < .3]
+IngWATHFD_data <- IngWATHFD_data[colSums(is.na(IngWATHFD_data))/nrow(IngWATHFD_data) < .3]
+
+## use minimum value imputation to replace blanks for pca analysis
+min_function <- function(x) replace(x, is.na(x), min(x, na.rm = TRUE))
+LiverChow_pca_data <- LiverChow_data
+LiverHFD_pca_data <- LiverHFD_data
+LiverChow_pca_data[] <- lapply(LiverChow_pca_data, min_function)
+LiverHFD_pca_data[] <- lapply(LiverHFD_pca_data, min_function)
+IngWATChow_pca_data <- IngWATChow_data
+IngWATHFD_pca_data <- IngWATHFD_data
+IngWATChow_pca_data[] <- lapply(IngWATChow_pca_data, min_function)
+IngWATHFD_pca_data[] <- lapply(IngWATHFD_pca_data, min_function)
+
+
+## log transform
+LiverChow_pca_data[4:396] <- lapply(LiverChow_pca_data[4:396], function(x) log2(x))
+LiverHFD_pca_data[4:395] <- lapply(LiverHFD_pca_data[4:395], function(x) log2(x))
+IngWATChow_pca_data[4:327] <- lapply(IngWATChow_pca_data[4:327], function(x) log2(x))
+IngWATHFD_pca_data[4:317] <- lapply(IngWATHFD_pca_data[4:317], function(x) log2(x))
+
+## PCA LiverChow
+LiverChow_pca <- prcomp(LiverChow_pca_data[4:396], center = TRUE, scale. = TRUE)
+LiverChow_pca_plot <- ggbiplot(LiverChow_pca, var.axes=FALSE, ellipse=TRUE, groups=LiverChow_pca_data$Genotype) + theme_minimal()
+LiverChow_scree <- fviz_eig(LiverChow_pca)
+LiverChow_contrib <- fviz_contrib(LiverChow_pca, choice = "var", axes = 1:3, top = 20)
+LiverChow_pca2 <- PCA(LiverChow_pca_data[4:300])
+LiverChow_pca_desc <- dimdesc(LiverChow_pca2, axes = c(1:2), proba = 0.05)
+LiverChow_pca_desc$Dim.1
+top_row <- plot_grid(LiverChow_pca_plot, ncol = 1, labels = c('A'), label_fontfamily = 'serif', label_fontface = 'bold', label_size = 22, align = 'w')
+bottom_row <- plot_grid(LiverChow_scree, LiverChow_contrib, ncol = 2, labels = c('B', 'C'), label_fontfamily = 'serif', label_fontface = 'bold', label_size = 22, align = 'w', rel_widths = c(1.5, 1.5))
+pdf(file="LiverChow_pca_v1.pdf",width=12,height=12)
+plot_grid(top_row, bottom_row, ncol = 1, rel_heights = c(1.0, 1.0))
+dev.off()
+
+
+## PCA LiverHFD
+LiverHFD_pca <- prcomp(LiverHFD_pca_data[4:395], center = TRUE, scale. = TRUE)
+LiverHFD_pca_plot <- ggbiplot(LiverHFD_pca, var.axes=FALSE, ellipse=TRUE, groups=LiverHFD_pca_data$Genotype) + theme_minimal()
+LiverHFD_scree <- fviz_eig(LiverHFD_pca)
+LiverHFD_contrib <- fviz_contrib(LiverHFD_pca, choice = "var", axes = 1:3, top = 20)
+LiverHFD_pca2 <- PCA(LiverHFD_pca_data[4:300])
+LiverHFD_pca_desc <- dimdesc(LiverHFD_pca2, axes = c(1:2), proba = 0.05)
+LiverHFD_pca_desc$Dim.1
+top_row <- plot_grid(LiverHFD_pca_plot, ncol = 1, labels = c('A'), label_fontfamily = 'serif', label_fontface = 'bold', label_size = 22, align = 'w')
+bottom_row <- plot_grid(LiverHFD_scree, LiverHFD_contrib, ncol = 2, labels = c('B', 'C'), label_fontfamily = 'serif', label_fontface = 'bold', label_size = 22, align = 'w', rel_widths = c(1.5, 1.5))
+pdf(file="LiverHFD_pca_v1.pdf",width=12,height=12)
+plot_grid(top_row, bottom_row, ncol = 1, rel_heights = c(1.0, 1.0))
+dev.off()
+
+## PCA IngWATChow
+IngWATChow_pca <- prcomp(IngWATChow_pca_data[4:327], center = TRUE, scale. = TRUE)
+IngWATChow_pca_plot <- ggbiplot(IngWATChow_pca, var.axes=FALSE, ellipse=TRUE, groups=IngWATChow_pca_data$Genotype) + theme_minimal()
+IngWATChow_scree <- fviz_eig(IngWATChow_pca)
+IngWATChow_contrib <- fviz_contrib(IngWATChow_pca, choice = "var", axes = 1:3, top = 20)
+IngWATChow_pca2 <- PCA(IngWATChow_pca_data[4:300])
+IngWATChow_pca_desc <- dimdesc(IngWATChow_pca2, axes = c(1:2), proba = 0.05)
+IngWATChow_pca_desc$Dim.1
+top_row <- plot_grid(IngWATChow_pca_plot, ncol = 1, labels = c('A'), label_fontfamily = 'serif', label_fontface = 'bold', label_size = 22, align = 'w')
+bottom_row <- plot_grid(IngWATChow_scree, IngWATChow_contrib, ncol = 2, labels = c('B', 'C'), label_fontfamily = 'serif', label_fontface = 'bold', label_size = 22, align = 'w', rel_widths = c(1.5, 1.5))
+pdf(file="IngWATChow_pca_v1.pdf",width=12,height=12)
+plot_grid(top_row, bottom_row, ncol = 1, rel_heights = c(1.0, 1.0))
+dev.off()
+
+
+## PCA IngWATHFD
+IngWATHFD_pca <- prcomp(IngWATHFD_pca_data[4:317], center = TRUE, scale. = TRUE)
+IngWATHFD_pca_plot <- ggbiplot(IngWATHFD_pca, var.axes=FALSE, ellipse=TRUE, groups=IngWATHFD_pca_data$Genotype) + theme_minimal()
+IngWATHFD_scree <- fviz_eig(IngWATHFD_pca)
+IngWATHFD_contrib <- fviz_contrib(IngWATHFD_pca, choice = "var", axes = 1:3, top = 20)
+IngWATHFD_pca2 <- PCA(IngWATHFD_pca_data[4:300])
+IngWATHFD_pca_desc <- dimdesc(IngWATHFD_pca2, axes = c(1:2), proba = 0.05)
+IngWATHFD_pca_desc$Dim.1
+top_row <- plot_grid(IngWATHFD_pca_plot, ncol = 1, labels = c('A'), label_fontfamily = 'serif', label_fontface = 'bold', label_size = 22, align = 'w')
+bottom_row <- plot_grid(IngWATHFD_scree, IngWATHFD_contrib, ncol = 2, labels = c('B', 'C'), label_fontfamily = 'serif', label_fontface = 'bold', label_size = 22, align = 'w', rel_widths = c(1.5, 1.5))
+pdf(file="IngWATHFD_pca_v1.pdf",width=12,height=12)
+plot_grid(top_row, bottom_row, ncol = 1, rel_heights = c(1.0, 1.0))
+dev.off()
+
+
+
+
+## define significance threshold (leaniant)
+data_sig = 0.05/(sqrt(ncol(data) - 5))
+
+
+
+############ 
+
+###### LiverChow analysis
+
+## run log2 fold change analyses
+LiverChow_ttest <- LiverChow_data[4:396] %>% map_df(~ broom::tidy(t.test(. ~ LiverChow_data$Genotype)), .id = 'var')
+LiverChow_ttest$qval <- p.adjust(LiverChow_ttest$p.value, method = "BH")
+LiverChow_ttest$p_sig <- ifelse(LiverChow_ttest$p.value < data_sig, "Significant", "Not significant")
+LiverChow_ttest$q_sig <- ifelse(LiverChow_ttest$qval < 0.05, "Significant", "Not significant")
+LiverChow_fold <- aggregate(LiverChow_data[, 4:396], list(LiverChow_data$Genotype), mean)
+LiverChow_fold_t <- as.data.frame(t(LiverChow_fold))
+LiverChow_fold_t$var <- rownames(LiverChow_fold_t)
+names(LiverChow_fold_t)[names(LiverChow_fold_t) == 'V1'] <- 'Group_A'
+names(LiverChow_fold_t)[names(LiverChow_fold_t) == 'V2'] <- 'Group_B'
+LiverChow_fold_t <- LiverChow_fold_t[-c(1),]
+LiverChow_fold_t$Group_A <- as.numeric(LiverChow_fold_t$Group_A)
+LiverChow_fold_t$Group_B <- as.numeric(LiverChow_fold_t$Group_B)
+LiverChow_fold_t$FC <- LiverChow_fold_t$Group_A / LiverChow_fold_t$Group_B
+
+LiverChow_fold_t$log2FC <- log2(LiverChow_fold_t$FC)
+LiverChow_summary <- merge(LiverChow_ttest, LiverChow_fold_t, by='var')
+LiverChow_summary$neglogp <- -log10(LiverChow_summary$p.val)
+LiverChow_summary <- merge(LiverChow_summary, annotation, by='var')
+write.table(LiverChow_summary, "LiverChow_summary.csv", sep=",")
+
+## make volcano plot
+LiverChow_vol <- ggplot(data= LiverChow_summary, aes(x=log2FC, y=neglogp, colour=LipidGroup)) + geom_point(alpha=0.4, size=1.75) + xlab("Log2 Fold change (KI / WT)") + ylab("-log10 p-value") + theme_bw() + theme(legend.position="right") + geom_text_repel(data = subset(LiverChow_summary, neglogp > 1.5 | log2FC > 1.48), aes(label = var), size = 3, key_glyph = "point") + theme(plot.title = element_text(face = "bold")) + theme(plot.title = element_text(hjust = 0.2)) + ggtitle("LiverChow") + labs(color = "Lipid class")
+LiverChow_vol
+
+pdf(file="LiverChow_vol.pdf",width=6,height=6)
+LiverChow_vol
+dev.off()
+
+###### LiverHFD analysis
+
+## run log2 fold change analyses
+LiverHFD_ttest <- LiverHFD_data[4:395] %>% map_df(~ broom::tidy(t.test(. ~ LiverHFD_data$Genotype)), .id = 'var')
+LiverHFD_ttest$qval <- p.adjust(LiverHFD_ttest$p.value, method = "BH")
+LiverHFD_ttest$p_sig <- ifelse(LiverHFD_ttest$p.value < data_sig, "Significant", "Not significant")
+LiverHFD_ttest$q_sig <- ifelse(LiverHFD_ttest$qval < 0.05, "Significant", "Not significant")
+LiverHFD_fold <- aggregate(LiverHFD_data[, 4:395], list(LiverHFD_data$Genotype), mean)
+LiverHFD_fold_t <- as.data.frame(t(LiverHFD_fold))
+LiverHFD_fold_t$var <- rownames(LiverHFD_fold_t)
+names(LiverHFD_fold_t)[names(LiverHFD_fold_t) == 'V1'] <- 'Group_A'
+names(LiverHFD_fold_t)[names(LiverHFD_fold_t) == 'V2'] <- 'Group_B'
+LiverHFD_fold_t <- LiverHFD_fold_t[-c(1),]
+LiverHFD_fold_t$Group_A <- as.numeric(LiverHFD_fold_t$Group_A)
+LiverHFD_fold_t$Group_B <- as.numeric(LiverHFD_fold_t$Group_B)
+LiverHFD_fold_t$FC <- LiverHFD_fold_t$Group_A / LiverHFD_fold_t$Group_B
+
+LiverHFD_fold_t$log2FC <- log2(LiverHFD_fold_t$FC)
+LiverHFD_summary <- merge(LiverHFD_ttest, LiverHFD_fold_t, by='var')
+LiverHFD_summary$neglogp <- -log10(LiverHFD_summary$p.val)
+LiverHFD_summary <- merge(LiverHFD_summary, annotation, by='var')
+write.table(LiverHFD_summary, "LiverHFD_summary.csv", sep=",")
+
+## make volcano plot
+LiverHFD_vol <- ggplot(data= LiverHFD_summary, aes(x=log2FC, y=neglogp, colour=LipidGroup)) + geom_point(alpha=0.4, size=1.75) + xlab("Log2 Fold change (KI / WT)") + ylab("-log10 p-value") + theme_bw() + theme(legend.position="right") + geom_text_repel(data = subset(LiverHFD_summary, neglogp > 1.7 | log2FC > 1.48 | log2FC < -2), aes(label = var), size = 3, key_glyph = "point") + theme(plot.title = element_text(face = "bold")) + theme(plot.title = element_text(hjust = 0.2)) + ggtitle("LiverHFD") + labs(color = "Lipid class")
+LiverHFD_vol
+
+pdf(file="LiverHFD_vol.pdf",width=6,height=6)
+LiverHFD_vol
+dev.off()
+
+
+
+###### IngWATChow analysis
+
+## run log2 fold change analyses
+IngWATChow_ttest <- IngWATChow_data[4:327] %>% map_df(~ broom::tidy(t.test(. ~ IngWATChow_data$Genotype)), .id = 'var')
+IngWATChow_ttest$qval <- p.adjust(IngWATChow_ttest$p.value, method = "BH")
+IngWATChow_ttest$p_sig <- ifelse(IngWATChow_ttest$p.value < data_sig, "Significant", "Not significant")
+IngWATChow_ttest$q_sig <- ifelse(IngWATChow_ttest$qval < 0.05, "Significant", "Not significant")
+IngWATChow_fold <- aggregate(IngWATChow_data[, 4:327], list(IngWATChow_data$Genotype), mean)
+IngWATChow_fold_t <- as.data.frame(t(IngWATChow_fold))
+IngWATChow_fold_t$var <- rownames(IngWATChow_fold_t)
+names(IngWATChow_fold_t)[names(IngWATChow_fold_t) == 'V1'] <- 'Group_A'
+names(IngWATChow_fold_t)[names(IngWATChow_fold_t) == 'V2'] <- 'Group_B'
+IngWATChow_fold_t <- IngWATChow_fold_t[-c(1),]
+IngWATChow_fold_t$Group_A <- as.numeric(IngWATChow_fold_t$Group_A)
+IngWATChow_fold_t$Group_B <- as.numeric(IngWATChow_fold_t$Group_B)
+IngWATChow_fold_t$FC <- IngWATChow_fold_t$Group_A / IngWATChow_fold_t$Group_B
+
+IngWATChow_fold_t$log2FC <- log2(IngWATChow_fold_t$FC)
+IngWATChow_summary <- merge(IngWATChow_ttest, IngWATChow_fold_t, by='var')
+IngWATChow_summary$neglogp <- -log10(IngWATChow_summary$p.val)
+IngWATChow_summary <- merge(IngWATChow_summary, annotation, by='var')
+write.table(IngWATChow_summary, "IngWATChow_summary.csv", sep=",")
+
+## make volcano plot
+IngWATChow_vol <- ggplot(data= IngWATChow_summary, aes(x=log2FC, y=neglogp, colour=LipidGroup)) + geom_point(alpha=0.4, size=1.75) + xlab("Log2 Fold change (KI / WT)") + ylab("-log10 p-value") + theme_bw() + theme(legend.position="right") + geom_text_repel(data = subset(IngWATChow_summary, neglogp > 2.6), aes(label = var), size = 3, key_glyph = "point") + theme(plot.title = element_text(face = "bold")) + theme(plot.title = element_text(hjust = 0.2)) + ggtitle("IngWATChow") + labs(color = "Lipid class")
+IngWATChow_vol
+
+pdf(file="IngWATChow_vol.pdf",width=6,height=6)
+IngWATChow_vol
+dev.off()
+
+###### IngWATHFD analysis
+
+## run log2 fold change analyses
+IngWATHFD_ttest <- IngWATHFD_data[4:317] %>% map_df(~ broom::tidy(t.test(. ~ IngWATHFD_data$Genotype)), .id = 'var')
+IngWATHFD_ttest$qval <- p.adjust(IngWATHFD_ttest$p.value, method = "BH")
+IngWATHFD_ttest$p_sig <- ifelse(IngWATHFD_ttest$p.value < data_sig, "Significant", "Not significant")
+IngWATHFD_ttest$q_sig <- ifelse(IngWATHFD_ttest$qval < 0.05, "Significant", "Not significant")
+IngWATHFD_fold <- aggregate(IngWATHFD_data[, 4:317], list(IngWATHFD_data$Genotype), mean)
+IngWATHFD_fold_t <- as.data.frame(t(IngWATHFD_fold))
+IngWATHFD_fold_t$var <- rownames(IngWATHFD_fold_t)
+names(IngWATHFD_fold_t)[names(IngWATHFD_fold_t) == 'V1'] <- 'Group_A'
+names(IngWATHFD_fold_t)[names(IngWATHFD_fold_t) == 'V2'] <- 'Group_B'
+IngWATHFD_fold_t <- IngWATHFD_fold_t[-c(1),]
+IngWATHFD_fold_t$Group_A <- as.numeric(IngWATHFD_fold_t$Group_A)
+IngWATHFD_fold_t$Group_B <- as.numeric(IngWATHFD_fold_t$Group_B)
+IngWATHFD_fold_t$FC <- IngWATHFD_fold_t$Group_A / IngWATHFD_fold_t$Group_B
+
+IngWATHFD_fold_t$log2FC <- log2(IngWATHFD_fold_t$FC)
+IngWATHFD_summary <- merge(IngWATHFD_ttest, IngWATHFD_fold_t, by='var')
+IngWATHFD_summary$neglogp <- -log10(IngWATHFD_summary$p.val)
+IngWATHFD_summary <- merge(IngWATHFD_summary, annotation, by='var')
+write.table(IngWATHFD_summary, "IngWATHFD_summary.csv", sep=",")
+
+## make volcano plot
+IngWATHFD_vol <- ggplot(data= IngWATHFD_summary, aes(x=log2FC, y=neglogp, colour=LipidGroup)) + geom_point(alpha=0.4, size=1.75) + xlab("Log2 Fold change (KI / WT)") + ylab("-log10 p-value") + theme_bw() + theme(legend.position="right") + geom_text_repel(data = subset(IngWATHFD_summary, neglogp > 2.8), aes(label = var), size = 3, key_glyph = "point") + theme(plot.title = element_text(face = "bold")) + theme(plot.title = element_text(hjust = 0.2)) + ggtitle("IngWATHFD") + labs(color = "Lipid class")
+IngWATHFD_vol
+
+pdf(file="IngWATHFD_vol.pdf",width=6,height=6)
+IngWATHFD_vol
+dev.off()
+
+### Jan '21 update with new data from BAT and gonWAT
+
+
+## load data
+data2 <- read_excel("Mfn2_lipidom_data_Dec20.xlsx")
+annotation <- read_excel("Annotation.xlsx")
+
+## create datasets to analyse separately
+BAT_data <- subset(data2, Tissue=="BAT")
+GonWAT_data <- subset(data2, Tissue=="GonWAT")
+BATChow_data <- subset(BAT_data, Condition=="Chow")
+BATHFD_data <- subset(BAT_data, Condition=="HighFat")
+GonWATChow_data <- subset(GonWAT_data, Condition=="Chow")
+GonWATHFD_data <- subset(GonWAT_data, Condition=="HighFat")
+
+## only keep lipids with >70% complete
+BATChow_data <- BATChow_data[colSums(is.na(BATChow_data))/nrow(BATChow_data) < .3]
+BATHFD_data <- BATHFD_data[colSums(is.na(BATHFD_data))/nrow(BATHFD_data) < .3]
+GonWATChow_data <- GonWATChow_data[colSums(is.na(GonWATChow_data))/nrow(GonWATChow_data) < .3]
+GonWATHFD_data <- GonWATHFD_data[colSums(is.na(GonWATHFD_data))/nrow(GonWATHFD_data) < .3]
+
+## use minimum value imputation to replace blanks for pca analysis
+min_function <- function(x) replace(x, is.na(x), min(x, na.rm = TRUE))
+BATChow_pca_data <- BATChow_data
+BATHFD_pca_data <- BATHFD_data
+BATChow_pca_data[] <- lapply(BATChow_pca_data, min_function)
+BATHFD_pca_data[] <- lapply(BATHFD_pca_data, min_function)
+GonWATChow_pca_data <- GonWATChow_data
+GonWATHFD_pca_data <- GonWATHFD_data
+GonWATChow_pca_data[] <- lapply(GonWATChow_pca_data, min_function)
+GonWATHFD_pca_data[] <- lapply(GonWATHFD_pca_data, min_function)
+
+
+## log transform
+BATChow_pca_data[4:ncol(BATChow_pca_data)] <- lapply(BATChow_pca_data[4:ncol(BATChow_pca_data)], function(x) log2(x))
+BATHFD_pca_data[4:ncol(BATHFD_pca_data)] <- lapply(BATHFD_pca_data[4:ncol(BATHFD_pca_data)], function(x) log2(x))
+GonWATChow_pca_data[4:ncol(GonWATChow_pca_data)] <- lapply(GonWATChow_pca_data[4:ncol(GonWATChow_pca_data)], function(x) log2(x))
+GonWATHFD_pca_data[4:ncol(GonWATHFD_pca_data)] <- lapply(GonWATHFD_pca_data[4:ncol(GonWATHFD_pca_data)], function(x) log2(x))
+
+## PCA BATChow
+BATChow_pca <- prcomp(BATChow_pca_data[4:ncol(BATChow_pca_data)], center = TRUE, scale. = TRUE)
+BATChow_pca_plot <- ggbiplot(BATChow_pca, var.axes=FALSE, ellipse=TRUE, groups=BATChow_pca_data$Genotype) + theme_minimal()
+BATChow_scree <- fviz_eig(BATChow_pca)
+BATChow_contrib <- fviz_contrib(BATChow_pca, choice = "var", axes = 1:3, top = 20)
+BATChow_pca2 <- PCA(BATChow_pca_data[4:ncol(BATChow_pca_data)])
+BATChow_pca_desc <- dimdesc(BATChow_pca2, axes = c(1:2), proba = 0.05)
+BATChow_pca_desc$Dim.1
+top_row <- plot_grid(BATChow_pca_plot, ncol = 1, labels = c('A'), label_fontfamily = 'serif', label_fontface = 'bold', label_size = 22, align = 'w')
+bottom_row <- plot_grid(BATChow_scree, BATChow_contrib, ncol = 2, labels = c('B', 'C'), label_fontfamily = 'serif', label_fontface = 'bold', label_size = 22, align = 'w', rel_widths = c(1.5, 1.5))
+pdf(file="BATChow_pca_v1.pdf",width=12,height=12)
+plot_grid(top_row, bottom_row, ncol = 1, rel_heights = c(1.0, 1.0))
+dev.off()
+
+
+## PCA BATHFD
+BATHFD_pca <- prcomp(BATHFD_pca_data[4:ncol(BATHFD_pca_data)], center = TRUE, scale. = TRUE)
+BATHFD_pca_plot <- ggbiplot(BATHFD_pca, var.axes=FALSE, ellipse=TRUE, groups=BATHFD_pca_data$Genotype) + theme_minimal()
+BATHFD_scree <- fviz_eig(BATHFD_pca)
+BATHFD_contrib <- fviz_contrib(BATHFD_pca, choice = "var", axes = 1:3, top = 20)
+BATHFD_pca2 <- PCA(BATHFD_pca_data[4:ncol(BATHFD_pca_data)])
+BATHFD_pca_desc <- dimdesc(BATHFD_pca2, axes = c(1:2), proba = 0.05)
+BATHFD_pca_desc$Dim.1
+top_row <- plot_grid(BATHFD_pca_plot, ncol = 1, labels = c('A'), label_fontfamily = 'serif', label_fontface = 'bold', label_size = 22, align = 'w')
+bottom_row <- plot_grid(BATHFD_scree, BATHFD_contrib, ncol = 2, labels = c('B', 'C'), label_fontfamily = 'serif', label_fontface = 'bold', label_size = 22, align = 'w', rel_widths = c(1.5, 1.5))
+pdf(file="BATHFD_pca_v1.pdf",width=12,height=12)
+plot_grid(top_row, bottom_row, ncol = 1, rel_heights = c(1.0, 1.0))
+dev.off()
+
+## PCA GonWATChow
+GonWATChow_pca <- prcomp(GonWATChow_pca_data[4:ncol(GonWATChow_pca_data)], center = TRUE, scale. = TRUE)
+GonWATChow_pca_plot <- ggbiplot(GonWATChow_pca, var.axes=FALSE, ellipse=TRUE, groups=GonWATChow_pca_data$Genotype) + theme_minimal()
+GonWATChow_scree <- fviz_eig(GonWATChow_pca)
+GonWATChow_contrib <- fviz_contrib(GonWATChow_pca, choice = "var", axes = 1:3, top = 20)
+GonWATChow_pca2 <- PCA(GonWATChow_pca_data[4:ncol(GonWATChow_pca_data)])
+GonWATChow_pca_desc <- dimdesc(GonWATChow_pca2, axes = c(1:2), proba = 0.05)
+GonWATChow_pca_desc$Dim.1
+top_row <- plot_grid(GonWATChow_pca_plot, ncol = 1, labels = c('A'), label_fontfamily = 'serif', label_fontface = 'bold', label_size = 22, align = 'w')
+bottom_row <- plot_grid(GonWATChow_scree, GonWATChow_contrib, ncol = 2, labels = c('B', 'C'), label_fontfamily = 'serif', label_fontface = 'bold', label_size = 22, align = 'w', rel_widths = c(1.5, 1.5))
+pdf(file="GonWATChow_pca_v1.pdf",width=12,height=12)
+plot_grid(top_row, bottom_row, ncol = 1, rel_heights = c(1.0, 1.0))
+dev.off()
+
+
+## PCA GonWATHFD
+GonWATHFD_pca <- prcomp(GonWATHFD_pca_data[4:ncol(GonWATHFD_pca_data)], center = TRUE, scale. = TRUE)
+GonWATHFD_pca_plot <- ggbiplot(GonWATHFD_pca, var.axes=FALSE, ellipse=TRUE, groups=GonWATHFD_pca_data$Genotype) + theme_minimal()
+GonWATHFD_scree <- fviz_eig(GonWATHFD_pca)
+GonWATHFD_contrib <- fviz_contrib(GonWATHFD_pca, choice = "var", axes = 1:3, top = 20)
+GonWATHFD_pca2 <- PCA(GonWATHFD_pca_data[4:ncol(GonWATHFD_pca_data)])
+GonWATHFD_pca_desc <- dimdesc(GonWATHFD_pca2, axes = c(1:2), proba = 0.05)
+GonWATHFD_pca_desc$Dim.1
+top_row <- plot_grid(GonWATHFD_pca_plot, ncol = 1, labels = c('A'), label_fontfamily = 'serif', label_fontface = 'bold', label_size = 22, align = 'w')
+bottom_row <- plot_grid(GonWATHFD_scree, GonWATHFD_contrib, ncol = 2, labels = c('B', 'C'), label_fontfamily = 'serif', label_fontface = 'bold', label_size = 22, align = 'w', rel_widths = c(1.5, 1.5))
+pdf(file="GonWATHFD_pca_v1.pdf",width=12,height=12)
+plot_grid(top_row, bottom_row, ncol = 1, rel_heights = c(1.0, 1.0))
+dev.off()
+
+
+
+
+## define significance threshold (leaniant)
+data_sig = 0.05/(sqrt(ncol(data) - 5))
+
+
+###### BATChow analysis
+
+## run log2 fold change analyses
+BATChow_ttest <- BATChow_data[4:ncol(BATChow_data)] %>% map_df(~ broom::tidy(t.test(. ~ BATChow_data$Genotype)), .id = 'var')
+BATChow_ttest$qval <- p.adjust(BATChow_ttest$p.value, method = "BH")
+BATChow_ttest$p_sig <- ifelse(BATChow_ttest$p.value < data_sig, "Significant", "Not significant")
+BATChow_ttest$q_sig <- ifelse(BATChow_ttest$qval < 0.05, "Significant", "Not significant")
+BATChow_fold <- aggregate(BATChow_data[, 4:ncol(BATChow_data)], list(BATChow_data$Genotype), mean)
+BATChow_fold_t <- as.data.frame(t(BATChow_fold))
+BATChow_fold_t$var <- rownames(BATChow_fold_t)
+names(BATChow_fold_t)[names(BATChow_fold_t) == 'V1'] <- 'Group_A'
+names(BATChow_fold_t)[names(BATChow_fold_t) == 'V2'] <- 'Group_B'
+BATChow_fold_t <- BATChow_fold_t[-c(1),]
+BATChow_fold_t$Group_A <- as.numeric(BATChow_fold_t$Group_A)
+BATChow_fold_t$Group_B <- as.numeric(BATChow_fold_t$Group_B)
+BATChow_fold_t$FC <- BATChow_fold_t$Group_A / BATChow_fold_t$Group_B
+
+BATChow_fold_t$log2FC <- log2(BATChow_fold_t$FC)
+BATChow_summary <- merge(BATChow_ttest, BATChow_fold_t, by='var')
+BATChow_summary$neglogp <- -log10(BATChow_summary$p.val)
+BATChow_summary <- merge(BATChow_summary, annotation, by='var')
+write.table(BATChow_summary, "BATChow_summary.csv", sep=",")
+
+## make volcano plot
+BATChow_vol <- ggplot(data= BATChow_summary, aes(x=log2FC, y=neglogp, colour=LipidGroup)) + geom_point(alpha=0.4, size=1.75) + xlab("Log2 Fold change (KI / WT)") + ylab("-log10 p-value") + theme_bw() + theme(legend.position="right") + geom_text_repel(data = subset(BATChow_summary, neglogp > 1.5 | log2FC > 2.5), aes(label = var), size = 3, key_glyph = "point") + theme(plot.title = element_text(face = "bold")) + theme(plot.title = element_text(hjust = 0.2)) + ggtitle("BATChow") + labs(color = "Lipid class")
+BATChow_vol
+
+pdf(file="BATChow_vol.pdf",width=6,height=6)
+BATChow_vol
+dev.off()
+
+###### BATHFD analysis
+
+## run log2 fold change analyses
+BATHFD_ttest <- BATHFD_data[4:ncol(BATHFD_data)] %>% map_df(~ broom::tidy(t.test(. ~ BATHFD_data$Genotype)), .id = 'var')
+BATHFD_ttest$qval <- p.adjust(BATHFD_ttest$p.value, method = "BH")
+BATHFD_ttest$p_sig <- ifelse(BATHFD_ttest$p.value < data_sig, "Significant", "Not significant")
+BATHFD_ttest$q_sig <- ifelse(BATHFD_ttest$qval < 0.05, "Significant", "Not significant")
+BATHFD_fold <- aggregate(BATHFD_data[, 4:ncol(BATHFD_data)], list(BATHFD_data$Genotype), mean)
+BATHFD_fold_t <- as.data.frame(t(BATHFD_fold))
+BATHFD_fold_t$var <- rownames(BATHFD_fold_t)
+names(BATHFD_fold_t)[names(BATHFD_fold_t) == 'V1'] <- 'Group_A'
+names(BATHFD_fold_t)[names(BATHFD_fold_t) == 'V2'] <- 'Group_B'
+BATHFD_fold_t <- BATHFD_fold_t[-c(1),]
+BATHFD_fold_t$Group_A <- as.numeric(BATHFD_fold_t$Group_A)
+BATHFD_fold_t$Group_B <- as.numeric(BATHFD_fold_t$Group_B)
+BATHFD_fold_t$FC <- BATHFD_fold_t$Group_A / BATHFD_fold_t$Group_B
+
+BATHFD_fold_t$log2FC <- log2(BATHFD_fold_t$FC)
+BATHFD_summary <- merge(BATHFD_ttest, BATHFD_fold_t, by='var')
+BATHFD_summary$neglogp <- -log10(BATHFD_summary$p.val)
+BATHFD_summary <- merge(BATHFD_summary, annotation, by='var')
+write.table(BATHFD_summary, "BATHFD_summary.csv", sep=",")
+
+## make volcano plot
+BATHFD_vol <- ggplot(data= BATHFD_summary, aes(x=log2FC, y=neglogp, colour=LipidGroup)) + geom_point(alpha=0.4, size=1.75) + xlab("Log2 Fold change (KI / WT)") + ylab("-log10 p-value") + theme_bw() + theme(legend.position="right") + geom_text_repel(data = subset(BATHFD_summary, neglogp > 1.7 | log2FC > 1.48 | log2FC < -2), aes(label = var), size = 3, key_glyph = "point") + theme(plot.title = element_text(face = "bold")) + theme(plot.title = element_text(hjust = 0.2)) + ggtitle("BATHFD") + labs(color = "Lipid class")
+BATHFD_vol
+
+pdf(file="BATHFD_vol.pdf",width=6,height=6)
+BATHFD_vol
+dev.off()
+
+
+
+###### GonWATChow analysis
+
+## run log2 fold change analyses
+GonWATChow_ttest <- GonWATChow_data[4:ncol(GonWATChow_data)] %>% map_df(~ broom::tidy(t.test(. ~ GonWATChow_data$Genotype)), .id = 'var')
+GonWATChow_ttest$qval <- p.adjust(GonWATChow_ttest$p.value, method = "BH")
+GonWATChow_ttest$p_sig <- ifelse(GonWATChow_ttest$p.value < data_sig, "Significant", "Not significant")
+GonWATChow_ttest$q_sig <- ifelse(GonWATChow_ttest$qval < 0.05, "Significant", "Not significant")
+GonWATChow_fold <- aggregate(GonWATChow_data[, 4:ncol(GonWATChow_data)], list(GonWATChow_data$Genotype), mean)
+GonWATChow_fold_t <- as.data.frame(t(GonWATChow_fold))
+GonWATChow_fold_t$var <- rownames(GonWATChow_fold_t)
+names(GonWATChow_fold_t)[names(GonWATChow_fold_t) == 'V1'] <- 'Group_A'
+names(GonWATChow_fold_t)[names(GonWATChow_fold_t) == 'V2'] <- 'Group_B'
+GonWATChow_fold_t <- GonWATChow_fold_t[-c(1),]
+GonWATChow_fold_t$Group_A <- as.numeric(GonWATChow_fold_t$Group_A)
+GonWATChow_fold_t$Group_B <- as.numeric(GonWATChow_fold_t$Group_B)
+GonWATChow_fold_t$FC <- GonWATChow_fold_t$Group_A / GonWATChow_fold_t$Group_B
+
+GonWATChow_fold_t$log2FC <- log2(GonWATChow_fold_t$FC)
+GonWATChow_summary <- merge(GonWATChow_ttest, GonWATChow_fold_t, by='var')
+GonWATChow_summary$neglogp <- -log10(GonWATChow_summary$p.val)
+GonWATChow_summary <- merge(GonWATChow_summary, annotation, by='var')
+write.table(GonWATChow_summary, "GonWATChow_summary.csv", sep=",")
+
+## make volcano plot
+GonWATChow_vol <- ggplot(data= GonWATChow_summary, aes(x=log2FC, y=neglogp, colour=LipidGroup)) + geom_point(alpha=0.4, size=1.75) + xlab("Log2 Fold change (KI / WT)") + ylab("-log10 p-value") + theme_bw() + theme(legend.position="right") + geom_text_repel(data = subset(GonWATChow_summary, neglogp > 2 | log2FC > 1.48), aes(label = var), size = 3, key_glyph = "point") + theme(plot.title = element_text(face = "bold")) + theme(plot.title = element_text(hjust = 0.2)) + ggtitle("GonWATChow") + labs(color = "Lipid class")
+GonWATChow_vol
+
+pdf(file="GonWATChow_vol.pdf",width=6,height=6)
+GonWATChow_vol
+dev.off()
+
+###### GonWATHFD analysis
+
+## run log2 fold change analyses
+GonWATHFD_ttest <- GonWATHFD_data[4:ncol(GonWATHFD_data)] %>% map_df(~ broom::tidy(t.test(. ~ GonWATHFD_data$Genotype)), .id = 'var')
+GonWATHFD_ttest$qval <- p.adjust(GonWATHFD_ttest$p.value, method = "BH")
+GonWATHFD_ttest$p_sig <- ifelse(GonWATHFD_ttest$p.value < data_sig, "Significant", "Not significant")
+GonWATHFD_ttest$q_sig <- ifelse(GonWATHFD_ttest$qval < 0.05, "Significant", "Not significant")
+GonWATHFD_fold <- aggregate(GonWATHFD_data[, 4:ncol(GonWATHFD_data)], list(GonWATHFD_data$Genotype), mean)
+GonWATHFD_fold_t <- as.data.frame(t(GonWATHFD_fold))
+GonWATHFD_fold_t$var <- rownames(GonWATHFD_fold_t)
+names(GonWATHFD_fold_t)[names(GonWATHFD_fold_t) == 'V1'] <- 'Group_A'
+names(GonWATHFD_fold_t)[names(GonWATHFD_fold_t) == 'V2'] <- 'Group_B'
+GonWATHFD_fold_t <- GonWATHFD_fold_t[-c(1),]
+GonWATHFD_fold_t$Group_A <- as.numeric(GonWATHFD_fold_t$Group_A)
+GonWATHFD_fold_t$Group_B <- as.numeric(GonWATHFD_fold_t$Group_B)
+GonWATHFD_fold_t$FC <- GonWATHFD_fold_t$Group_A / GonWATHFD_fold_t$Group_B
+
+GonWATHFD_fold_t$log2FC <- log2(GonWATHFD_fold_t$FC)
+GonWATHFD_summary <- merge(GonWATHFD_ttest, GonWATHFD_fold_t, by='var')
+GonWATHFD_summary$neglogp <- -log10(GonWATHFD_summary$p.val)
+GonWATHFD_summary <- merge(GonWATHFD_summary, annotation, by='var')
+write.table(GonWATHFD_summary, "GonWATHFD_summary.csv", sep=",")
+
+## make volcano plot
+GonWATHFD_vol <- ggplot(data= GonWATHFD_summary, aes(x=log2FC, y=neglogp, colour=LipidGroup)) + geom_point(alpha=0.4, size=1.75) + xlab("Log2 Fold change (KI / WT)") + ylab("-log10 p-value") + theme_bw() + theme(legend.position="right") + geom_text_repel(data = subset(GonWATHFD_summary, neglogp > 3 | log2FC > 2 | log2FC < -2), aes(label = var), size = 3, key_glyph = "point") + theme(plot.title = element_text(face = "bold")) + theme(plot.title = element_text(hjust = 0.2)) + ggtitle("GonWATHFD") + labs(color = "Lipid class")
+GonWATHFD_vol
+
+pdf(file="GonWATHFD_vol.pdf",width=6,height=6)
+GonWATHFD_vol
+dev.off()
+
+
+
+
+
+
+
+
+
+
+
